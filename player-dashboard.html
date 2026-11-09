@@ -11,6 +11,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400..700&family=JetBrains+Mono:wght@400..500&family=Anton&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="auth.css">
+<link rel="stylesheet" href="dashboard.css?v=5">
+<link rel="stylesheet" href="analyze.css?v=1">
 <link rel="stylesheet" href="cursor.css">
 </head>
 <body>
@@ -22,8 +24,9 @@
   </div>
   <main class="dash__hello">
     <h1>Your player report</h1>
-    <p>Signed in as <b data-email></b>. Your dashboard is being built and fills in once the analysis model is ready.</p>
+    <p>Signed in as <b data-email></b>. Upload a game video below to get the analysis video and match numbers. Your personal report is being built.</p>
   </main>
+  <section class="card" id="analyze" aria-labelledby="analyze-h" data-analyze="player"></section>
   <section class="dash__grid" aria-label="Coming to this dashboard">
     <article class="tile"><span class="tile__tag">Coming soon</span><h2>Your shot chart</h2><p>Where you shot from in each game, and what went in.</p></article>
     <article class="tile"><span class="tile__tag">Coming soon</span><h2>Points and form</h2><p>Your points over the season, with your trend.</p></article>
@@ -31,5 +34,6 @@
   </section>
 </div>
 <script type="module" src="auth.js"></script>
+<script type="module" src="analyze.js?v=1"></script>
 </body>
 </html>

@@ -2,6 +2,8 @@
 // (format in data/MATCH_FORMAT.md), and draws every view from it. "Your team" and the shot filters live in
 // the address, so a view can be shared or reloaded.
 
+import { serverFetch, serverVideoUrl } from './config.js';
+
 const $ = (sel, root = document) => root.querySelector(sel);
 const NS = 'http://www.w3.org/2000/svg';
 const svgEl = (name, attrs = {}, parent) => {
@@ -19,7 +21,7 @@ const ratio = (a, b) => (b ? a / b : 0);
 const clock = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
 const dateFmt = new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
 
-const state = { data: null, team: 0, shotTeam: 'mine', player: 'all', result: 'all', playKind: 'all', heat: 'team',
+const state = { data: null, match: null, team: 0,shotTeam: 'mine', player: 'all', result: 'all', playKind: 'all', heat: 'team',
   sort: { key: 'pts', dir: 'descending' } };
 const mine = () => state.team;
 const theirs = () => 1 - state.team;
@@ -29,10 +31,11 @@ const code = (team) => state.data.teams[team].code;
 // ---------------------------------------------------------------- the address
 function readUrl() {
   const p = new URLSearchParams(location.search);
-  return { team: p.get('team'), player: p.get('player') || 'all', result: p.get('result') || 'all', shotTeam: p.get('shots') || 'mine' };
+  return { match: p.get('match'), team: p.get('team'), player: p.get('player') || 'all', result: p.get('result') || 'all', shotTeam: p.get('shots') || 'mine' };
 }
 function writeUrl() {
   const p = new URLSearchParams();
+  if (state.match) p.set('match', state.match);
   p.set('team', code(state.team));
   if (state.shotTeam !== 'mine') p.set('shots', state.shotTeam);
   if (state.player !== 'all') p.set('player', state.player);
@@ -236,6 +239,7 @@ function renderShots(animate) {
   layer.classList.toggle('is-new', Boolean(animate) && !reduced);
   const all = filteredShots();
   const placed = all.filter((s) => s.x !== null);
+  $('[data-court]').classList.toggle('is-unmapped', !courtMapped());
   placed.forEach((s, i) => {
     const { x, y } = toCourt(s);
     const g = svgEl('g', { class: `shot shot--${role(s.team)} ${s.made ? 'shot--made' : 'shot--miss'}${s.made && !s.confirmed ? ' is-open' : ''}`, style: `--i: ${i}` }, layer);
@@ -265,7 +269,7 @@ function renderShots(animate) {
     + `<tr class="zones__total"><th scope="row">All shots</th><td class="num">${made}/${all.length}</td><td class="num">${pts}</td></tr>`;
   const unplaced = all.filter((s) => s.x === null);
   $('[data-shots-unplaced]').textContent = unplaced.length
-    ? `Not drawn, because the shooter's position could not be measured: ${unplaced.map((s) => `${clock(s.t)} ${s.player}, ${s.made ? `${s.points} points` : 'missed'}`).join('; ')}.`
+    ? `${courtMapped() ? '' : `${NO_COURT} `}Not drawn, because the shooter's position could not be measured: ${unplaced.map((s) => `${clock(s.t)} ${s.player}, ${s.made ? (s.points ? `${s.points} points` : 'made, value unknown') : 'missed'}`).join('; ')}.`
     : '';
   document.querySelectorAll('[data-players] tr').forEach((tr) => tr.classList.toggle('is-picked', tr.dataset.key === state.player));
   document.querySelectorAll('[data-shots-for]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.shotsFor === state.player)));
@@ -340,14 +344,14 @@ function renderPlayers() {
       <td class="num">${p.fgm}/${p.fga}</td><td class="num">${p.tpm}/${p.tpa}</td>
       <td class="num">${p.passes}</td><td class="num">${p.received}</td><td class="num">${p.int}</td>
       <td class="num">${cell(p.ball_s, (v) => `${one.format(v)} s`)}</td>
-      <td class="num">${whole.format(p.distance_m)} m</td><td class="num">${cell(p.top_kmh, (v) => `${one.format(v)}`)}</td>
+      <td class="num">${cell(p.distance_m, (v) => `${whole.format(v)} m`)}</td><td class="num">${cell(p.top_kmh, (v) => `${one.format(v)}`)}</td>
       <td class="views"><button class="mini-btn" type="button" data-shots-for="${key}" aria-pressed="false" aria-label="Show shots for number ${esc(p.no)}">Shots</button><button class="mini-btn" type="button" data-map-for="${key}" aria-label="Show where number ${esc(p.no)} moved">Map</button></td>
     </tr>`;
   }).join('') + (u.seconds ? `<tr class="row--muted">
       <td class="who"><b>Not identified</b><span>Number not readable</span></td>
       <td class="num">${clock(u.seconds)}</td><td class="num">${u.pts || 0}</td><td class="num">${u.fgm || 0}/${u.fga || 0}</td><td class="num">${u.tpm || 0}/${u.tpa || 0}</td>
       <td class="num">${u.passes || 0}</td><td class="num">${u.received || 0}</td><td class="num">${u.int || 0}</td>
-      <td class="num">${one.format(u.ball_s || 0)} s</td><td class="num">${whole.format(u.distance_m || 0)} m</td><td class="num">–</td><td></td></tr>` : '');
+      <td class="num">${one.format(u.ball_s || 0)} s</td><td class="num">${courtMapped() ? `${whole.format(u.distance_m || 0)} m` : '–'}</td><td class="num">–</td><td></td></tr>` : '');
   renderShots(false);
 }
 
@@ -399,7 +403,17 @@ function buildHeatSelect() {
   sel.value = state.heat;
 }
 
+const NO_COURT = 'The court could not be mapped automatically for this video, so speed, distance, heatmaps and shot positions are not available. Everything else on this page is measured.';
+const courtMapped = () => state.data.court_mapped !== false;
+
 function renderHeat() {
+  if (!courtMapped()) {
+    $('[data-heat]').querySelector('svg')?.remove();
+    $('[data-heat-sub]').textContent = NO_COURT;
+    $('[data-heat-key]').innerHTML = '';
+    $('[data-heat-select]').closest('.pick').hidden = true;
+    return;
+  }
   const d = state.data.heat;
   const box = $('[data-heat]');
   const tip = $('[data-heat-tip]');
@@ -440,6 +454,7 @@ function renderHeat() {
 
 // ---------------------------------------------------------------- distance and speed
 function renderRuns(animate) {
+  if (!courtMapped()) { $('[data-runs]').innerHTML = `<p class="fine">${NO_COURT}</p>`; return; }
   const ps = state.data.players.filter((p) => p.team === mine()).sort((a, b) => b.distance_m - a.distance_m);
   const max = Math.max(...ps.map((p) => p.distance_m), 1);
   const box = $('[data-runs]');
@@ -462,7 +477,7 @@ function renderControl(animate) {
     <div class="control__bar" role="img" aria-label="Ball control: ${esc(me.code)} ${whole.format(me.ball_control_pct)} percent, ${esc(op.code)} ${whole.format(op.ball_control_pct)} percent">
       <span class="control__me" style="width:${me.ball_control_pct}%"></span><span class="control__op" style="width:${op.ball_control_pct}%"></span>
     </div>`;
-  const rows = [['Passes', 'passes'], ['Interceptions', 'interceptions'], ['Field goals made', 'fgm'], ['Three-pointers made', 'tpm'], ['Points in the clip', 'points'], ['Distance (m)', 'distance_m']];
+  const rows = [['Passes', 'passes'], ['Interceptions', 'interceptions'], ['Field goals made', 'fgm'], ['Three-pointers made', 'tpm'], ['Points in the clip', 'points'], ...(courtMapped() ? [['Distance (m)', 'distance_m']] : [])];
   $('[data-tally]').innerHTML = `<table class="table table--tally"><thead><tr><th scope="col"></th><th scope="col" class="num">${esc(me.code)}</th><th scope="col" class="num">${esc(op.code)}</th></tr></thead><tbody>${
     rows.map(([l, k]) => `<tr><th scope="row">${l}</th><td class="num${me[k] > op[k] ? ' is-lead' : ''}">${whole.format(me[k])}</td><td class="num${op[k] > me[k] ? ' is-lead' : ''}">${whole.format(op[k])}</td></tr>`).join('')}</tbody></table>
     <p class="fine">Ball holder known in ${whole.format(state.data.quality.ball_holder_known_pct)}% of frames; between holders the last team in control keeps it.</p>`;
@@ -560,25 +575,54 @@ function trackSections() {
   links.forEach((a) => { const s = document.querySelector(a.getAttribute('href')); if (s) io.observe(s); });
 }
 
+// The match picker: the built-in match plus every finished upload on the analysis server (when it is online)
+async function buildMatchPicker() {
+  const select = $('[data-match-select]');
+  select.value = state.match || '';
+  select.addEventListener('change', () => {
+    const p = new URLSearchParams();
+    if (select.value) p.set('match', select.value);
+    location.search = p.toString();
+  });
+  try {
+    const res = await serverFetch('/api/jobs', { cache: 'no-store' });
+    if (!res.ok) return;
+    const done = (await res.json()).filter((j) => j.status === 'done');
+    select.insertAdjacentHTML('beforeend', done.map((j) => `<option value="${j.id}">${esc(j.title)} (uploaded)</option>`).join(''));
+    select.value = state.match || '';
+  } catch { /* analysis server offline: only the built-in match */ }
+}
+
 async function start() {
   if (!document.querySelector('[data-dashboard]')) return;
+  const url = readUrl();
+  state.match = url.match && /^[a-f0-9]{12}$/.test(url.match) ? url.match : null;
+  buildMatchPicker();
   try {
-    const res = await fetch('data/match.json', { cache: 'no-cache' });
+    const res = state.match ? await serverFetch(`/api/jobs/${state.match}/match.json`, { cache: 'no-store' })
+      : await fetch('data/match.json', { cache: 'no-cache' });
     if (!res.ok) throw new Error(`status ${res.status}`);
     state.data = await res.json();
     if (!state.data.teams?.length) throw new Error('no teams in the file');
   } catch (err) {
     const box = $('[data-load-error]');
-    box.textContent = `The match data could not load (${err.message}). Check that data/match.json exists, and open the site through a web server, not by double-clicking the file.`;
+    box.textContent = state.match
+      ? `This uploaded match could not load (${err.message}). The analysis server may be offline; the built-in match still works.`
+      : `The match data could not load (${err.message}). Check that data/match.json exists, and open the site through a web server, not by double-clicking the file.`;
     box.hidden = false;
     $('[data-title]').textContent = 'No match data';
     return;
   }
   $('[data-sample]').hidden = !state.data.sample;
-  const url = readUrl();
   const t = state.data.teams.findIndex((x) => x.code === url.team);
   Object.assign(state, { team: t >= 0 ? t : 0, player: url.player, result: url.result, shotTeam: ['mine', 'theirs', 'both'].includes(url.shotTeam) ? url.shotTeam : 'mine' });
-  $('[data-video]').src = state.data.video;
+  if (state.match) {
+    // uploaded matches stream from the analysis server; load the video with the ngrok header
+    serverVideoUrl(state.data.video).then((src) => { $('[data-video]').src = src; })
+      .catch(() => { $('[data-video]').replaceWith(Object.assign(document.createElement('p'), { className: 'fine', textContent: 'The video could not load from the analysis server.' })); });
+  } else {
+    $('[data-video]').src = state.data.video;
+  }
   buildTeamSwitch();
   wireShots();
   wirePlayers();

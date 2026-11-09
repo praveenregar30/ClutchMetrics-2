@@ -289,6 +289,11 @@ th[aria-sort="ascending"] .sort svg { transform: rotate(180deg); }
 .muted { color: var(--muted); }
 .sub-h { margin: 20px 0 8px; font-size: 16px; font-weight: 500; }
 
+/* match picker bar above the overview */
+.match-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.match-bar select { min-width: 260px; }
+@media (max-width: 639px) { .match-bar select { min-width: 0; width: 100%; } .match-bar .pick { width: 100%; } }
+
 /* video */
 .video-wrap { border-radius: 12px; overflow: hidden; background: #000; border: 1px solid var(--line); }
 .video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #000; }

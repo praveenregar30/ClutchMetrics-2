@@ -1,0 +1,46 @@
+/* "Analyse a video" section (analyze.js), shared by the coach and player dashboards. Tokens from auth.css. */
+.server { display: inline-flex; align-items: center; gap: 8px; min-height: 32px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--muted); font-size: 13px; }
+.server i { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+.server.is-on { color: var(--ink); }
+.server.is-on i { background: #3fbf6f; box-shadow: 0 0 0 3px rgb(63 191 111 / .2); }
+.server.is-off i { background: var(--error); }
+
+.upload { display: grid; gap: 16px; }
+.drop { position: relative; display: grid; justify-items: center; gap: 6px; padding: 28px 16px; border: 1.5px dashed var(--line-strong); border-radius: 14px; background: var(--field); text-align: center; transition: border-color .2s ease, background-color .2s ease; }
+.drop:hover, .drop.is-over, .drop:focus-within { border-color: var(--accent); background: rgb(255 122 26 / .05); }
+.drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.drop svg { width: 30px; height: 30px; fill: none; stroke: var(--accent); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.drop b { font-weight: 500; overflow-wrap: anywhere; }
+.drop span { color: var(--muted); font-size: 14px; }
+.upload__fields { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+@media (min-width: 720px) { .upload__fields { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.upload .field input { height: 46px; }
+.upload .field input[type="date"] { color-scheme: dark; }
+.opt { color: var(--muted); font-weight: 400; font-size: 13px; }
+.upload__go { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
+.upload__go .fine { margin: 0; }
+.mini-btn--primary { min-height: 44px; padding: 0 18px; border-color: var(--accent); background: var(--accent); color: var(--accent-ink); font-size: 15px; }
+.mini-btn--primary:hover { color: var(--accent-ink); filter: brightness(1.08); }
+.mini-btn--primary:disabled { opacity: .45; filter: none; cursor: not-allowed; }
+a.mini-btn { display: inline-flex; align-items: center; text-decoration: none; }
+
+.bar { height: 8px; border-radius: 4px; background: var(--grid, rgb(247 241 232 / .08)); overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; border-radius: 4px; background: var(--accent); transition: width .3s ease; }
+
+.jobs { display: grid; gap: 10px; margin-top: 8px; }
+.job { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 16px; align-items: center; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--card-2, #1d1914); }
+.job__main b { display: block; font-weight: 500; }
+.job__main span { color: var(--muted); font-size: 13px; }
+.job__state { display: flex; align-items: center; gap: 10px; }
+.job__progress, .job__msg, .job__watch { grid-column: 1 / -1; }
+.job__progress { display: grid; gap: 6px; }
+.job__progress span { color: var(--muted); font-size: 13px; }
+.job__msg { margin: 0; color: var(--error); font-size: 14px; }
+.job__watch { display: grid; gap: 12px; }
+.job__watch .video { border-radius: 10px; }
+.tag { display: inline-flex; align-items: center; min-height: 26px; padding: 0 10px; border-radius: 999px; border: 1px solid var(--line-strong); color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.tag--done { border-color: rgb(63 191 111 / .5); color: #7fd9a1; }
+.tag--run { border-color: rgb(255 122 26 / .5); color: var(--accent); }
+.tag--fail { border-color: rgb(255 138 122 / .5); color: var(--error); }
+@media (max-width: 639px) { .job { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }

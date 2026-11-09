@@ -11,7 +11,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400..700&family=JetBrains+Mono:wght@400..500&family=Anton&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="auth.css">
-<link rel="stylesheet" href="dashboard.css?v=4">
+<link rel="stylesheet" href="dashboard.css?v=5">
+<link rel="stylesheet" href="analyze.css?v=1">
 <link rel="stylesheet" href="cursor.css">
 </head>
 <body>
@@ -32,6 +33,7 @@
       <a href="#movement"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18c3-1 4-6 7-6s3 4 6 4 4-7 5-9"/><circle cx="7" cy="6" r="2"/></svg>Movement</a>
       <a href="#ball"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="7" r="2.500"/><circle cx="18" cy="7" r="2.500"/><circle cx="12" cy="18" r="2.500"/><path d="M8.500 7h7M7.300 9.200l3.500 6.500M16.700 9.200l-3.500 6.500"/></svg>Ball &amp; passing</a>
       <a href="#plays"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>All plays</a>
+      <a href="#analyze"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7.500 8.500 12 4l4.500 4.500"/><path d="M4 15v3.500A1.500 1.500 0 0 0 5.500 20h13a1.500 1.500 0 0 0 1.500-1.500V15"/></svg>Analyse a video</a>
     </nav>
     <div class="side__user">
       <span class="side__label">Signed in as</span>
@@ -43,6 +45,14 @@
   <main class="main" id="main">
     <p class="note" data-sample hidden><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span><b>Sample data.</b> These numbers are made up to show the design.</span></p>
     <p class="note note--error" data-load-error hidden></p>
+
+    <div class="match-bar">
+      <div class="pick pick--inline">
+        <label for="match">Match</label>
+        <select id="match" data-match-select><option value="">Australia vs India (built-in)</option></select>
+      </div>
+      <a class="mini-btn" href="#analyze">+ Analyse a new video</a>
+    </div>
 
     <section class="block" id="overview" aria-labelledby="overview-h">
       <div class="game-head">
@@ -211,10 +221,13 @@
       </div>
       <div class="about" data-about></div>
     </section>
+
+    <section class="block card" id="analyze" aria-labelledby="analyze-h" data-analyze="coach"></section>
   </main>
 </div>
 
 <script type="module" src="auth.js"></script>
-<script type="module" src="dashboard.js?v=4"></script>
+<script type="module" src="dashboard.js?v=5"></script>
+<script type="module" src="analyze.js?v=1"></script>
 </body>
 </html>
