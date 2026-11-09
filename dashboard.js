@@ -43,8 +43,32 @@ function totals(game) {
   const sum = (key) => game.players.reduce((a, p) => a + p[key], 0);
   return {
     pts: game.score.team, fgm: sum('fgm'), fga: sum('fga'), tpm: sum('tpm'), tpa: sum('tpa'),
-    reb: sum('reb'), ast: sum('ast'), tov: sum('tov'),
+    ftm: sum('ftm'), fta: sum('fta'), reb: sum('reb'), ast: sum('ast'), tov: sum('tov'),
   };
+}
+
+// opens another game with the shot filters cleared
+function openGame(number) {
+  if (String(number) === String(state.game.number)) return;
+  state.player = 'all'; state.q = 'all'; state.result = 'all';
+  selectGame(number, true);
+}
+
+// shows one player (or everyone, when picked again) on the shot chart
+function showPlayerShots(no, scroll) {
+  state.player = state.player === String(no) ? 'all' : String(no);
+  $('[data-player-select]').value = state.player;
+  writeUrl();
+  renderShots(true);
+  if (scroll && state.player !== 'all') $('#shots').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+}
+
+// keeps a tooltip inside its box
+function placeTip(tip, box, left, top) {
+  const w = box.getBoundingClientRect().width;
+  const half = Math.min(tip.offsetWidth / 2 || 90, w / 2);
+  tip.style.left = `${Math.min(Math.max(left, half), w - half)}px`;
+  tip.style.top = `${top}px`;
 }
 
 // ---------------------------------------------------------------- overview
@@ -135,6 +159,10 @@ function renderShots(animate) {
     </tr>`).join('') + `<tr class="zones__total"><th scope="row">All zones</th><td class="num">${made}/${shots.length}</td><td class="num">${shots.length ? pct.format(ratio(made, shots.length)) : '–'}</td></tr>`;
 
   document.querySelectorAll('[data-players] tr').forEach((tr) => tr.classList.toggle('is-picked', tr.dataset.no === state.player));
+  document.querySelectorAll('.pdot').forEach((d) => {
+    d.classList.toggle('is-picked', d.dataset.no === state.player);
+    d.setAttribute('aria-pressed', String(d.dataset.no === state.player));
+  });
   document.querySelectorAll('[data-shots-for]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.shotsFor === state.player)));
 }
 
@@ -233,12 +261,166 @@ function wirePlayers() {
   });
   $('[data-players]').addEventListener('click', (e) => {
     const b = e.target.closest('[data-shots-for]');
-    if (!b) return;
-    state.player = state.player === b.dataset.shotsFor ? 'all' : b.dataset.shotsFor;
-    $('[data-player-select]').value = state.player;
-    writeUrl();
-    renderShots(true);
-    if (state.player !== 'all') $('#shots').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+    if (b) showPlayerShots(b.dataset.shotsFor, true);
+  });
+}
+
+// ---------------------------------------------------------------- where the points came from
+function pointsBySource(g) {
+  const zone = (names) => {
+    const zs = g.shots.filter((s) => names.includes(s.zone));
+    return { m: zs.filter((s) => s.made).length, a: zs.length };
+  };
+  const paint = zone(['Paint']);
+  const mid = zone(['Mid-range']);
+  const three = zone(['Corner 3', 'Above-break 3']);
+  const ft = { m: g.players.reduce((a, p) => a + p.ftm, 0), a: g.players.reduce((a, p) => a + p.fta, 0) };
+  return [
+    { label: 'Paint', pts: paint.m * 2, ...paint },
+    { label: 'Mid-range', pts: mid.m * 2, ...mid },
+    { label: 'Three-pointers', pts: three.m * 3, ...three },
+    { label: 'Free throws', pts: ft.m, ...ft },
+  ];
+}
+
+function renderScoring(animate) {
+  const box = $('[data-mix]');
+  const rows = pointsBySource(state.game);
+  const others = state.data.games.filter((g) => g !== state.game).map(pointsBySource);
+  const total = rows.reduce((a, r) => a + r.pts, 0);
+  rows.forEach((r, i) => { r.avg = others.length ? others.reduce((a, o) => a + o[i].pts, 0) / others.length : null; });
+  const max = Math.max(...rows.flatMap((r) => [r.pts, r.avg ?? 0]), 1);
+  $('[data-mix-sub]').textContent = `${total} points in this game, split by shot type.`;
+  box.classList.toggle('is-new', Boolean(animate) && !reduced);
+  box.innerHTML = rows.map((r) => {
+    const share = ratio(r.pts, total);
+    const avgText = r.avg === null ? '' : ` Average of the other games: ${one.format(r.avg)}.`;
+    return `<div class="mix__row">
+      <div class="mix__name"><b>${r.label}</b><span>${r.m} of ${r.a} made</span></div>
+      <div class="mix__track" role="img" aria-label="${r.label}: ${r.pts} points, ${pct.format(share)} of the total.${avgText}">
+        <span class="mix__bar" style="width:${(r.pts / max) * 100}%"></span>
+        ${r.avg === null ? '' : `<span class="mix__avg" style="left:${(r.avg / max) * 100}%"></span>`}
+      </div>
+      <div class="mix__val"><b>${r.pts}</b><span>${pct.format(share)}</span></div>
+    </div>`;
+  }).join('');
+}
+
+// ---------------------------------------------------------------- shot volume and accuracy
+function renderShooters() {
+  const box = $('[data-shooters]');
+  const tip = $('[data-shooters-tip]');
+  box.querySelector('svg')?.remove();
+  tip.hidden = true;
+  const ps = state.game.players.filter((p) => p.fga > 0).sort((a, b) => b.fga - a.fga);
+  const W = Math.max(Math.round(box.clientWidth) || 520, 280); const H = W < 480 ? 280 : 320;
+  const top = 18; const bottom = 46; const left = 46; const right = 18;
+  const step = Math.max(...ps.map((p) => p.fga), 1) > 12 ? 5 : 2;
+  const xmax = Math.max(Math.ceil(Math.max(...ps.map((p) => p.fga), 1) / step) * step, step);
+  const x = (v) => left + ((W - left - right) * v) / xmax;
+  const y = (v) => top + (H - top - bottom) * (1 - v);
+  const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, role: 'group', 'aria-label': 'Shots attempted and field goal percentage for each player' });
+  box.prepend(svg);
+  [0, 0.25, 0.5, 0.75, 1].forEach((v) => {
+    svgEl('line', { class: 'gridline', x1: left, x2: W - right, y1: y(v), y2: y(v) }, svg);
+    const t = svgEl('text', { class: 'axis-text', x: left - 8, y: y(v) + 4, 'text-anchor': 'end' }, svg);
+    t.textContent = `${v * 100}%`;
+  });
+  for (let v = 0; v <= xmax; v += step) {
+    const t = svgEl('text', { class: 'axis-text', x: x(v), y: H - 24, 'text-anchor': 'middle' }, svg);
+    t.textContent = v;
+  }
+  const xt = svgEl('text', { class: 'axis-title', x: (left + W - right) / 2, y: H - 4, 'text-anchor': 'middle' }, svg);
+  xt.textContent = 'Shots attempted';
+  const t = totals(state.game);
+  const ty = y(ratio(t.fgm, t.fga));
+  svgEl('line', { class: 'avg-line', x1: left, x2: W - right, y1: ty, y2: ty }, svg);
+  $('[data-team-fg]').textContent = pct.format(ratio(t.fgm, t.fga));
+
+  ps.forEach((p) => {
+    const cx = x(p.fga); const cy = y(ratio(p.fgm, p.fga));
+    const g = svgEl('g', { class: `pdot${String(p.no) === state.player ? ' is-picked' : ''}`, tabindex: '0', role: 'button', 'aria-pressed': String(String(p.no) === state.player),
+      'aria-label': `Number ${p.no}, ${p.pos}: ${p.fgm} of ${p.fga} made, ${pct.format(ratio(p.fgm, p.fga))}. Show on the shot chart.` }, svg);
+    g.dataset.no = String(p.no);
+    svgEl('circle', { class: 'pdot__hit', cx, cy, r: 20 }, g);
+    svgEl('circle', { class: 'pdot__mark', cx, cy, r: 13 }, g);
+    const n = svgEl('text', { class: 'pdot__no', x: cx, y: cy + 4.5, 'text-anchor': 'middle' }, g);
+    n.textContent = p.no;
+    const show = () => {
+      tip.innerHTML = `<b>No. ${p.no} · ${esc(p.pos)}</b><span>${p.fgm} of ${p.fga} made (${pct.format(ratio(p.fgm, p.fga))}) · ${p.pts} points</span>`;
+      tip.hidden = false;
+      const scale = svg.getBoundingClientRect().width / W;
+      placeTip(tip, box, cx * scale, (cy - 12) * scale);
+    };
+    const hide = () => { tip.hidden = true; };
+    g.addEventListener('pointerenter', show);
+    g.addEventListener('pointerleave', hide);
+    g.addEventListener('focus', show);
+    g.addEventListener('blur', hide);
+    g.addEventListener('click', () => showPlayerShots(p.no, true));
+    g.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showPlayerShots(p.no, true); } });
+  });
+}
+
+// ---------------------------------------------------------------- season trends
+const TRENDS = [
+  { label: 'Field goal %', get: (t) => ratio(t.fgm, t.fga), fmt: (v) => pct.format(v) },
+  { label: 'Three-point %', get: (t) => ratio(t.tpm, t.tpa), fmt: (v) => pct.format(v) },
+  { label: 'Free throw %', get: (t) => ratio(t.ftm, t.fta), fmt: (v) => pct.format(v) },
+  { label: 'Rebounds', get: (t) => t.reb, fmt: (v) => one.format(v).replace(/\.0$/, '') },
+  { label: 'Assists', get: (t) => t.ast, fmt: (v) => one.format(v).replace(/\.0$/, '') },
+  { label: 'Turnovers', note: 'lower is better', get: (t) => t.tov, fmt: (v) => one.format(v).replace(/\.0$/, '') },
+];
+
+function renderTrends() {
+  const games = state.data.games;
+  const box = $('[data-trends]');
+  const all = games.map(totals);
+  const cur = games.indexOf(state.game);
+  box.innerHTML = TRENDS.map((m) => {
+    const vals = all.map(m.get);
+    const avg = vals.reduce((a, v) => a + v, 0) / vals.length;
+    return `<article class="trend">
+      <span class="trend__label">${m.label}${m.note ? ` <i>(${m.note})</i>` : ''}</span>
+      <span class="trend__value">${m.fmt(vals[cur])}</span>
+      <span class="trend__avg">Season average ${m.fmt(avg)}</span>
+      <div class="trend__chart"><div class="tip" role="tooltip" hidden></div></div>
+    </article>`;
+  }).join('');
+
+  box.querySelectorAll('.trend__chart').forEach((chart, k) => {
+    const m = TRENDS[k];
+    const vals = all.map(m.get);
+    const avg = vals.reduce((a, v) => a + v, 0) / vals.length;
+    const tip = chart.querySelector('.tip');
+    const W = Math.max(Math.round(chart.clientWidth) || 220, 160); const H = 96;
+    const top = 10; const bottom = 24; const side = 10;
+    let lo = Math.min(...vals); let hi = Math.max(...vals);
+    const pad = (hi - lo || Math.abs(hi) || 1) * 0.2; lo -= pad; hi += pad;
+    const x = (i) => side + (games.length === 1 ? (W - 2 * side) / 2 : ((W - 2 * side) * i) / (games.length - 1));
+    const y = (v) => top + (H - top - bottom) * (1 - (v - lo) / (hi - lo));
+    const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, role: 'group',
+      'aria-label': `${m.label} by game: ${games.map((g, i) => `game ${g.number} ${m.fmt(vals[i])}`).join(', ')}. Season average ${m.fmt(avg)}.` });
+    chart.prepend(svg);
+    svgEl('line', { class: 'avg-line', x1: 0, x2: W, y1: y(avg), y2: y(avg) }, svg);
+    svgEl('path', { class: 'spark', d: vals.map((v, i) => `${i ? 'L' : 'M'}${x(i)} ${y(v)}`).join('') }, svg);
+    games.forEach((g, i) => {
+      svgEl('circle', { class: `pt${i === cur ? ' is-current' : ''}`, cx: x(i), cy: y(vals[i]), r: i === cur ? 6 : 4 }, svg);
+      const t = svgEl('text', { class: `axis-text${i === cur ? ' is-current' : ''}`, x: x(i), y: H - 4, 'text-anchor': i === 0 ? 'start' : i === games.length - 1 ? 'end' : 'middle' }, svg);
+      t.textContent = `G${g.number}`;
+    });
+    const half = (W - 2 * side) / Math.max(games.length - 1, 1) / 2;
+    games.forEach((g, i) => {
+      const hit = svgEl('rect', { class: 'hit', x: Math.max(x(i) - half, 0), y: 0, width: Math.min(half * 2, W), height: H }, svg);
+      hit.addEventListener('pointerenter', () => {
+        tip.innerHTML = `<b>Game ${g.number} vs ${esc(g.opponent)}</b><span>${m.label}: ${m.fmt(vals[i])}</span>`;
+        tip.hidden = false;
+        const scale = svg.getBoundingClientRect().width / W;
+        placeTip(tip, chart, x(i) * scale, (y(vals[i]) - 4) * scale);
+      });
+      hit.addEventListener('pointerleave', () => { tip.hidden = true; });
+      hit.addEventListener('click', () => openGame(g.number));
+    });
   });
 }
 
@@ -359,7 +541,7 @@ function renderSeason() {
     hit.addEventListener('pointerleave', hide);
     hit.addEventListener('focus', show);
     hit.addEventListener('blur', hide);
-    const open = () => { if (g === state.game) return; state.player = 'all'; state.q = 'all'; state.result = 'all'; selectGame(g.number, true); };
+    const open = () => openGame(g.number);
     hit.addEventListener('click', open);
     hit.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
   });
@@ -373,11 +555,14 @@ function selectGame(number, animate) {
   document.title = `Game ${state.game.number} vs ${state.game.opponent}: ClutchMetrics coach dashboard`;
   buildFilters();
   renderOverview();
+  renderShooters();
   renderPlayers();
   renderShots(animate);
+  renderScoring(animate);
   renderLineups(animate);
   renderQuarters(animate);
   renderSeason();
+  renderTrends();
   writeUrl();
 }
 
@@ -422,7 +607,7 @@ async function start() {
   selectGame(url.game, true);
   trackSections();
   let t;
-  addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { renderSeason(); renderQuarters(false); }, 150); });
+  addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { renderSeason(); renderQuarters(false); renderShooters(); renderTrends(); }, 150); });
 }
 
 start();

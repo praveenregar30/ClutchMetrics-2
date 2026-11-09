@@ -27,10 +27,12 @@
     <nav class="side__nav" aria-label="Dashboard sections">
       <a href="#overview"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z"/></svg>Overview</a>
       <a href="#shots"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.500"/><path d="M3.500 12h17M12 3.500v17M6.500 5.500c2.700 3.500 2.700 9.500 0 13M17.500 5.500c-2.700 3.500-2.700 9.500 0 13"/></svg>Shot chart</a>
+      <a href="#scoring"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h9M4 12h14M4 18h6"/><path d="M17 15.500v5M20 17.500v3"/></svg>Scoring</a>
       <a href="#players"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11a3.500 3.500 0 1 0 0-7 3.500 3.500 0 0 0 0 7ZM2.500 20c.5-3.600 3-5.500 6.500-5.500s6 1.900 6.500 5.500M16 4.500a3.500 3.500 0 0 1 0 6.500M18.500 14.800c1.700.8 2.700 2.500 3 5.200"/></svg>Players</a>
       <a href="#lineups"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M4 12h16M4 18h7"/></svg>Lineups</a>
       <a href="#quarters"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V12M10 20V6M15 20v-9M20 20V9"/></svg>Quarters</a>
       <a href="#season"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3.500 16 5-5 4 3 7.500-8"/><path d="M15 6h5v5"/></svg>Season</a>
+      <a href="#trends"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9.500 6.500 7l3.500 3 4-5"/><path d="M10 19.500l3.500-3 3.500 2 4-5"/><path d="M3 21h18"/></svg>Trends</a>
     </nav>
     <div class="side__user">
       <span class="side__label">Signed in as</span>
@@ -100,6 +102,32 @@
       </div>
     </section>
 
+    <div class="pair" id="scoring">
+      <section class="block card" aria-labelledby="mix-h">
+        <div class="card__head">
+          <div>
+            <h2 id="mix-h">Where the points came from</h2>
+            <p class="card__sub" data-mix-sub>Points by shot type in this game.</p>
+          </div>
+        </div>
+        <div class="legend legend--row"><span><i class="swatch swatch--team"></i>This game</span><span><i class="tick"></i>Average of the other games</span></div>
+        <div class="mix" data-mix></div>
+      </section>
+
+      <section class="block card" aria-labelledby="shooters-h">
+        <div class="card__head">
+          <div>
+            <h2 id="shooters-h">Shot volume and accuracy</h2>
+            <p class="card__sub">Each dot is a player: further right took more shots, higher made a bigger share. Select a dot to see that player on the shot chart.</p>
+          </div>
+        </div>
+        <div class="legend legend--row"><span><i class="dot dot--made"></i>Player (jersey number)</span><span><i class="dash-key"></i>Team average <b data-team-fg></b></span></div>
+        <div class="scatter" data-shooters>
+          <div class="tip" data-shooters-tip role="tooltip" hidden></div>
+        </div>
+      </section>
+    </div>
+
     <section class="block card" id="players" aria-labelledby="players-h">
       <div class="card__head">
         <div>
@@ -154,6 +182,16 @@
       <div class="line" data-season>
         <div class="tip" data-season-tip role="tooltip" hidden></div>
       </div>
+    </section>
+
+    <section class="block card" id="trends" aria-labelledby="trends-h">
+      <div class="card__head">
+        <div>
+          <h2 id="trends-h">Season trends</h2>
+          <p class="card__sub">Team numbers in every game. The larger point is the game you are viewing, and the dashed line is the season average. Select a point to open that game.</p>
+        </div>
+      </div>
+      <div class="trends" data-trends></div>
     </section>
   </main>
 </div>

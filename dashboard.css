@@ -201,7 +201,61 @@ th[aria-sort="ascending"] .sort svg { transform: rotate(180deg); }
 .line .end-label { font: 500 13px var(--font); fill: var(--ink); }
 .line .crosshair { stroke: var(--line-strong); stroke-dasharray: 3 4; }
 
+/* ---- where the points came from */
+#scoring { scroll-margin-top: 16px; }
+.tick { width: 3px; height: 14px; border-radius: 2px; background: var(--ink); }
+.mix { display: grid; gap: 18px; }
+.mix__row { display: grid; grid-template-columns: minmax(110px, .9fr) minmax(0, 1.6fr) 64px; gap: 14px; align-items: center; }
+.mix__name b { display: block; font-weight: 500; font-size: 15px; }
+.mix__name span { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.mix__track { position: relative; height: 24px; border-radius: 4px; background: var(--grid); }
+.mix__bar { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; background: var(--series-team); transform-origin: left; }
+.mix__avg { position: absolute; top: -5px; bottom: -5px; width: 3px; margin-left: -1.5px; border-radius: 2px; background: var(--ink); box-shadow: 0 0 0 2px var(--card); }
+.mix__val { text-align: right; font-variant-numeric: tabular-nums; line-height: 1.25; }
+.mix__val b { display: block; font-weight: 500; font-size: 18px; }
+.mix__val span { color: var(--muted); font-size: 13px; }
+.is-new .mix__bar { animation: grow .6s cubic-bezier(.22, 1, .36, 1) backwards; }
+
+/* ---- shot volume and accuracy */
+.scatter { position: relative; }
+.scatter svg { display: block; width: 100%; height: auto; overflow: visible; }
+.scatter .gridline { stroke: var(--grid); }
+.scatter .axis-text { fill: var(--muted); font: 13px var(--font); }
+.scatter .axis-title { fill: var(--muted); font: 500 13px var(--font); }
+.scatter .avg-line { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 4 5; }
+.dash-key { width: 18px; height: 0; border-top: 2px dashed var(--muted); }
+.legend b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; }
+.pdot { outline: none; }
+.pdot__hit { fill: transparent; }
+.pdot__mark { fill: var(--series-team); stroke: var(--card); stroke-width: 2; transition: stroke .15s ease; }
+.pdot__no { fill: var(--accent-ink); font: 600 12px var(--font); pointer-events: none; font-variant-numeric: tabular-nums; }
+.pdot:hover .pdot__mark, .pdot:focus-visible .pdot__mark { stroke: var(--ink); }
+.pdot.is-picked .pdot__mark { stroke: var(--ink); stroke-width: 3; }
+
+/* ---- season trends */
+.trends { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+@media (min-width: 520px) { .trends { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 900px) { .trends { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.trend { display: grid; gap: 2px; align-content: start; padding: 16px 16px 12px; border: 1px solid var(--line); border-radius: 14px; background: var(--card-2); }
+.trend__label { color: var(--muted); font-size: 14px; }
+.trend__label i { font-style: normal; font-size: 12px; }
+.trend__value { font: 500 28px/1.15 var(--font); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.trend__avg { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.trend__chart { position: relative; margin-top: 10px; }
+.trend__chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.trend .avg-line { stroke: var(--line-strong); stroke-dasharray: 3 4; }
+.trend .spark { fill: none; stroke: var(--series-team); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.trend .pt { fill: var(--series-team); stroke: var(--card-2); stroke-width: 2; }
+.trend .pt.is-current { stroke: var(--ink); stroke-width: 2.5; }
+.trend .axis-text { fill: var(--muted); font: 12px var(--font); }
+.trend .axis-text.is-current { fill: var(--ink); font-weight: 500; }
+.trend .hit { fill: transparent; }
+.trend .tip { min-width: 0; }
+
 @media (max-width: 639px) {
+  .mix__row { grid-template-columns: minmax(0, 1fr) 56px; gap: 6px 12px; }
+  .mix__name { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+  .mix__name b { display: inline; }
   .pick select { min-width: 0; width: 100%; }
   .game-head__right, .pick { width: 100%; }
   .pick--inline { grid-auto-flow: row; }
@@ -209,5 +263,5 @@ th[aria-sort="ascending"] .sort svg { transform: rotate(180deg); }
   .card { padding: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .shot-layer.is-new .shot, .is-new .lineup__bar, .is-new .bars .bar-team, .is-new .bars .bar-opp { animation: none; }
+  .shot-layer.is-new .shot, .is-new .lineup__bar, .is-new .mix__bar, .is-new .bars .bar-team, .is-new .bars .bar-opp { animation: none; }
 }
