@@ -1,0 +1,4534 @@
+{
+ "team": "ClutchMetrics sample team",
+ "sample": true,
+ "games": [
+  {
+   "id": "game-10",
+   "number": 10,
+   "date": "2026-10-06",
+   "opponent": "Hawks",
+   "home": true,
+   "score": {
+    "team": 76,
+    "opp": 69
+   },
+   "quarters": [
+    {
+     "q": 1,
+     "team": 17,
+     "opp": 19,
+     "tov": 1,
+     "fouls": 5
+    },
+    {
+     "q": 2,
+     "team": 16,
+     "opp": 19,
+     "tov": 1,
+     "fouls": 5
+    },
+    {
+     "q": 3,
+     "team": 21,
+     "opp": 16,
+     "tov": 2,
+     "fouls": 6
+    },
+    {
+     "q": 4,
+     "team": 22,
+     "opp": 15,
+     "tov": 1,
+     "fouls": 6
+    }
+   ],
+   "players": [
+    {
+     "no": 7,
+     "pos": "Point guard",
+     "starter": true,
+     "min": 29,
+     "pts": 18,
+     "reb": 3,
+     "ast": 2,
+     "tov": 1,
+     "stl": 1,
+     "fgm": 7,
+     "fga": 12,
+     "tpm": 3,
+     "tpa": 8,
+     "ftm": 1,
+     "fta": 1,
+     "pm": 4
+    },
+    {
+     "no": 11,
+     "pos": "Shooting guard",
+     "starter": true,
+     "min": 33,
+     "pts": 11,
+     "reb": 2,
+     "ast": 5,
+     "tov": 1,
+     "stl": 0,
+     "fgm": 3,
+     "fga": 12,
+     "tpm": 2,
+     "tpa": 7,
+     "ftm": 3,
+     "fta": 4,
+     "pm": 2
+    },
+    {
+     "no": 23,
+     "pos": "Small forward",
+     "starter": true,
+     "min": 34,
+     "pts": 12,
+     "reb": 7,
+     "ast": 1,
+     "tov": 1,
+     "stl": 1,
+     "fgm": 4,
+     "fga": 11,
+     "tpm": 2,
+     "tpa": 4,
+     "ftm": 2,
+     "fta": 3,
+     "pm": 9
+    },
+    {
+     "no": 32,
+     "pos": "Power forward",
+     "starter": true,
+     "min": 31,
+     "pts": 11,
+     "reb": 7,
+     "ast": 1,
+     "tov": 0,
+     "stl": 1,
+     "fgm": 5,
+     "fga": 8,
+     "tpm": 0,
+     "tpa": 1,
+     "ftm": 1,
+     "fta": 1,
+     "pm": 7
+    },
+    {
+     "no": 44,
+     "pos": "Center",
+     "starter": true,
+     "min": 30,
+     "pts": 9,
+     "reb": 10,
+     "ast": 1,
+     "tov": 2,
+     "stl": 1,
+     "fgm": 4,
+     "fga": 7,
+     "tpm": 0,
+     "tpa": 0,
+     "ftm": 1,
+     "fta": 1,
+     "pm": 7
+    },
+    {
+     "no": 3,
+     "pos": "Guard",
+     "starter": false,
+     "min": 8,
+     "pts": 6,
+     "reb": 1,
+     "ast": 1,
+     "tov": 0,
+     "stl": 0,
+     "fgm": 2,
+     "fga": 6,
+     "tpm": 1,
+     "tpa": 4,
+     "ftm": 1,
+     "fta": 1,
+     "pm": 1
+    },
+    {
+     "no": 15,
+     "pos": "Forward",
+     "starter": false,
+     "min": 13,
+     "pts": 4,
+     "reb": 2,
+     "ast": 1,
+     "tov": 0,
+     "stl": 0,
+     "fgm": 2,
+     "fga": 4,
+     "tpm": 0,
+     "tpa": 1,
+     "ftm": 0,
+     "fta": 0,
+     "pm": 6
+    },
+    {
+     "no": 20,
+     "pos": "Forward",
+     "starter": false,
+     "min": 6,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0,
+     "tov": 0,
+     "stl": 0,
+     "fgm": 1,
+     "fga": 3,
+     "tpm": 0,
+     "tpa": 1,
+     "ftm": 1,
+     "fta": 1,
+     "pm": -4
+    },
+    {
+     "no": 9,
+     "pos": "Guard",
+     "starter": false,
+     "min": 8,
+     "pts": 0,
+     "reb": 1,
+     "ast": 1,
+     "tov": 0,
+     "stl": 0,
+     "fgm": 0,
+     "fga": 3,
+     "tpm": 0,
+     "tpa": 1,
+     "ftm": 0,
+     "fta": 0,
+     "pm": -1
+    },
+    {
+     "no": 50,
+     "pos": "Center",
+     "starter": false,
+     "min": 8,
+     "pts": 2,
+     "reb": 1,
+     "ast": 1,
+     "tov": 0,
+     "stl": 0,
+     "fgm": 1,
+     "fga": 2,
+     "tpm": 0,
+     "tpa": 0,
+     "ftm": 0,
+     "fta": 0,
+     "pm": 4
+    }
+   ],
+   "lineups": [
+    {
+     "name": "Starters",
+     "players": [
+      7,
+      11,
+      23,
+      32,
+      44
+     ],
+     "min": 14,
+     "pm": -9
+    },
+    {
+     "name": "Small lineup",
+     "players": [
+      7,
+      11,
+      3,
+      23,
+      32
+     ],
+     "min": 6,
+     "pm": 5
+    },
+    {
+     "name": "Big lineup",
+     "players": [
+      7,
+      23,
+      32,
+      44,
+      50
+     ],
+     "min": 5,
+     "pm": 2
+    },
+    {
+     "name": "Bench unit",
+     "players": [
+      3,
+      9,
+      15,
+      20,
+      50
+     ],
+     "min": 6,
+     "pm": 2
+    },
+    {
+     "name": "Closing five",
+     "players": [
+      7,
+      11,
+      23,
+      15,
+      44
+     ],
+     "min": 5,
+     "pm": 7
+    },
+    {
+     "name": "Second unit",
+     "players": [
+      3,
+      11,
+      15,
+      20,
+      44
+     ],
+     "min": 4,
+     "pm": 0
+    }
+   ],
+   "shots": [
+    {
+     "player": 7,
+     "q": 3,
+     "x": -2.8,
+     "y": 7.1,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 2,
+     "x": -2.1,
+     "y": 29.5,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 3,
+     "x": 23.2,
+     "y": 10.1,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 2,
+     "x": 23,
+     "y": 10.2,
+     "zone": "Corner 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 1,
+     "x": 3.4,
+     "y": 3.6,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 2,
+     "x": 22.7,
+     "y": 6.5,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 4,
+     "x": -3.6,
+     "y": 12.1,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 4,
+     "x": -21.9,
+     "y": 21.3,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 3,
+     "x": -11.8,
+     "y": 21.1,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 4,
+     "x": 22.8,
+     "y": 10.1,
+     "zone": "Corner 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 2,
+     "x": 8.2,
+     "y": 29.7,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 2,
+     "x": -18.6,
+     "y": 23.3,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 3,
+     "x": -5.1,
+     "y": 15.3,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 4,
+     "x": -6.9,
+     "y": 20.4,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 2,
+     "x": -0.9,
+     "y": 3.8,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 4,
+     "x": -4.6,
+     "y": 21.9,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 1,
+     "x": 12.2,
+     "y": 5.3,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 2,
+     "x": 2.9,
+     "y": 29.7,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 2,
+     "x": -22.5,
+     "y": 7.4,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 2,
+     "x": -22.2,
+     "y": 20.1,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 4,
+     "x": 18.6,
+     "y": 21.8,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 4,
+     "x": -13.2,
+     "y": 26.1,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 4,
+     "x": -22.4,
+     "y": 20.4,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 1,
+     "x": 15.5,
+     "y": 27.6,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 4,
+     "x": 19.1,
+     "y": 24.3,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 1,
+     "x": -2.1,
+     "y": 15.7,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 4,
+     "x": -0.4,
+     "y": 13.1,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 2,
+     "x": 7.4,
+     "y": 29.7,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 1,
+     "x": 5.1,
+     "y": 15,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 3,
+     "x": 17.4,
+     "y": 14.5,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 2,
+     "x": -22.5,
+     "y": 18.8,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 2,
+     "x": -0.9,
+     "y": 12.5,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 3,
+     "x": -6.3,
+     "y": 7.3,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 2,
+     "x": 12,
+     "y": 9.2,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 2,
+     "x": -23.8,
+     "y": 8.1,
+     "zone": "Corner 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 3,
+     "x": -4.4,
+     "y": 13.5,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 2,
+     "x": 3.5,
+     "y": 14.1,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 32,
+     "q": 4,
+     "x": 0.8,
+     "y": 10.6,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 3,
+     "x": -4.1,
+     "y": 13.1,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 2,
+     "x": 10.2,
+     "y": 29.2,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 32,
+     "q": 3,
+     "x": 7.2,
+     "y": 15.8,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 32,
+     "q": 4,
+     "x": -0.6,
+     "y": 11.2,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 3,
+     "x": 0.9,
+     "y": 1.4,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 4,
+     "x": 6.3,
+     "y": 14.5,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 4,
+     "x": 9.5,
+     "y": 13.3,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 44,
+     "q": 3,
+     "x": -3.5,
+     "y": 14.1,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 44,
+     "q": 1,
+     "x": -4.8,
+     "y": 14.4,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 4,
+     "x": -1.3,
+     "y": 2.3,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 44,
+     "q": 3,
+     "x": 5.2,
+     "y": 10,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 1,
+     "x": -4,
+     "y": 3.6,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 3,
+     "q": 3,
+     "x": 23.6,
+     "y": 6.6,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 3,
+     "q": 3,
+     "x": 23.3,
+     "y": 7.2,
+     "zone": "Corner 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 3,
+     "q": 4,
+     "x": 21.5,
+     "y": 19.2,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 3,
+     "q": 2,
+     "x": 23.6,
+     "y": 17.8,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 3,
+     "q": 2,
+     "x": 8.1,
+     "y": 15.7,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 3,
+     "q": 4,
+     "x": -1.5,
+     "y": 2.4,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 15,
+     "q": 1,
+     "x": -3.9,
+     "y": 2.3,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 15,
+     "q": 2,
+     "x": 14.1,
+     "y": 7.1,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 15,
+     "q": 4,
+     "x": -5.9,
+     "y": 16.9,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 15,
+     "q": 4,
+     "x": -1.2,
+     "y": 29.5,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 20,
+     "q": 2,
+     "x": -20.8,
+     "y": 20.2,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 20,
+     "q": 1,
+     "x": -2.6,
+     "y": 3.1,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 20,
+     "q": 1,
+     "x": -7.2,
+     "y": 8.1,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 9,
+     "q": 3,
+     "x": 8.3,
+     "y": 12.8,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 9,
+     "q": 2,
+     "x": -6.1,
+     "y": 6,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 9,
+     "q": 1,
+     "x": 11.4,
+     "y": 29,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 50,
+     "q": 4,
+     "x": 9.1,
+     "y": 22.6,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 50,
+     "q": 4,
+     "x": -3.4,
+     "y": 1.9,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    }
+   ]
+  },
+  {
+   "id": "game-11",
+   "number": 11,
+   "date": "2026-10-13",
+   "opponent": "Titans",
+   "home": false,
+   "score": {
+    "team": 86,
+    "opp": 91
+   },
+   "quarters": [
+    {
+     "q": 1,
+     "team": 26,
+     "opp": 22,
+     "tov": 2,
+     "fouls": 2
+    },
+    {
+     "q": 2,
+     "team": 21,
+     "opp": 21,
+     "tov": 2,
+     "fouls": 2
+    },
+    {
+     "q": 3,
+     "team": 13,
+     "opp": 23,
+     "tov": 3,
+     "fouls": 4
+    },
+    {
+     "q": 4,
+     "team": 26,
+     "opp": 25,
+     "tov": 2,
+     "fouls": 3
+    }
+   ],
+   "players": [
+    {
+     "no": 7,
+     "pos": "Point guard",
+     "starter": true,
+     "min": 28,
+     "pts": 17,
+     "reb": 1,
+     "ast": 4,
+     "tov": 1,
+     "stl": 0,
+     "fgm": 7,
+     "fga": 14,
+     "tpm": 2,
+     "tpa": 4,
+     "ftm": 1,
+     "fta": 1,
+     "pm": -1
+    },
+    {
+     "no": 11,
+     "pos": "Shooting guard",
+     "starter": true,
+     "min": 31,
+     "pts": 19,
+     "reb": 2,
+     "ast": 3,
+     "tov": 0,
+     "stl": 1,
+     "fgm": 6,
+     "fga": 13,
+     "tpm": 4,
+     "tpa": 9,
+     "ftm": 3,
+     "fta": 4,
+     "pm": -3
+    },
+    {
+     "no": 23,
+     "pos": "Small forward",
+     "starter": true,
+     "min": 29,
+     "pts": 11,
+     "reb": 4,
+     "ast": 1,
+     "tov": 1,
+     "stl": 1,
+     "fgm": 4,
+     "fga": 9,
+     "tpm": 2,
+     "tpa": 6,
+     "ftm": 1,
+     "fta": 2,
+     "pm": -7
+    },
+    {
+     "no": 32,
+     "pos": "Power forward",
+     "starter": true,
+     "min": 27,
+     "pts": 7,
+     "reb": 3,
+     "ast": 1,
+     "tov": 2,
+     "stl": 0,
+     "fgm": 3,
+     "fga": 9,
+     "tpm": 1,
+     "tpa": 2,
+     "ftm": 0,
+     "fta": 0,
+     "pm": -7
+    },
+    {
+     "no": 44,
+     "pos": "Center",
+     "starter": true,
+     "min": 31,
+     "pts": 13,
+     "reb": 11,
+     "ast": 2,
+     "tov": 2,
+     "stl": 0,
+     "fgm": 6,
+     "fga": 9,
+     "tpm": 0,
+     "tpa": 0,
+     "ftm": 1,
+     "fta": 1,
+     "pm": -8
+    },
+    {
+     "no": 3,
+     "pos": "Guard",
+     "starter": false,
+     "min": 7,
+     "pts": 8,
+     "reb": 1,
+     "ast": 1,
+     "tov": 1,
+     "stl": 0,
+     "fgm": 3,
+     "fga": 5,
+     "tpm": 1,
+     "tpa": 1,
+     "ftm": 1,
+     "fta": 1,
+     "pm": -5
+    },
+    {
+     "no": 15,
+     "pos": "Forward",
+     "starter": false,
+     "min": 13,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1,
+     "tov": 1,
+     "stl": 0,
+     "fgm": 1,
+     "fga": 4,
+     "tpm": 0,
+     "tpa": 0,
+     "ftm": 1,
+     "fta": 1,
+     "pm": 1
+    },
+    {
+     "no": 20,
+     "pos": "Forward",
+     "starter": false,
+     "min": 8,
+     "pts": 3,
+     "reb": 1,
+     "ast": 0,
+     "tov": 0,
+     "stl": 0,
+     "fgm": 1,
+     "fga": 4,
+     "tpm": 0,
+     "tpa": 0,
+     "ftm": 1,
+     "fta": 1,
+     "pm": 0
+    },
+    {
+     "no": 9,
+     "pos": "Guard",
+     "starter": false,
+     "min": 11,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1,
+     "tov": 0,
+     "stl": 0,
+     "fgm": 1,
+     "fga": 3,
+     "tpm": 0,
+     "tpa": 1,
+     "ftm": 1,
+     "fta": 1,
+     "pm": 2
+    },
+    {
+     "no": 50,
+     "pos": "Center",
+     "starter": false,
+     "min": 15,
+     "pts": 2,
+     "reb": 5,
+     "ast": 1,
+     "tov": 1,
+     "stl": 1,
+     "fgm": 1,
+     "fga": 2,
+     "tpm": 0,
+     "tpa": 0,
+     "ftm": 0,
+     "fta": 0,
+     "pm": -2
+    }
+   ],
+   "lineups": [
+    {
+     "name": "Starters",
+     "players": [
+      7,
+      11,
+      23,
+      32,
+      44
+     ],
+     "min": 14,
+     "pm": -8
+    },
+    {
+     "name": "Small lineup",
+     "players": [
+      7,
+      11,
+      3,
+      23,
+      32
+     ],
+     "min": 6,
+     "pm": 2
+    },
+    {
+     "name": "Big lineup",
+     "players": [
+      7,
+      23,
+      32,
+      44,
+      50
+     ],
+     "min": 5,
+     "pm": -2
+    },
+    {
+     "name": "Bench unit",
+     "players": [
+      3,
+      9,
+      15,
+      20,
+      50
+     ],
+     "min": 6,
+     "pm": 5
+    },
+    {
+     "name": "Closing five",
+     "players": [
+      7,
+      11,
+      23,
+      15,
+      44
+     ],
+     "min": 5,
+     "pm": -2
+    },
+    {
+     "name": "Second unit",
+     "players": [
+      3,
+      11,
+      15,
+      20,
+      44
+     ],
+     "min": 4,
+     "pm": 0
+    }
+   ],
+   "shots": [
+    {
+     "player": 7,
+     "q": 4,
+     "x": 23.7,
+     "y": 7,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 4,
+     "x": -4,
+     "y": 13.8,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 4,
+     "x": 4.9,
+     "y": 3.1,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 1,
+     "x": 23.2,
+     "y": 10.8,
+     "zone": "Corner 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 4,
+     "x": 1.9,
+     "y": 3.9,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 4,
+     "x": -1.7,
+     "y": 8.4,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 2,
+     "x": 0.1,
+     "y": 1,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 4,
+     "x": 3.9,
+     "y": 5.3,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 1,
+     "x": 8.5,
+     "y": 31.2,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 4,
+     "x": 6.3,
+     "y": 10.9,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 2,
+     "x": 23.3,
+     "y": 4.3,
+     "zone": "Corner 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 2,
+     "x": 2.2,
+     "y": 10.1,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 1,
+     "x": 4,
+     "y": 15.2,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 1,
+     "x": 6.5,
+     "y": 9.9,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 3,
+     "x": 20.9,
+     "y": 22.1,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 1,
+     "x": -23.4,
+     "y": 7.3,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 1,
+     "x": -24.3,
+     "y": 7.5,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 1,
+     "x": 14.9,
+     "y": 27.2,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 4,
+     "x": -23.9,
+     "y": 4.3,
+     "zone": "Corner 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 1,
+     "x": -24.4,
+     "y": 5,
+     "zone": "Corner 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 3,
+     "x": -21.9,
+     "y": 16.2,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 1,
+     "x": -1.9,
+     "y": 15.7,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 1,
+     "x": 23.7,
+     "y": 7.7,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 2,
+     "x": 3.6,
+     "y": 6.7,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 1,
+     "x": -23.1,
+     "y": 7.7,
+     "zone": "Corner 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 3,
+     "x": 1.8,
+     "y": 1.5,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 1,
+     "x": 5.5,
+     "y": 2.8,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 2,
+     "x": -18.4,
+     "y": 23.8,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 4,
+     "x": -14.4,
+     "y": 27.1,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 3,
+     "x": 0.6,
+     "y": 9.4,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 4,
+     "x": -14.7,
+     "y": 25.5,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 3,
+     "x": -8.6,
+     "y": 10.8,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 2,
+     "x": -3.4,
+     "y": 6.2,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 4,
+     "x": 22.6,
+     "y": 8.2,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 4,
+     "x": -23.8,
+     "y": 6.2,
+     "zone": "Corner 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 2,
+     "x": -22.8,
+     "y": 17.1,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 32,
+     "q": 4,
+     "x": 19.7,
+     "y": 19.6,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 32,
+     "q": 1,
+     "x": 2.2,
+     "y": 10.7,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 4,
+     "x": 11.3,
+     "y": 5.5,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 32,
+     "q": 2,
+     "x": -9.3,
+     "y": 6.4,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 32,
+     "q": 3,
+     "x": 2.9,
+     "y": 16.6,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 2,
+     "x": -24.3,
+     "y": 10.4,
+     "zone": "Corner 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 4,
+     "x": -2.1,
+     "y": 11.6,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 32,
+     "q": 1,
+     "x": -7,
+     "y": 11.3,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 32,
+     "q": 3,
+     "x": -4.1,
+     "y": 2.6,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 44,
+     "q": 1,
+     "x": -2.9,
+     "y": 13.4,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 4,
+     "x": 3.5,
+     "y": 4.8,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 3,
+     "x": -2.9,
+     "y": 6.3,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 4,
+     "x": 1.2,
+     "y": 1.1,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 1,
+     "x": -0.9,
+     "y": 14.1,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 44,
+     "q": 3,
+     "x": -2.1,
+     "y": 7.3,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 44,
+     "q": 3,
+     "x": 4.5,
+     "y": 10,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 1,
+     "x": -2.9,
+     "y": 4.4,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 44,
+     "q": 4,
+     "x": 1.2,
+     "y": 1.5,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 3,
+     "q": 3,
+     "x": -7.5,
+     "y": 7.9,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 3,
+     "q": 2,
+     "x": -1.1,
+     "y": 7.6,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 3,
+     "q": 3,
+     "x": 21.7,
+     "y": 5.8,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 3,
+     "q": 2,
+     "x": 1.8,
+     "y": 3.6,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 3,
+     "q": 4,
+     "x": -11.9,
+     "y": 26.8,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 15,
+     "q": 1,
+     "x": 4.7,
+     "y": 8.2,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 15,
+     "q": 3,
+     "x": 9.4,
+     "y": 19.1,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 15,
+     "q": 3,
+     "x": -13.9,
+     "y": 19.6,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 15,
+     "q": 1,
+     "x": 6.5,
+     "y": 15.2,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 20,
+     "q": 4,
+     "x": 0,
+     "y": 2.5,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 20,
+     "q": 2,
+     "x": 6.9,
+     "y": 1.3,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 20,
+     "q": 2,
+     "x": -2,
+     "y": 9.1,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 20,
+     "q": 2,
+     "x": 2.8,
+     "y": 3.6,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 9,
+     "q": 4,
+     "x": -1.5,
+     "y": 6.1,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 9,
+     "q": 2,
+     "x": 15.4,
+     "y": 27.7,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 9,
+     "q": 3,
+     "x": -15,
+     "y": 18.8,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 50,
+     "q": 2,
+     "x": 8.8,
+     "y": 17.7,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 50,
+     "q": 1,
+     "x": -3.1,
+     "y": 2.5,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    }
+   ]
+  },
+  {
+   "id": "game-12",
+   "number": 12,
+   "date": "2026-10-20",
+   "opponent": "Comets",
+   "home": true,
+   "score": {
+    "team": 96,
+    "opp": 84
+   },
+   "quarters": [
+    {
+     "q": 1,
+     "team": 20,
+     "opp": 22,
+     "tov": 3,
+     "fouls": 6
+    },
+    {
+     "q": 2,
+     "team": 25,
+     "opp": 23,
+     "tov": 0,
+     "fouls": 6
+    },
+    {
+     "q": 3,
+     "team": 26,
+     "opp": 19,
+     "tov": 0,
+     "fouls": 2
+    },
+    {
+     "q": 4,
+     "team": 25,
+     "opp": 20,
+     "tov": 0,
+     "fouls": 4
+    }
+   ],
+   "players": [
+    {
+     "no": 7,
+     "pos": "Point guard",
+     "starter": true,
+     "min": 27,
+     "pts": 12,
+     "reb": 1,
+     "ast": 2,
+     "tov": 1,
+     "stl": 0,
+     "fgm": 4,
+     "fga": 11,
+     "tpm": 2,
+     "tpa": 6,
+     "ftm": 2,
+     "fta": 2,
+     "pm": 10
+    },
+    {
+     "no": 11,
+     "pos": "Shooting guard",
+     "starter": true,
+     "min": 33,
+     "pts": 11,
+     "reb": 3,
+     "ast": 5,
+     "tov": 1,
+     "stl": 1,
+     "fgm": 4,
+     "fga": 12,
+     "tpm": 2,
+     "tpa": 6,
+     "ftm": 1,
+     "fta": 1,
+     "pm": 15
+    },
+    {
+     "no": 23,
+     "pos": "Small forward",
+     "starter": true,
+     "min": 29,
+     "pts": 14,
+     "reb": 6,
+     "ast": 2,
+     "tov": 1,
+     "stl": 1,
+     "fgm": 6,
+     "fga": 10,
+     "tpm": 1,
+     "tpa": 2,
+     "ftm": 1,
+     "fta": 2,
+     "pm": 6
+    },
+    {
+     "no": 32,
+     "pos": "Power forward",
+     "starter": true,
+     "min": 35,
+     "pts": 13,
+     "reb": 6,
+     "ast": 2,
+     "tov": 0,
+     "stl": 1,
+     "fgm": 5,
+     "fga": 7,
+     "tpm": 1,
+     "tpa": 1,
+     "ftm": 2,
+     "fta": 2,
+     "pm": 13
+    },
+    {
+     "no": 44,
+     "pos": "Center",
+     "starter": true,
+     "min": 27,
+     "pts": 15,
+     "reb": 8,
+     "ast": 2,
+     "tov": 0,
+     "stl": 1,
+     "fgm": 7,
+     "fga": 9,
+     "tpm": 0,
+     "tpa": 0,
+     "ftm": 1,
+     "fta": 2,
+     "pm": 10
+    },
+    {
+     "no": 3,
+     "pos": "Guard",
+     "starter": false,
+     "min": 7,
+     "pts": 9,
+     "reb": 1,
+     "ast": 1,
+     "tov": 0,
+     "stl": 0,
+     "fgm": 3,
+     "fga": 5,
+     "tpm": 2,
+     "tpa": 3,
+     "ftm": 1,
+     "fta": 1,
+     "pm": 1
+    },
+    {
+     "no": 15,
+     "pos": "Forward",
+     "starter": false,
+     "min": 12,
+     "pts": 10,
+     "reb": 2,
+     "ast": 1,
+     "tov": 0,
+     "stl": 0,
+     "fgm": 4,
+     "fga": 5,
+     "tpm": 0,
+     "tpa": 0,
+     "ftm": 2,
+     "fta": 2,
+     "pm": 5
+    },
+    {
+     "no": 20,
+     "pos": "Forward",
+     "starter": false,
+     "min": 8,
+     "pts": 7,
+     "reb": 2,
+     "ast": 0,
+     "tov": 0,
+     "stl": 0,
+     "fgm": 3,
+     "fga": 3,
+     "tpm": 0,
+     "tpa": 0,
+     "ftm": 1,
+     "fta": 1,
+     "pm": -2
+    },
+    {
+     "no": 9,
+     "pos": "Guard",
+     "starter": false,
+     "min": 9,
+     "pts": 3,
+     "reb": 1,
+     "ast": 1,
+     "tov": 0,
+     "stl": 0,
+     "fgm": 1,
+     "fga": 3,
+     "tpm": 1,
+     "tpa": 3,
+     "ftm": 0,
+     "fta": 0,
+     "pm": 6
+    },
+    {
+     "no": 50,
+     "pos": "Center",
+     "starter": false,
+     "min": 13,
+     "pts": 2,
+     "reb": 5,
+     "ast": 0,
+     "tov": 0,
+     "stl": 0,
+     "fgm": 1,
+     "fga": 2,
+     "tpm": 0,
+     "tpa": 0,
+     "ftm": 0,
+     "fta": 0,
+     "pm": 7
+    }
+   ],
+   "lineups": [
+    {
+     "name": "Starters",
+     "players": [
+      7,
+      11,
+      23,
+      32,
+      44
+     ],
+     "min": 14,
+     "pm": -1
+    },
+    {
+     "name": "Small lineup",
+     "players": [
+      7,
+      11,
+      3,
+      23,
+      32
+     ],
+     "min": 6,
+     "pm": 3
+    },
+    {
+     "name": "Big lineup",
+     "players": [
+      7,
+      23,
+      32,
+      44,
+      50
+     ],
+     "min": 5,
+     "pm": 0
+    },
+    {
+     "name": "Bench unit",
+     "players": [
+      3,
+      9,
+      15,
+      20,
+      50
+     ],
+     "min": 6,
+     "pm": 5
+    },
+    {
+     "name": "Closing five",
+     "players": [
+      7,
+      11,
+      23,
+      15,
+      44
+     ],
+     "min": 5,
+     "pm": 1
+    },
+    {
+     "name": "Second unit",
+     "players": [
+      3,
+      11,
+      15,
+      20,
+      44
+     ],
+     "min": 4,
+     "pm": 4
+    }
+   ],
+   "shots": [
+    {
+     "player": 7,
+     "q": 2,
+     "x": 10.4,
+     "y": 16.9,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 4,
+     "x": 5.1,
+     "y": 9,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 2,
+     "x": -3.4,
+     "y": 3.4,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 1,
+     "x": 2.7,
+     "y": 15.9,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 4,
+     "x": 6.7,
+     "y": 28.6,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 4,
+     "x": -11.2,
+     "y": 27.6,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 1,
+     "x": -24,
+     "y": 17.8,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 3,
+     "x": -16.9,
+     "y": 24.1,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 2,
+     "x": 5.6,
+     "y": 32.4,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 2,
+     "x": -22.6,
+     "y": 7.4,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 2,
+     "x": -7.1,
+     "y": 7.8,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 3,
+     "x": -9.9,
+     "y": 21.4,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 2,
+     "x": 6.5,
+     "y": 4.6,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 1,
+     "x": 24.1,
+     "y": 11.6,
+     "zone": "Corner 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 3,
+     "x": -22.2,
+     "y": 19.3,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 3,
+     "x": -1,
+     "y": 11,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 2,
+     "x": 17.4,
+     "y": 23.6,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 2,
+     "x": 23.1,
+     "y": 5.2,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 3,
+     "x": 0.5,
+     "y": 16.6,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 2,
+     "x": 13.7,
+     "y": 16.4,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 4,
+     "x": 12.3,
+     "y": 29.6,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 1,
+     "x": 16.7,
+     "y": 24,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 3,
+     "x": -0.2,
+     "y": 7.8,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 2,
+     "x": -12.8,
+     "y": 8.7,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 2,
+     "x": 8.4,
+     "y": 11.3,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 3,
+     "x": -20.1,
+     "y": 20,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 1,
+     "x": -2.5,
+     "y": 16.3,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 4,
+     "x": -5,
+     "y": 22.1,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 3,
+     "x": -16.6,
+     "y": 7,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 3,
+     "x": -9.8,
+     "y": 23.2,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 4,
+     "x": -22.8,
+     "y": 10.6,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 3,
+     "x": -11,
+     "y": 6,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 1,
+     "x": -1.1,
+     "y": 2,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 4,
+     "x": 3.1,
+     "y": 14,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 4,
+     "x": 6.9,
+     "y": 4.9,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 3,
+     "x": -9.8,
+     "y": 21.9,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 32,
+     "q": 1,
+     "x": -0.1,
+     "y": 16.7,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 3,
+     "x": -1.3,
+     "y": 1.8,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 2,
+     "x": 24,
+     "y": 4.5,
+     "zone": "Corner 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 2,
+     "x": -18.2,
+     "y": 12,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 44,
+     "q": 3,
+     "x": -1.4,
+     "y": 6,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 2,
+     "x": 5.3,
+     "y": 13.8,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 44,
+     "q": 3,
+     "x": 7,
+     "y": 15.9,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 4,
+     "x": 4.7,
+     "y": 14.4,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 2,
+     "x": 6.3,
+     "y": 8,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 44,
+     "q": 4,
+     "x": 3.3,
+     "y": 9.1,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 2,
+     "x": 2.1,
+     "y": 1.6,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 1,
+     "x": -7.5,
+     "y": 13.4,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 2,
+     "x": -12.7,
+     "y": 11.1,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 3,
+     "q": 2,
+     "x": 6,
+     "y": 29.8,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 3,
+     "q": 3,
+     "x": -7.6,
+     "y": 25.2,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 3,
+     "q": 4,
+     "x": 7.4,
+     "y": 29.5,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 3,
+     "q": 4,
+     "x": -6.1,
+     "y": 30.6,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 3,
+     "q": 2,
+     "x": 1.2,
+     "y": 20.7,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 15,
+     "q": 2,
+     "x": 5.5,
+     "y": 16.5,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 15,
+     "q": 2,
+     "x": -2.3,
+     "y": 15.7,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 15,
+     "q": 1,
+     "x": -7.4,
+     "y": 2,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 15,
+     "q": 3,
+     "x": -2.1,
+     "y": 1.5,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 15,
+     "q": 3,
+     "x": 6.2,
+     "y": 14.7,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 20,
+     "q": 2,
+     "x": 3.3,
+     "y": 6.9,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 20,
+     "q": 4,
+     "x": -16.7,
+     "y": 15,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 20,
+     "q": 2,
+     "x": -7.3,
+     "y": 11.6,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 9,
+     "q": 1,
+     "x": -24.4,
+     "y": 4.5,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 9,
+     "q": 3,
+     "x": -2.8,
+     "y": 30.6,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 9,
+     "q": 1,
+     "x": -14.2,
+     "y": 25.6,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 50,
+     "q": 2,
+     "x": -3.7,
+     "y": 15.5,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 50,
+     "q": 2,
+     "x": 2.2,
+     "y": 17,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    }
+   ]
+  },
+  {
+   "id": "game-13",
+   "number": 13,
+   "date": "2026-10-27",
+   "opponent": "Rangers",
+   "home": false,
+   "score": {
+    "team": 81,
+    "opp": 78
+   },
+   "quarters": [
+    {
+     "q": 1,
+     "team": 17,
+     "opp": 20,
+     "tov": 2,
+     "fouls": 2
+    },
+    {
+     "q": 2,
+     "team": 25,
+     "opp": 21,
+     "tov": 3,
+     "fouls": 6
+    },
+    {
+     "q": 3,
+     "team": 21,
+     "opp": 21,
+     "tov": 2,
+     "fouls": 6
+    },
+    {
+     "q": 4,
+     "team": 18,
+     "opp": 16,
+     "tov": 1,
+     "fouls": 5
+    }
+   ],
+   "players": [
+    {
+     "no": 7,
+     "pos": "Point guard",
+     "starter": true,
+     "min": 31,
+     "pts": 16,
+     "reb": 2,
+     "ast": 6,
+     "tov": 1,
+     "stl": 0,
+     "fgm": 5,
+     "fga": 13,
+     "tpm": 4,
+     "tpa": 7,
+     "ftm": 2,
+     "fta": 3,
+     "pm": 6
+    },
+    {
+     "no": 11,
+     "pos": "Shooting guard",
+     "starter": true,
+     "min": 32,
+     "pts": 13,
+     "reb": 2,
+     "ast": 6,
+     "tov": 2,
+     "stl": 1,
+     "fgm": 4,
+     "fga": 10,
+     "tpm": 2,
+     "tpa": 7,
+     "ftm": 3,
+     "fta": 4,
+     "pm": -1
+    },
+    {
+     "no": 23,
+     "pos": "Small forward",
+     "starter": true,
+     "min": 31,
+     "pts": 17,
+     "reb": 5,
+     "ast": 2,
+     "tov": 0,
+     "stl": 1,
+     "fgm": 6,
+     "fga": 10,
+     "tpm": 3,
+     "tpa": 5,
+     "ftm": 2,
+     "fta": 2,
+     "pm": -2
+    },
+    {
+     "no": 32,
+     "pos": "Power forward",
+     "starter": true,
+     "min": 31,
+     "pts": 19,
+     "reb": 5,
+     "ast": 2,
+     "tov": 2,
+     "stl": 1,
+     "fgm": 8,
+     "fga": 10,
+     "tpm": 0,
+     "tpa": 0,
+     "ftm": 3,
+     "fta": 3,
+     "pm": 3
+    },
+    {
+     "no": 44,
+     "pos": "Center",
+     "starter": true,
+     "min": 30,
+     "pts": 9,
+     "reb": 6,
+     "ast": 2,
+     "tov": 2,
+     "stl": 1,
+     "fgm": 4,
+     "fga": 8,
+     "tpm": 0,
+     "tpa": 0,
+     "ftm": 1,
+     "fta": 1,
+     "pm": 6
+    },
+    {
+     "no": 3,
+     "pos": "Guard",
+     "starter": false,
+     "min": 6,
+     "pts": 1,
+     "reb": 1,
+     "ast": 1,
+     "tov": 0,
+     "stl": 0,
+     "fgm": 0,
+     "fga": 4,
+     "tpm": 0,
+     "tpa": 0,
+     "ftm": 1,
+     "fta": 1,
+     "pm": 4
+    },
+    {
+     "no": 15,
+     "pos": "Forward",
+     "starter": false,
+     "min": 12,
+     "pts": 0,
+     "reb": 3,
+     "ast": 1,
+     "tov": 1,
+     "stl": 0,
+     "fgm": 0,
+     "fga": 4,
+     "tpm": 0,
+     "tpa": 1,
+     "ftm": 0,
+     "fta": 0,
+     "pm": 2
+    },
+    {
+     "no": 20,
+     "pos": "Forward",
+     "starter": false,
+     "min": 6,
+     "pts": 6,
+     "reb": 1,
+     "ast": 0,
+     "tov": 0,
+     "stl": 0,
+     "fgm": 3,
+     "fga": 4,
+     "tpm": 0,
+     "tpa": 1,
+     "ftm": 0,
+     "fta": 0,
+     "pm": 2
+    },
+    {
+     "no": 9,
+     "pos": "Guard",
+     "starter": false,
+     "min": 9,
+     "pts": 0,
+     "reb": 1,
+     "ast": 2,
+     "tov": 0,
+     "stl": 0,
+     "fgm": 0,
+     "fga": 2,
+     "tpm": 0,
+     "tpa": 1,
+     "ftm": 0,
+     "fta": 0,
+     "pm": 5
+    },
+    {
+     "no": 50,
+     "pos": "Center",
+     "starter": false,
+     "min": 12,
+     "pts": 0,
+     "reb": 3,
+     "ast": 1,
+     "tov": 0,
+     "stl": 0,
+     "fgm": 0,
+     "fga": 1,
+     "tpm": 0,
+     "tpa": 0,
+     "ftm": 0,
+     "fta": 0,
+     "pm": -4
+    }
+   ],
+   "lineups": [
+    {
+     "name": "Starters",
+     "players": [
+      7,
+      11,
+      23,
+      32,
+      44
+     ],
+     "min": 14,
+     "pm": -9
+    },
+    {
+     "name": "Small lineup",
+     "players": [
+      7,
+      11,
+      3,
+      23,
+      32
+     ],
+     "min": 6,
+     "pm": 5
+    },
+    {
+     "name": "Big lineup",
+     "players": [
+      7,
+      23,
+      32,
+      44,
+      50
+     ],
+     "min": 5,
+     "pm": 5
+    },
+    {
+     "name": "Bench unit",
+     "players": [
+      3,
+      9,
+      15,
+      20,
+      50
+     ],
+     "min": 6,
+     "pm": 7
+    },
+    {
+     "name": "Closing five",
+     "players": [
+      7,
+      11,
+      23,
+      15,
+      44
+     ],
+     "min": 5,
+     "pm": -1
+    },
+    {
+     "name": "Second unit",
+     "players": [
+      3,
+      11,
+      15,
+      20,
+      44
+     ],
+     "min": 4,
+     "pm": -4
+    }
+   ],
+   "shots": [
+    {
+     "player": 7,
+     "q": 3,
+     "x": 7.2,
+     "y": 28.5,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 1,
+     "x": -5.2,
+     "y": 20.9,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 1,
+     "x": 11,
+     "y": 6.3,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 3,
+     "x": 7.5,
+     "y": 29.6,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 3,
+     "x": -5.8,
+     "y": 13.2,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 1,
+     "x": -23.8,
+     "y": 15.5,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 3,
+     "x": -6,
+     "y": 15,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 1,
+     "x": -23.8,
+     "y": 3.8,
+     "zone": "Corner 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 2,
+     "x": -9.1,
+     "y": 28.8,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 2,
+     "x": -22.4,
+     "y": 18.7,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 2,
+     "x": -5.4,
+     "y": 6.4,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 3,
+     "x": 2.6,
+     "y": 31.7,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 1,
+     "x": 1.2,
+     "y": 6.4,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 3,
+     "x": -22.7,
+     "y": 18.2,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 1,
+     "x": 21.5,
+     "y": 22.7,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 4,
+     "x": -18.8,
+     "y": 21.6,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 4,
+     "x": -3,
+     "y": 29.4,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 3,
+     "x": -12.6,
+     "y": 5.6,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 4,
+     "x": -7,
+     "y": 22.4,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 3,
+     "x": -22.7,
+     "y": 3.8,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 3,
+     "x": -5.8,
+     "y": 29.3,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 1,
+     "x": 23.6,
+     "y": 11,
+     "zone": "Corner 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 4,
+     "x": 0,
+     "y": 15.1,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 4,
+     "x": 4.9,
+     "y": 7,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 4,
+     "x": 6.7,
+     "y": 15.1,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 4,
+     "x": -3.4,
+     "y": 10.9,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 3,
+     "x": -15.5,
+     "y": 25,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 3,
+     "x": -23.9,
+     "y": 6.6,
+     "zone": "Corner 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 3,
+     "x": -20.8,
+     "y": 18.4,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 3,
+     "x": 5.7,
+     "y": 3.6,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 1,
+     "x": 3.4,
+     "y": 30.2,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 3,
+     "x": -23.9,
+     "y": 7.1,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 3,
+     "x": 10.8,
+     "y": 10.9,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 32,
+     "q": 2,
+     "x": -1.5,
+     "y": 19.5,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 2,
+     "x": -3.2,
+     "y": 4.1,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 32,
+     "q": 2,
+     "x": 4.2,
+     "y": 17,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 1,
+     "x": 8.4,
+     "y": 11.5,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 3,
+     "x": -4.4,
+     "y": 9.5,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 2,
+     "x": 6.5,
+     "y": 6.1,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 2,
+     "x": 4.8,
+     "y": 14.8,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 2,
+     "x": 11.7,
+     "y": 12.3,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 2,
+     "x": -5.8,
+     "y": 5.9,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 2,
+     "x": -17,
+     "y": 18.9,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 44,
+     "q": 2,
+     "x": 2.9,
+     "y": 5.8,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 2,
+     "x": 4.1,
+     "y": 6.7,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 2,
+     "x": 10.8,
+     "y": 22.8,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 44,
+     "q": 3,
+     "x": -1.8,
+     "y": 10.7,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 44,
+     "q": 1,
+     "x": -20.9,
+     "y": 6,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 44,
+     "q": 4,
+     "x": 13.6,
+     "y": 13.9,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 2,
+     "x": 15.9,
+     "y": 7.6,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 3,
+     "x": -5.2,
+     "y": 14.7,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 3,
+     "q": 4,
+     "x": 5.8,
+     "y": 6.3,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 3,
+     "q": 1,
+     "x": -3.8,
+     "y": 12.7,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 3,
+     "q": 4,
+     "x": -3.4,
+     "y": 5.1,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 3,
+     "q": 3,
+     "x": 5.9,
+     "y": 3.3,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 15,
+     "q": 2,
+     "x": -3.1,
+     "y": 10.5,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 15,
+     "q": 4,
+     "x": -10.8,
+     "y": 27.7,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 15,
+     "q": 1,
+     "x": -13.5,
+     "y": 16.5,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 15,
+     "q": 2,
+     "x": -2.6,
+     "y": 8.8,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 20,
+     "q": 4,
+     "x": 4.9,
+     "y": 8.9,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 20,
+     "q": 2,
+     "x": -7.5,
+     "y": 21.2,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 20,
+     "q": 3,
+     "x": 0.1,
+     "y": 4.1,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 20,
+     "q": 4,
+     "x": 14.8,
+     "y": 28.4,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 9,
+     "q": 3,
+     "x": -4.3,
+     "y": 4.2,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 9,
+     "q": 1,
+     "x": 7.7,
+     "y": 30.7,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 50,
+     "q": 3,
+     "x": 6.7,
+     "y": 14.8,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    }
+   ]
+  },
+  {
+   "id": "game-14",
+   "number": 14,
+   "date": "2026-11-03",
+   "opponent": "Storm",
+   "home": true,
+   "score": {
+    "team": 88,
+    "opp": 81
+   },
+   "quarters": [
+    {
+     "q": 1,
+     "team": 21,
+     "opp": 19,
+     "tov": 5,
+     "fouls": 4
+    },
+    {
+     "q": 2,
+     "team": 24,
+     "opp": 23,
+     "tov": 1,
+     "fouls": 5
+    },
+    {
+     "q": 3,
+     "team": 24,
+     "opp": 19,
+     "tov": 1,
+     "fouls": 5
+    },
+    {
+     "q": 4,
+     "team": 19,
+     "opp": 20,
+     "tov": 0,
+     "fouls": 6
+    }
+   ],
+   "players": [
+    {
+     "no": 7,
+     "pos": "Point guard",
+     "starter": true,
+     "min": 28,
+     "pts": 25,
+     "reb": 2,
+     "ast": 6,
+     "tov": 2,
+     "stl": 1,
+     "fgm": 8,
+     "fga": 13,
+     "tpm": 5,
+     "tpa": 7,
+     "ftm": 4,
+     "fta": 5,
+     "pm": 1
+    },
+    {
+     "no": 11,
+     "pos": "Shooting guard",
+     "starter": true,
+     "min": 30,
+     "pts": 17,
+     "reb": 2,
+     "ast": 3,
+     "tov": 2,
+     "stl": 0,
+     "fgm": 6,
+     "fga": 13,
+     "tpm": 3,
+     "tpa": 7,
+     "ftm": 2,
+     "fta": 3,
+     "pm": 5
+    },
+    {
+     "no": 23,
+     "pos": "Small forward",
+     "starter": true,
+     "min": 30,
+     "pts": 8,
+     "reb": 4,
+     "ast": 2,
+     "tov": 0,
+     "stl": 1,
+     "fgm": 3,
+     "fga": 8,
+     "tpm": 1,
+     "tpa": 1,
+     "ftm": 1,
+     "fta": 2,
+     "pm": 2
+    },
+    {
+     "no": 32,
+     "pos": "Power forward",
+     "starter": true,
+     "min": 30,
+     "pts": 10,
+     "reb": 5,
+     "ast": 1,
+     "tov": 2,
+     "stl": 1,
+     "fgm": 5,
+     "fga": 7,
+     "tpm": 0,
+     "tpa": 1,
+     "ftm": 0,
+     "fta": 0,
+     "pm": 2
+    },
+    {
+     "no": 44,
+     "pos": "Center",
+     "starter": true,
+     "min": 32,
+     "pts": 16,
+     "reb": 7,
+     "ast": 2,
+     "tov": 1,
+     "stl": 0,
+     "fgm": 7,
+     "fga": 8,
+     "tpm": 0,
+     "tpa": 0,
+     "ftm": 2,
+     "fta": 3,
+     "pm": 1
+    },
+    {
+     "no": 3,
+     "pos": "Guard",
+     "starter": false,
+     "min": 7,
+     "pts": 4,
+     "reb": 1,
+     "ast": 1,
+     "tov": 0,
+     "stl": 0,
+     "fgm": 1,
+     "fga": 5,
+     "tpm": 0,
+     "tpa": 1,
+     "ftm": 2,
+     "fta": 2,
+     "pm": 0
+    },
+    {
+     "no": 15,
+     "pos": "Forward",
+     "starter": false,
+     "min": 11,
+     "pts": 2,
+     "reb": 3,
+     "ast": 1,
+     "tov": 0,
+     "stl": 0,
+     "fgm": 1,
+     "fga": 4,
+     "tpm": 0,
+     "tpa": 1,
+     "ftm": 0,
+     "fta": 0,
+     "pm": -1
+    },
+    {
+     "no": 20,
+     "pos": "Forward",
+     "starter": false,
+     "min": 11,
+     "pts": 3,
+     "reb": 2,
+     "ast": 1,
+     "tov": 0,
+     "stl": 0,
+     "fgm": 1,
+     "fga": 3,
+     "tpm": 0,
+     "tpa": 2,
+     "ftm": 1,
+     "fta": 1,
+     "pm": 1
+    },
+    {
+     "no": 9,
+     "pos": "Guard",
+     "starter": false,
+     "min": 11,
+     "pts": 1,
+     "reb": 1,
+     "ast": 2,
+     "tov": 0,
+     "stl": 0,
+     "fgm": 0,
+     "fga": 2,
+     "tpm": 0,
+     "tpa": 1,
+     "ftm": 1,
+     "fta": 1,
+     "pm": -3
+    },
+    {
+     "no": 50,
+     "pos": "Center",
+     "starter": false,
+     "min": 10,
+     "pts": 2,
+     "reb": 3,
+     "ast": 1,
+     "tov": 0,
+     "stl": 0,
+     "fgm": 1,
+     "fga": 1,
+     "tpm": 0,
+     "tpa": 0,
+     "ftm": 0,
+     "fta": 0,
+     "pm": 5
+    }
+   ],
+   "lineups": [
+    {
+     "name": "Starters",
+     "players": [
+      7,
+      11,
+      23,
+      32,
+      44
+     ],
+     "min": 14,
+     "pm": 8
+    },
+    {
+     "name": "Small lineup",
+     "players": [
+      7,
+      11,
+      3,
+      23,
+      32
+     ],
+     "min": 6,
+     "pm": -1
+    },
+    {
+     "name": "Big lineup",
+     "players": [
+      7,
+      23,
+      32,
+      44,
+      50
+     ],
+     "min": 5,
+     "pm": -1
+    },
+    {
+     "name": "Bench unit",
+     "players": [
+      3,
+      9,
+      15,
+      20,
+      50
+     ],
+     "min": 6,
+     "pm": -4
+    },
+    {
+     "name": "Closing five",
+     "players": [
+      7,
+      11,
+      23,
+      15,
+      44
+     ],
+     "min": 5,
+     "pm": 4
+    },
+    {
+     "name": "Second unit",
+     "players": [
+      3,
+      11,
+      15,
+      20,
+      44
+     ],
+     "min": 4,
+     "pm": 1
+    }
+   ],
+   "shots": [
+    {
+     "player": 7,
+     "q": 1,
+     "x": 6.2,
+     "y": 8.7,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 3,
+     "x": -24.3,
+     "y": 3.4,
+     "zone": "Corner 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 2,
+     "x": -1.4,
+     "y": 16.9,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 3,
+     "x": -23.2,
+     "y": 5.5,
+     "zone": "Corner 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 4,
+     "x": -19.5,
+     "y": 20.3,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 4,
+     "x": 1.3,
+     "y": 25.1,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 2,
+     "x": -4.6,
+     "y": 5.5,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 2,
+     "x": -19.2,
+     "y": 23.9,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 3,
+     "x": -11.7,
+     "y": 27.4,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 4,
+     "x": 23.6,
+     "y": 1.9,
+     "zone": "Corner 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 3,
+     "x": -1.4,
+     "y": 11.4,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 7,
+     "q": 1,
+     "x": -23.6,
+     "y": 9.7,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 7,
+     "q": 1,
+     "x": -5.9,
+     "y": 10.2,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 2,
+     "x": 1.1,
+     "y": 10.7,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 2,
+     "x": 21.1,
+     "y": 23.1,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 3,
+     "x": 3.9,
+     "y": 1.6,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 3,
+     "x": -8.6,
+     "y": 13.7,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 3,
+     "x": 5.7,
+     "y": 12,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 2,
+     "x": 14.4,
+     "y": 11.4,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 1,
+     "x": -23,
+     "y": 2.7,
+     "zone": "Corner 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 1,
+     "x": -23.6,
+     "y": 7.6,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 1,
+     "x": -0.8,
+     "y": 30.2,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 2,
+     "x": -13,
+     "y": 27.9,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 2,
+     "x": 10.2,
+     "y": 27.8,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 11,
+     "q": 1,
+     "x": -22.3,
+     "y": 6.6,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 11,
+     "q": 1,
+     "x": 1,
+     "y": 11.7,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 4,
+     "x": -15.5,
+     "y": 18.1,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 4,
+     "x": -6.7,
+     "y": 13.8,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 4,
+     "x": 1.1,
+     "y": 13.3,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 2,
+     "x": -19.8,
+     "y": 9,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 4,
+     "x": -21.8,
+     "y": 21.8,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": true
+    },
+    {
+     "player": 23,
+     "q": 4,
+     "x": -3.2,
+     "y": 22.8,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 3,
+     "x": 9.9,
+     "y": 17.3,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 23,
+     "q": 2,
+     "x": 5.7,
+     "y": 5.1,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 2,
+     "x": 22.7,
+     "y": 4.8,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 32,
+     "q": 2,
+     "x": -16.9,
+     "y": 15,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 32,
+     "q": 1,
+     "x": 12.6,
+     "y": 9.4,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 4,
+     "x": -4.3,
+     "y": 13.2,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 1,
+     "x": 15.7,
+     "y": 17.8,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 1,
+     "x": -12.1,
+     "y": 19.5,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 32,
+     "q": 1,
+     "x": 3.6,
+     "y": 7.5,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 4,
+     "x": 0.8,
+     "y": 7.8,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 1,
+     "x": 4.8,
+     "y": 5.5,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 3,
+     "x": -9.7,
+     "y": 19.8,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 2,
+     "x": 17.1,
+     "y": 12.3,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 3,
+     "x": -16.9,
+     "y": 7.7,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 3,
+     "x": 3.7,
+     "y": 10,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 2,
+     "x": -9.8,
+     "y": 13.2,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 44,
+     "q": 3,
+     "x": -5.5,
+     "y": 10,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 3,
+     "q": 3,
+     "x": 11.3,
+     "y": 10.6,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 3,
+     "q": 4,
+     "x": -22.5,
+     "y": 8.8,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 3,
+     "q": 2,
+     "x": 3.5,
+     "y": 10.7,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 3,
+     "q": 3,
+     "x": 15.6,
+     "y": 20.1,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 3,
+     "q": 1,
+     "x": -4.8,
+     "y": 20.9,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 15,
+     "q": 4,
+     "x": -4.4,
+     "y": 15.4,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 15,
+     "q": 3,
+     "x": 4.4,
+     "y": 2.5,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 15,
+     "q": 4,
+     "x": 22.1,
+     "y": 17.1,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 15,
+     "q": 2,
+     "x": -0.5,
+     "y": 12,
+     "zone": "Paint",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 20,
+     "q": 4,
+     "x": 22.3,
+     "y": 4.6,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 20,
+     "q": 2,
+     "x": -24,
+     "y": 1.2,
+     "zone": "Corner 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 20,
+     "q": 1,
+     "x": -0.2,
+     "y": 14.6,
+     "zone": "Paint",
+     "three": false,
+     "made": true
+    },
+    {
+     "player": 9,
+     "q": 2,
+     "x": -18.2,
+     "y": 13.6,
+     "zone": "Mid-range",
+     "three": false,
+     "made": false
+    },
+    {
+     "player": 9,
+     "q": 4,
+     "x": 4.9,
+     "y": 31.9,
+     "zone": "Above-break 3",
+     "three": true,
+     "made": false
+    },
+    {
+     "player": 50,
+     "q": 1,
+     "x": -2.2,
+     "y": 23.8,
+     "zone": "Mid-range",
+     "three": false,
+     "made": true
+    }
+   ]
+  }
+ ]
+}

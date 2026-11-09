@@ -4,32 +4,161 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Coach dashboard: ClutchMetrics</title>
-<meta name="description" content="The ClutchMetrics coach dashboard.">
+<meta name="description" content="The ClutchMetrics coach dashboard: shot charts, players, lineups and quarters for every game.">
 <meta name="theme-color" content="#100e0c">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400..700&family=JetBrains+Mono:wght@400..500&family=Anton&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="auth.css">
+<link rel="stylesheet" href="dashboard.css">
 <link rel="stylesheet" href="cursor.css">
 </head>
 <body>
+<a class="skip" href="#main">Skip to the dashboard</a>
 <noscript><p style="padding:24px">The dashboard needs JavaScript. <a href="login-coach.html">Back to sign-in</a></p></noscript>
-<div class="dash" data-dashboard="coach" hidden>
-  <div class="dash__top">
-    <a class="logo-link" href="index.html" aria-label="ClutchMetrics home"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="8.500" r="7.500" fill="#ff7a1a"/><path d="M8.500 8.500h15M16 1v15M10.800 3.200q3 5.300 0 10.600M21.200 3.200q-3 5.300 0 10.600" fill="none" stroke="#160b03" stroke-width="1.100"/><path d="M4.500 18h23" fill="none" stroke="#ff7a1a" stroke-width="2.800" stroke-linecap="round"/><path d="M7 19.500 10.500 30h11L25 19.500M11.500 19.500 13.500 30M20.500 19.500 18.500 30M16 19.500V30M8.800 24.800h14.400" fill="none" stroke="#f7f1e8" stroke-width="1.200" stroke-linejoin="round"/></svg><span class="brand" translate="no">ClutchMetrics</span></a>
-    <button class="dash__out" type="button" data-signout>Sign out</button>
-  </div>
-  <main class="dash__hello">
-    <h1>Coach dashboard</h1>
-    <p>Signed in as <b data-email></b>. Your dashboard is being built and fills in once the analysis model is ready.</p>
+
+<div class="app" data-dashboard="coach" hidden>
+  <aside class="side">
+    <div class="side__brand">
+      <a class="logo-link" href="index.html" aria-label="ClutchMetrics home"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="8.500" r="7.500" fill="#ff7a1a"/><path d="M8.500 8.500h15M16 1v15M10.800 3.200q3 5.300 0 10.600M21.200 3.200q-3 5.300 0 10.600" fill="none" stroke="#160b03" stroke-width="1.100"/><path d="M4.500 18h23" fill="none" stroke="#ff7a1a" stroke-width="2.800" stroke-linecap="round"/><path d="M7 19.500 10.500 30h11L25 19.500M11.500 19.500 13.500 30M20.500 19.500 18.500 30M16 19.500V30M8.800 24.800h14.400" fill="none" stroke="#f7f1e8" stroke-width="1.200" stroke-linejoin="round"/></svg><span class="brand" translate="no">ClutchMetrics</span></a>
+      <button class="side__out side__out--top" type="button" data-signout>Sign out</button>
+    </div>
+    <nav class="side__nav" aria-label="Dashboard sections">
+      <a href="#overview"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z"/></svg>Overview</a>
+      <a href="#shots"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.500"/><path d="M3.500 12h17M12 3.500v17M6.500 5.500c2.700 3.500 2.700 9.500 0 13M17.500 5.500c-2.700 3.500-2.700 9.500 0 13"/></svg>Shot chart</a>
+      <a href="#players"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11a3.500 3.500 0 1 0 0-7 3.500 3.500 0 0 0 0 7ZM2.500 20c.5-3.600 3-5.500 6.500-5.500s6 1.900 6.500 5.500M16 4.500a3.500 3.500 0 0 1 0 6.500M18.500 14.800c1.700.8 2.700 2.500 3 5.200"/></svg>Players</a>
+      <a href="#lineups"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M4 12h16M4 18h7"/></svg>Lineups</a>
+      <a href="#quarters"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V12M10 20V6M15 20v-9M20 20V9"/></svg>Quarters</a>
+      <a href="#season"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3.500 16 5-5 4 3 7.500-8"/><path d="M15 6h5v5"/></svg>Season</a>
+    </nav>
+    <div class="side__user">
+      <span class="side__label">Signed in as</span>
+      <b data-email></b>
+      <button class="side__out" type="button" data-signout>Sign out</button>
+    </div>
+  </aside>
+
+  <main class="main" id="main">
+    <p class="note" data-sample hidden><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span><b>Sample data.</b> These games are made up to show the design. Your model’s results replace them in <code>data/games.json</code>.</span></p>
+    <p class="note note--error" data-load-error hidden></p>
+
+    <section class="block" id="overview" aria-labelledby="overview-h">
+      <div class="game-head">
+        <div>
+          <p class="eyebrow" data-game-meta></p>
+          <h1 id="overview-h" data-game-title>Loading game…</h1>
+        </div>
+        <div class="game-head__right">
+          <span class="result" data-result></span>
+          <div class="pick">
+            <label for="game">Game</label>
+            <select id="game" name="game" data-game-select></select>
+          </div>
+        </div>
+      </div>
+      <div class="kpis" data-kpis aria-live="polite"></div>
+    </section>
+
+    <section class="block card" id="shots" aria-labelledby="shots-h">
+      <div class="card__head">
+        <div>
+          <h2 id="shots-h">Shot chart</h2>
+          <p class="card__sub" data-shot-summary aria-live="polite"></p>
+        </div>
+      </div>
+      <div class="filters" role="group" aria-label="Filter the shots">
+        <div class="pick pick--inline">
+          <label for="player">Player</label>
+          <select id="player" name="player" data-player-select></select>
+        </div>
+        <div class="seg" role="group" aria-label="Quarter" data-seg="q"></div>
+        <div class="seg" role="group" aria-label="Result" data-seg="result"></div>
+      </div>
+      <div class="shots-grid">
+        <div class="court" data-court>
+          <svg class="court__svg" viewBox="0 0 500 470" role="img" aria-labelledby="court-desc" data-court-svg>
+            <desc id="court-desc" data-court-desc>Half court with each shot marked.</desc>
+            <rect class="court__floor" width="500" height="470"/>
+            <path class="court__plank" d="M0 60H500M0 120H500M0 180H500M0 240H500M0 300H500M0 360H500M0 420H500"/>
+            <rect class="court__paint" x="170" width="160" height="190"/>
+            <path class="court__line" d="M170 0V190H330V0M190 190A60 60 0 0 0 310 190M190 190A60 60 0 0 1 310 190M30 0V140A237.500 237.500 0 0 0 470 140V0M190 470A60 60 0 0 1 310 470"/>
+            <path class="court__rim" d="M220 40H280"/>
+            <circle class="court__rim" cx="250" cy="52.500" r="8"/>
+            <g data-shot-layer></g>
+          </svg>
+          <div class="tip" data-tip role="tooltip" hidden></div>
+          <div class="legend"><span><i class="dot dot--made"></i>Made</span><span><i class="cross"></i>Missed</span></div>
+        </div>
+        <div class="zones">
+          <h3>By zone</h3>
+          <table class="table table--zones">
+            <thead><tr><th scope="col">Zone</th><th scope="col" class="num">Made</th><th scope="col" class="num">FG%</th></tr></thead>
+            <tbody data-zones></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="block card" id="players" aria-labelledby="players-h">
+      <div class="card__head">
+        <div>
+          <h2 id="players-h">Players</h2>
+          <p class="card__sub">Select a column to sort. <b>Shots</b> shows that player on the shot chart.</p>
+        </div>
+      </div>
+      <div class="scroll">
+        <table class="table table--players">
+          <thead data-players-head></thead>
+          <tbody data-players></tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="pair">
+      <section class="block card" id="lineups" aria-labelledby="lineups-h">
+        <div class="card__head">
+          <div>
+            <h2 id="lineups-h">Lineups</h2>
+            <p class="card__sub">Plus-minus for each five on court, with minutes played.</p>
+          </div>
+        </div>
+        <div class="diverge" data-lineups></div>
+        <div class="legend legend--row"><span><i class="swatch swatch--pos"></i>Outscored the opponent</span><span><i class="swatch swatch--neg"></i>Outscored by the opponent</span></div>
+      </section>
+
+      <section class="block card" id="quarters" aria-labelledby="quarters-h">
+        <div class="card__head">
+          <div>
+            <h2 id="quarters-h">Quarters</h2>
+            <p class="card__sub">Points by quarter, with turnovers and fouls.</p>
+          </div>
+        </div>
+        <div class="legend legend--row"><span><i class="swatch swatch--team"></i>Your team</span><span><i class="swatch swatch--opp"></i>Opponent</span></div>
+        <div class="bars" data-quarters></div>
+        <table class="table table--quarters">
+          <thead data-q-head></thead>
+          <tbody data-q-body></tbody>
+        </table>
+      </section>
+    </div>
+
+    <section class="block card" id="season" aria-labelledby="season-h">
+      <div class="card__head">
+        <div>
+          <h2 id="season-h">Season</h2>
+          <p class="card__sub">Points scored and allowed, game by game. Select a game to open it.</p>
+        </div>
+        <div class="legend legend--row"><span><i class="swatch swatch--team"></i>Scored</span><span><i class="swatch swatch--opp"></i>Allowed</span></div>
+      </div>
+      <div class="line" data-season>
+        <div class="tip" data-season-tip role="tooltip" hidden></div>
+      </div>
+    </section>
   </main>
-  <section class="dash__grid" aria-label="Coming to this dashboard">
-    <article class="tile"><span class="tile__tag">Coming soon</span><h2>Team shot chart</h2><p>Every shot from the last game on one court, made and missed.</p></article>
-    <article class="tile"><span class="tile__tag">Coming soon</span><h2>Lineup comparison</h2><p>Plus-minus and minutes for each group you played.</p></article>
-    <article class="tile"><span class="tile__tag">Coming soon</span><h2>Quarter breakdown</h2><p>Points, turnovers and fouls, quarter by quarter.</p></article>
-  </section>
 </div>
+
 <script type="module" src="auth.js"></script>
+<script type="module" src="dashboard.js"></script>
 </body>
 </html>

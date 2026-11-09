@@ -120,9 +120,9 @@ if (gate) {
   } else {
     gate.querySelectorAll('[data-email]').forEach((el) => { el.textContent = session.email; });
     gate.hidden = false;
-    gate.querySelector('[data-signout]').addEventListener('click', () => {
+    gate.querySelectorAll('[data-signout]').forEach((b) => b.addEventListener('click', () => {
       store.clear();
       location.href = 'index.html';
-    });
+    }));
   }
 }

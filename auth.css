@@ -117,3 +117,5 @@ button, input, a { touch-action: manipulation; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .mini-line path { stroke-dashoffset: 0; }
 }
+
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
