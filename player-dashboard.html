@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Your player report: ClutchMetrics</title>
+<meta name="description" content="The ClutchMetrics player dashboard.">
+<meta name="theme-color" content="#100e0c">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400..700&family=JetBrains+Mono:wght@400..500&family=Anton&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="auth.css">
+<link rel="stylesheet" href="cursor.css">
+</head>
+<body>
+<noscript><p style="padding:24px">The dashboard needs JavaScript. <a href="login-player.html">Back to sign-in</a></p></noscript>
+<div class="dash" data-dashboard="player" hidden>
+  <div class="dash__top">
+    <a class="logo-link" href="index.html" aria-label="ClutchMetrics home"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="8.500" r="7.500" fill="#ff7a1a"/><path d="M8.500 8.500h15M16 1v15M10.800 3.200q3 5.300 0 10.600M21.200 3.200q-3 5.300 0 10.600" fill="none" stroke="#160b03" stroke-width="1.100"/><path d="M4.500 18h23" fill="none" stroke="#ff7a1a" stroke-width="2.800" stroke-linecap="round"/><path d="M7 19.500 10.500 30h11L25 19.500M11.500 19.500 13.500 30M20.500 19.500 18.500 30M16 19.500V30M8.800 24.800h14.400" fill="none" stroke="#f7f1e8" stroke-width="1.200" stroke-linejoin="round"/></svg><span class="brand" translate="no">ClutchMetrics</span></a>
+    <button class="dash__out" type="button" data-signout>Sign out</button>
+  </div>
+  <main class="dash__hello">
+    <h1>Your player report</h1>
+    <p>Signed in as <b data-email></b>. Your dashboard is being built and fills in once the analysis model is ready.</p>
+  </main>
+  <section class="dash__grid" aria-label="Coming to this dashboard">
+    <article class="tile"><span class="tile__tag">Coming soon</span><h2>Your shot chart</h2><p>Where you shot from in each game, and what went in.</p></article>
+    <article class="tile"><span class="tile__tag">Coming soon</span><h2>Points and form</h2><p>Your points over the season, with your trend.</p></article>
+    <article class="tile"><span class="tile__tag">Coming soon</span><h2>Next focus</h2><p>One area to work on, based on your last games.</p></article>
+  </section>
+</div>
+<script type="module" src="auth.js"></script>
+</body>
+</html>

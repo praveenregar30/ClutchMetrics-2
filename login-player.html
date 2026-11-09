@@ -2,32 +2,72 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Player sign-in: ClutchMetrics</title>
-<meta name="description" content="The player sign-in for ClutchMetrics, which opens once the dashboards are built.">
+<meta name="description" content="Sign in to your ClutchMetrics player report to see your own shots, points and form, game by game.">
 <meta name="theme-color" content="#100e0c">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-<style>
-  :root { color-scheme: dark; --ink: #f7f1e8; --muted: #b4ab9e; --action: #ff7a1a; }
-  * { box-sizing: border-box; }
-  body { margin: 0; min-height: 100svh; display: grid; place-content: center; gap: 16px; padding: 24px; background: #100e0c; color: var(--ink); font: 400 16px/1.6 "Host Grotesk", system-ui, sans-serif; }
-  h1 { margin: 0; font-size: clamp(32px, 6vw, 48px); line-height: 1.1; letter-spacing: -.03em; font-weight: 500; text-wrap: balance; }
-  p { margin: 0; max-width: 46ch; }
-  a { color: var(--action); text-underline-offset: 3px; display: inline-block; padding-block: 11px; touch-action: manipulation; }
-  a:hover { text-decoration-thickness: 2px; }
-  a:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; }
-  .brand { font-family: "Anton", Impact, "Arial Narrow", sans-serif; font-weight: 400; letter-spacing: .015em; font-size: 1.08em; }
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400..700&family=JetBrains+Mono:wght@400..500&family=Anton&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="auth.css">
 <link rel="stylesheet" href="cursor.css">
 </head>
 <body>
-<main>
-  <h1>Player sign-in</h1>
-  <p>This login opens your personal report. It goes live once the dashboards are built.</p>
-  <a href="index.html">Back to <span class="brand" translate="no">ClutchMetrics</span></a>
-</main>
+<a class="skip" href="#signin">Skip to sign-in</a>
+<div class="auth">
+  <main class="auth__main">
+    <div class="auth__top">
+      <a class="logo-link" href="index.html" aria-label="ClutchMetrics home"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="8.500" r="7.500" fill="#ff7a1a"/><path d="M8.500 8.500h15M16 1v15M10.800 3.200q3 5.300 0 10.600M21.200 3.200q-3 5.300 0 10.600" fill="none" stroke="#160b03" stroke-width="1.100"/><path d="M4.500 18h23" fill="none" stroke="#ff7a1a" stroke-width="2.800" stroke-linecap="round"/><path d="M7 19.500 10.500 30h11L25 19.500M11.500 19.500 13.500 30M20.500 19.500 18.500 30M16 19.500V30M8.800 24.800h14.400" fill="none" stroke="#f7f1e8" stroke-width="1.200" stroke-linejoin="round"/></svg><span class="brand" translate="no">ClutchMetrics</span></a>
+      <a class="back" href="index.html"><span aria-hidden="true">←</span> Back to home</a>
+    </div>
+    <div class="auth__body">
+      <nav class="roles" aria-label="Choose your login"><a href="login-coach.html">Coach</a><a href="login-player.html" aria-current="page">Player</a></nav>
+      <div class="auth__head">
+        <h1>Welcome back, player</h1>
+        <p>Sign in to see your shots, points and form, game by game.</p>
+      </div>
+      <form class="form" id="signin" data-signin="player" novalidate>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" inputmode="email" autocomplete="username" spellcheck="false" autocapitalize="off" placeholder="name@team.com…" aria-describedby="email-error" required>
+          <p class="field__error" id="email-error" aria-live="polite"></p>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="field__wrap">
+            <input id="password" name="password" type="password" autocomplete="current-password" aria-describedby="password-error" required minlength="6">
+            <button class="reveal" type="button" aria-pressed="false" aria-label="Show password">Show</button>
+          </div>
+          <p class="field__error" id="password-error" aria-live="polite"></p>
+        </div>
+        <div class="row">
+          <label class="check"><input id="remember" name="remember" type="checkbox"> Keep me signed in</label>
+          <button class="linkish" type="button" data-forgot>Forgot password?</button>
+        </div>
+        <button class="submit" type="submit"><span class="spinner" aria-hidden="true"></span><span class="submit__label">Sign in as player</span></button>
+        <p class="status" role="status" data-status></p>
+        <div class="demo"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><p style="margin:0"><b>Demo sign-in.</b> Real accounts are not live yet. Use any email and a password of 6 or more characters.</p></div>
+      </form>
+      <p class="switch-line">Not a player? <a href="login-coach.html">Sign in as coach</a></p>
+    </div>
+  </main>
+  <aside class="auth__side" aria-label="What the player login shows">
+    <svg class="side__court" viewBox="0 0 600 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect x="40" y="40" width="520" height="720"/><path d="M40 400H560"/><ellipse cx="300" cy="400" rx="70" ry="70"/><path d="M220 40V230H380V40M220 760V570H380V760M80 40V150A220 220 0 0 0 520 150V40M80 760V650A220 220 0 0 1 520 650V760"/><ellipse cx="300" cy="230" rx="60" ry="60"/><ellipse cx="300" cy="570" rx="60" ry="60"/></svg>
+    <div class="side__card" aria-hidden="true">
+          <div class="side__card-top"><b>Your report, No. 7</b><span>Player view</span></div>
+          <div class="mini-big">18.4</div>
+          <span>Points a game, last 5 games</span>
+          <svg class="mini-line" viewBox="0 0 300 80" preserveAspectRatio="none"><path vector-effect="non-scaling-stroke" d="M4 58L76 40L150 52L224 24L296 8"/></svg>
+          <div class="mini-row"><span>Field goals</span><span>48%</span><span></span></div>
+          <div class="mini-row"><span>Assists</span><span>5.2</span><span></span></div>
+        </div>
+    <div class="side__text">
+      <h2>Your game, in your numbers</h2>
+      <ul class="side__list"><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.500 4.500 4.500L19 7.500"/></svg>See where your shots go in</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.500 4.500 4.500L19 7.500"/></svg>Follow your points game by game</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.500 4.500 4.500L19 7.500"/></svg>Spot what to work on next</li></ul>
+    </div>
+  </aside>
+</div>
+<script type="module" src="auth.js"></script>
 </body>
 </html>
