@@ -1,0 +1,4 @@
+/* the basketball cursor: a ball everywhere, a ball with a ring on what can be clicked; the system cursors are the fallback */
+html { cursor: url("assets/cursor/ball.png") 10 10, auto; cursor: image-set(url("assets/cursor/ball.png") 1x, url("assets/cursor/ball@2x.png") 2x) 10 10, auto; }
+a, button, summary, label, select, [role="button"], .btn, .nav__link, .nav__toggle { cursor: url("assets/cursor/ball-hover.png") 12 12, pointer !important; cursor: image-set(url("assets/cursor/ball-hover.png") 1x, url("assets/cursor/ball-hover@2x.png") 2x) 12 12, pointer !important; }
+input, textarea { cursor: text; }

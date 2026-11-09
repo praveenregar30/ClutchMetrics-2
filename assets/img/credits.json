@@ -1,0 +1,93 @@
+{
+ "note": "Credits for the photographs in this folder: photos.mjs credits prints the footer block for the ones the pages use.",
+ "photos": [
+  {
+   "file": "photo-f129176897-960.jpg",
+   "files": [
+    "photo-f129176897-500.jpg",
+    "photo-f129176897-960.jpg"
+   ],
+   "id": "f129176897",
+   "alt": "Basketball hitting a basketball goal",
+   "by": "noahsilliman",
+   "licence": "CC0",
+   "licenceUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "page": "https://commons.wikimedia.org/wiki/File:Basketball_hitting_a_basketball_goal.jpg",
+   "source": "Wikimedia Commons"
+  },
+  {
+   "file": "photo-f191256714-960.jpg",
+   "files": [
+    "photo-f191256714-500.jpg",
+    "photo-f191256714-960.jpg"
+   ],
+   "id": "f191256714",
+   "alt": "Basketball going into a basketball hoop with sunset in background",
+   "by": "Shixart1985",
+   "licence": "CC BY 2.0",
+   "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Basketball_going_into_a_basketball_hoop_with_sunset_in_background.jpg",
+   "source": "Wikimedia Commons"
+  },
+  {
+   "file": "photo-f61914619.jpg",
+   "files": [
+    "photo-f61914619-500.jpg",
+    "photo-f61914619-960.jpg",
+    "photo-f61914619.jpg"
+   ],
+   "id": "f61914619",
+   "alt": "Freestanding basketball net (Unsplash)",
+   "by": "Andy Hu humadethis",
+   "licence": "CC0",
+   "licenceUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+   "page": "https://commons.wikimedia.org/wiki/File:Freestanding_basketball_net_(Unsplash).jpg",
+   "source": "Wikimedia Commons"
+  },
+  {
+   "file": "photo-f188894096.jpg",
+   "files": [
+    "photo-f188894096-500.jpg",
+    "photo-f188894096-960.jpg",
+    "photo-f188894096.jpg"
+   ],
+   "id": "f188894096",
+   "alt": "Basketball hoop with red and blue net in park undefined",
+   "by": "Shixart1985",
+   "licence": "CC BY 2.0",
+   "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Basketball_hoop_with_red_and_blue_net_in_park_undefined.jpg",
+   "source": "Wikimedia Commons"
+  },
+  {
+   "file": "photo-f6026990.jpg",
+   "files": [
+    "photo-f6026990-500.jpg",
+    "photo-f6026990-960.jpg",
+    "photo-f6026990.jpg"
+   ],
+   "id": "f6026990",
+   "alt": "Basket",
+   "by": "MarcoCrupi",
+   "licence": "CC BY-SA 3.0",
+   "licenceUrl": "http://creativecommons.org/licenses/by-sa/3.0/",
+   "page": "https://commons.wikimedia.org/wiki/File:Basket.jpg",
+   "source": "Wikimedia Commons"
+  },
+  {
+   "file": "photo-f9917549.jpg",
+   "files": [
+    "photo-f9917549-500.jpg",
+    "photo-f9917549-960.jpg",
+    "photo-f9917549.jpg"
+   ],
+   "id": "f9917549",
+   "alt": "Basketball net",
+   "by": "J.smith",
+   "licence": "CC BY-SA 4.0",
+   "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Basketball_net.jpg",
+   "source": "Wikimedia Commons"
+  }
+ ]
+}
