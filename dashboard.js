@@ -61,21 +61,21 @@ function renderOverview() {
   const me = d.teams[mine()]; const op = d.teams[theirs()];
   $('[data-meta]').textContent = [d.competition, d.date ? dateFmt.format(new Date(`${d.date}T12:00:00`)) : '', d.venue].filter(Boolean).join(' · ');
   $('[data-title]').textContent = `${me.name} vs ${op.name}`;
-  $('[data-clip]').textContent = `Analysed clip: ${clock(d.clip.duration_s)} of play (from ${clock(d.clip.source_start_s)} in the source video).`;
-
   const tv = d.tv_score.readings;
   const last = tv[tv.length - 1];
+  $('[data-clip]').textContent = `Analysed clip: ${clock(d.clip.duration_s)} of play`
+    + (last ? ` · TV scoreboard at the end: ${d.teams[0].code} ${last[1]}–${last[2]} ${d.teams[1].code}` : '');
+
   $('[data-scorebox]').innerHTML = `
+    <span class="pick__label">Points in the clip</span>
     <div class="scorebox__main" aria-label="Points scored in the clip: ${esc(me.code)} ${me.points}, ${esc(op.code)} ${op.points}">
       <span class="scorebox__team"><i class="swatch swatch--team"></i>${esc(me.code)}</span>
       <b>${me.points}<span>–</span>${op.points}</b>
       <span class="scorebox__team">${esc(op.code)}<i class="swatch swatch--opp"></i></span>
-    </div>
-    <span class="scorebox__note">Points in the clip${last ? ` · TV scoreboard at the end: ${esc(d.teams[0].code)} ${last[1]}–${last[2]} ${esc(d.teams[1].code)}` : ''}</span>`;
+    </div>`;
 
   const tiles = [
-    { label: 'Points', a: me.points, b: op.points, show: (t) => whole.format(t.points),
-      note: (t) => `${t.points_confirmed} confirmed by the TV scoreboard` },
+    { label: 'Points', a: me.points, b: op.points, show: (t) => whole.format(t.points), note: () => '' },
     { label: 'Field goals', a: ratio(me.fgm, me.fga), b: ratio(op.fgm, op.fga), show: (t) => `${t.fgm}/${t.fga}`,
       note: (t) => (t.fga ? `${pct.format(ratio(t.fgm, t.fga))} made` : 'No shots') },
     { label: 'Three-pointers', a: ratio(me.tpm, me.tpa), b: ratio(op.tpm, op.tpa), show: (t) => `${t.tpm}/${t.tpa}`,
@@ -89,7 +89,7 @@ function renderOverview() {
     return `<article class="kpi">
       <span class="kpi__label">${k.label}</span>
       <span class="kpi__value">${k.show(me)}</span>
-      <span class="kpi__delta ${lead}">${k.note(me)}</span>
+      ${k.note(me) ? `<span class="kpi__delta ${lead}">${k.note(me)}</span>` : ''}
       <span class="kpi__opp"><i class="swatch swatch--opp"></i>${esc(op.code)} <b>${k.show(op)}</b></span>
     </article>`;
   }).join('');

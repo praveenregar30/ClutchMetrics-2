@@ -269,13 +269,19 @@ th[aria-sort="ascending"] .sort svg { transform: rotate(180deg); }
 /* ================================================================ match dashboard (data/match.json) */
 .game-head__sub { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
 .pick__label { color: var(--muted); font-size: 13px; font-weight: 500; }
-.scorebox { display: grid; gap: 4px; justify-items: end; }
-.scorebox__main { display: inline-flex; align-items: center; gap: 12px; height: 52px; padding: 0 16px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--card); }
-.scorebox__main b { font: 500 30px/1 var(--font); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
-.scorebox__main b span { margin: 0 6px; color: var(--muted); }
-.scorebox__team { display: inline-flex; align-items: center; gap: 6px; font: 500 15px var(--font); color: var(--muted); }
-.scorebox__note { color: var(--muted); font-size: 12px; text-align: right; max-width: 320px; }
-.kpi__opp { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; padding-top: 8px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+/* score box and team switch: same label row, same 50px control height, bottoms aligned */
+.game-head__right { align-items: flex-end; gap: 20px; }
+.scorebox, .game-head__right .pick { display: grid; gap: 6px; justify-items: start; }
+.scorebox__main { display: inline-flex; align-items: center; gap: 14px; height: 50px; padding: 0 18px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--card); }
+.scorebox__main b { display: inline-flex; align-items: center; font: 500 28px/1 var(--font); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.scorebox__main b span { margin: 0 8px; color: var(--muted); font-weight: 400; }
+.scorebox__team { display: inline-flex; align-items: center; gap: 7px; font: 500 15px/1 var(--font); color: var(--muted); }
+.game-head__right .seg { height: 50px; align-items: stretch; }
+.game-head__right .seg button { min-width: 56px; }
+/* KPI tiles: the opponent line sits at the bottom of every tile, so tiles in a row line up */
+.kpi { display: flex; flex-direction: column; }
+.kpi__opp { display: inline-flex; align-items: center; gap: 6px; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.kpi .kpi__delta { margin-bottom: 10px; }
 .kpi__opp b { color: var(--ink); font-weight: 500; }
 .kpi__delta.is-good { color: var(--ink); }
 .swatch { display: inline-block; flex: none; }
@@ -403,8 +409,7 @@ th[aria-sort="ascending"] .sort svg { transform: rotate(180deg); }
 .about ul { margin: 0; padding-left: 18px; }
 
 @media (max-width: 639px) {
-  .scorebox { justify-items: start; width: 100%; }
-  .scorebox__note { text-align: left; }
+  .game-head__right { gap: 14px; }
   .run { grid-template-columns: 36px minmax(0, 1fr) 96px; gap: 8px; }
   .card__head .pick--inline { width: 100%; }
 }
