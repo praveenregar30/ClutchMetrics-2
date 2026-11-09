@@ -1,5 +1,6 @@
-// ClutchMetrics coach dashboard. Reads data/games.json (format in data/README.md) and draws every view from it.
-// The chosen game and the shot filters live in the address, so a view can be shared or reloaded.
+// ClutchMetrics coach dashboard. Reads data/match.json, written by the analysis model's exporter
+// (format in data/MATCH_FORMAT.md), and draws every view from it. "Your team" and the shot filters live in
+// the address, so a view can be shared or reloaded.
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const NS = 'http://www.w3.org/2000/svg';
@@ -11,59 +12,34 @@ const svgEl = (name, attrs = {}, parent) => {
 };
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-const pct = new Intl.NumberFormat(undefined, { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const pct = new Intl.NumberFormat(undefined, { style: 'percent', maximumFractionDigits: 0 });
 const one = new Intl.NumberFormat(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const whole = new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 });
-const dateFmt = new Intl.DateTimeFormat(undefined, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
-const shortDate = new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short' });
-const toDate = (iso) => { const [y, m, d] = iso.split('-').map(Number); return new Date(y, m - 1, d); };
-const signed = (n) => (n > 0 ? `+${n}` : n < 0 ? `−${Math.abs(n)}` : '0');
 const ratio = (a, b) => (b ? a / b : 0);
-const playerLabel = (p) => `No. ${p.no}`;
+const clock = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
+const dateFmt = new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
 
-const state = { data: null, game: null, player: 'all', q: 'all', result: 'all', sort: { key: 'pts', dir: 'descending' } };
+const state = { data: null, team: 0, shotTeam: 'mine', player: 'all', result: 'all', playKind: 'all', heat: 'team',
+  sort: { key: 'pts', dir: 'descending' } };
+const mine = () => state.team;
+const theirs = () => 1 - state.team;
+const role = (team) => (team === state.team ? 'team' : 'opp');
+const code = (team) => state.data.teams[team].code;
 
 // ---------------------------------------------------------------- the address
 function readUrl() {
   const p = new URLSearchParams(location.search);
-  return { game: p.get('game'), player: p.get('player') || 'all', q: p.get('q') || 'all', result: p.get('result') || 'all' };
+  return { team: p.get('team'), player: p.get('player') || 'all', result: p.get('result') || 'all', shotTeam: p.get('shots') || 'mine' };
 }
 function writeUrl() {
   const p = new URLSearchParams();
-  p.set('game', state.game.number);
+  p.set('team', code(state.team));
+  if (state.shotTeam !== 'mine') p.set('shots', state.shotTeam);
   if (state.player !== 'all') p.set('player', state.player);
-  if (state.q !== 'all') p.set('q', state.q);
   if (state.result !== 'all') p.set('result', state.result);
   history.replaceState(null, '', `${location.pathname}?${p}${location.hash}`);
 }
 
-// ---------------------------------------------------------------- numbers for a game
-function totals(game) {
-  const sum = (key) => game.players.reduce((a, p) => a + p[key], 0);
-  return {
-    pts: game.score.team, fgm: sum('fgm'), fga: sum('fga'), tpm: sum('tpm'), tpa: sum('tpa'),
-    ftm: sum('ftm'), fta: sum('fta'), reb: sum('reb'), ast: sum('ast'), tov: sum('tov'),
-  };
-}
-
-// opens another game with the shot filters cleared
-function openGame(number) {
-  if (String(number) === String(state.game.number)) return;
-  state.player = 'all'; state.q = 'all'; state.result = 'all';
-  selectGame(number, true);
-}
-
-// shows one player (or everyone, when picked again) on the shot chart
-function showPlayerShots(no, scroll) {
-  state.player = state.player === String(no) ? 'all' : String(no);
-  $('[data-player-select]').value = state.player;
-  writeUrl();
-  renderShots(true);
-  if (scroll && state.player !== 'all') $('#shots').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
-}
-
-// keeps a tooltip inside its box
 function placeTip(tip, box, left, top) {
   const w = box.getBoundingClientRect().width;
   const half = Math.min(tip.offsetWidth / 2 || 90, w / 2);
@@ -71,180 +47,307 @@ function placeTip(tip, box, left, top) {
   tip.style.top = `${top}px`;
 }
 
+// jumps the video to a moment, a second early so the play can be seen building
+function watch(t) {
+  const v = $('[data-video]');
+  v.currentTime = Math.max(0, t - 1);
+  $('#video').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  v.play().catch(() => {});
+}
+
 // ---------------------------------------------------------------- overview
 function renderOverview() {
-  const g = state.game;
-  const games = state.data.games;
-  $('[data-game-title]').textContent = `Game ${g.number} vs ${g.opponent}`;
-  $('[data-game-meta]').textContent = `${g.home ? 'Home' : 'Away'} · ${dateFmt.format(toDate(g.date))}`;
-  const win = g.score.team > g.score.opp;
-  const result = $('[data-result]');
-  result.className = `result ${win ? 'result--win' : 'result--loss'}`;
-  result.innerHTML = `<span class="result__tag">${win ? 'Won' : 'Lost'}</span>${g.score.team}–${g.score.opp}`;
-  result.setAttribute('aria-label', `${win ? 'Won' : 'Lost'} ${g.score.team} to ${g.score.opp}`);
+  const d = state.data;
+  const me = d.teams[mine()]; const op = d.teams[theirs()];
+  $('[data-meta]').textContent = [d.competition, d.date ? dateFmt.format(new Date(`${d.date}T12:00:00`)) : '', d.venue].filter(Boolean).join(' · ');
+  $('[data-title]').textContent = `${me.name} vs ${op.name}`;
+  $('[data-clip]').textContent = `Analysed clip: ${clock(d.clip.duration_s)} of play (from ${clock(d.clip.source_start_s)} in the source video).`;
 
-  const t = totals(g);
-  const others = games.filter((x) => x !== g).map(totals);
-  const avg = (fn) => (others.length ? others.reduce((a, x) => a + fn(x), 0) / others.length : fn(t));
+  const tv = d.tv_score.readings;
+  const last = tv[tv.length - 1];
+  $('[data-scorebox]').innerHTML = `
+    <div class="scorebox__main" aria-label="Points scored in the clip: ${esc(me.code)} ${me.points}, ${esc(op.code)} ${op.points}">
+      <span class="scorebox__team"><i class="swatch swatch--team"></i>${esc(me.code)}</span>
+      <b>${me.points}<span>–</span>${op.points}</b>
+      <span class="scorebox__team">${esc(op.code)}<i class="swatch swatch--opp"></i></span>
+    </div>
+    <span class="scorebox__note">Points in the clip${last ? ` · TV scoreboard at the end: ${esc(d.teams[0].code)} ${last[1]}–${last[2]} ${esc(d.teams[1].code)}` : ''}</span>`;
+
   const tiles = [
-    { label: 'Points', value: whole.format(t.pts), now: t.pts, base: avg((x) => x.pts), fmt: (d) => one.format(d) },
-    { label: 'Field goals', value: pct.format(ratio(t.fgm, t.fga)), now: ratio(t.fgm, t.fga), base: avg((x) => ratio(x.fgm, x.fga)), fmt: (d) => `${one.format(d * 100)} pts` },
-    { label: 'Three-pointers', value: pct.format(ratio(t.tpm, t.tpa)), now: ratio(t.tpm, t.tpa), base: avg((x) => ratio(x.tpm, x.tpa)), fmt: (d) => `${one.format(d * 100)} pts` },
-    { label: 'Rebounds', value: whole.format(t.reb), now: t.reb, base: avg((x) => x.reb), fmt: (d) => one.format(d) },
-    { label: 'Assists', value: whole.format(t.ast), now: t.ast, base: avg((x) => x.ast), fmt: (d) => one.format(d) },
-    { label: 'Turnovers', value: whole.format(t.tov), now: t.tov, base: avg((x) => x.tov), fmt: (d) => one.format(d), lowerIsBetter: true },
+    { label: 'Points', a: me.points, b: op.points, show: (t) => whole.format(t.points),
+      note: (t) => `${t.points_confirmed} confirmed by the TV scoreboard` },
+    { label: 'Field goals', a: ratio(me.fgm, me.fga), b: ratio(op.fgm, op.fga), show: (t) => `${t.fgm}/${t.fga}`,
+      note: (t) => (t.fga ? `${pct.format(ratio(t.fgm, t.fga))} made` : 'No shots') },
+    { label: 'Three-pointers', a: ratio(me.tpm, me.tpa), b: ratio(op.tpm, op.tpa), show: (t) => `${t.tpm}/${t.tpa}`,
+      note: (t) => (t.tpa ? `${pct.format(ratio(t.tpm, t.tpa))} made` : 'No attempts') },
+    { label: 'Ball control', a: me.ball_control_pct, b: op.ball_control_pct, show: (t) => `${whole.format(t.ball_control_pct)}%`, note: () => 'Share of the time' },
+    { label: 'Passes', a: me.passes, b: op.passes, show: (t) => whole.format(t.passes), note: () => 'Completed to a team-mate' },
+    { label: 'Interceptions', a: me.interceptions, b: op.interceptions, show: (t) => whole.format(t.interceptions), note: () => 'Ball won from the opponent' },
   ];
-  const up = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 2 11 10H1z"/></svg>';
-  const down = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 10 1 2h10z"/></svg>';
   $('[data-kpis]').innerHTML = tiles.map((k) => {
-    const d = k.now - k.base;
-    const better = k.lowerIsBetter ? d < 0 : d > 0;
-    const same = Math.abs(d) < 0.0005;
-    const word = same ? 'same as average' : `${d > 0 ? 'above' : 'below'} average`;
+    const lead = k.a > k.b ? 'is-good' : '';
     return `<article class="kpi">
       <span class="kpi__label">${k.label}</span>
-      <span class="kpi__value">${k.value}</span>
-      <span class="kpi__delta ${same ? '' : better ? 'is-good' : 'is-bad'}">${same ? '' : d > 0 ? up : down}<span>${same ? '' : `<b>${k.fmt(Math.abs(d))}</b> `}${word}</span></span>
+      <span class="kpi__value">${k.show(me)}</span>
+      <span class="kpi__delta ${lead}">${k.note(me)}</span>
+      <span class="kpi__opp"><i class="swatch swatch--opp"></i>${esc(op.code)} <b>${k.show(op)}</b></span>
     </article>`;
   }).join('');
 }
 
-// ---------------------------------------------------------------- shot chart
-const ZONES = ['Paint', 'Mid-range', 'Corner 3', 'Above-break 3'];
-const toCourt = (s) => ({ x: (s.x + 25) * 10, y: s.y * 10 });
+function buildTeamSwitch() {
+  const box = $('[data-team-seg]');
+  box.innerHTML = state.data.teams.map((t, i) => `<button type="button" data-value="${i}" aria-pressed="${String(i === state.team)}" aria-label="View as ${esc(t.name)}">${esc(t.code)}</button>`).join('');
+  box.addEventListener('click', (e) => {
+    const b = e.target.closest('button');
+    if (!b || Number(b.dataset.value) === state.team) return;
+    state.team = Number(b.dataset.value);
+    state.player = 'all';
+    box.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    renderAll(true);
+  });
+}
 
+// ---------------------------------------------------------------- video and timeline
+function playText(p) {
+  if (p.type === 'pass') return { kind: 'Pass', detail: `${p.from} → ${p.to}` };
+  if (p.type === 'interception') return { kind: 'Interception', detail: `${p.player} won it from ${p.from}` };
+  const what = p.kind === 'free_throw' ? 'Free throw' : p.made ? (p.points === 3 ? '3-pointer made' : `${p.points || ''}${p.points ? '-pointer' : 'Shot'} made`) : (p.value === 3 ? '3-point miss' : 'Shot missed');
+  const note = p.made && !p.confirmed ? ' (not confirmed)' : '';
+  return { kind: what + note, detail: `${p.player}${p.distance_m ? ` · ${one.format(p.distance_m)} m from the basket` : ''}` };
+}
+
+function allPlays() {
+  const shots = state.data.shots.map((s) => ({ ...s, type: 'shot' }));
+  return [...state.data.plays, ...shots].sort((a, b) => a.t - b.t);
+}
+
+function renderTimeline() {
+  const d = state.data;
+  const box = $('[data-timeline]');
+  const tip = $('[data-timeline-tip]');
+  box.querySelector('svg')?.remove();
+  const W = Math.max(Math.round(box.clientWidth) || 800, 300);
+  const left = 96; const right = 12; const H = 150;
+  const dur = d.clip.duration_s;
+  const x = (t) => left + ((W - left - right) * t) / dur;
+  const lanes = { shot: 24, interception: 58, pass: 92, control: 124 };
+  const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, role: 'group', 'aria-label': 'Timeline of the clip: shots, interceptions, passes and ball control' });
+  box.prepend(svg);
+  [['Shots', lanes.shot], ['Interceptions', lanes.interception], ['Passes', lanes.pass], ['Ball control', lanes.control]].forEach(([name, y]) => {
+    const t = svgEl('text', { class: 'axis-text', x: 0, y: y + 4 }, svg); t.textContent = name;
+    svgEl('line', { class: 'gridline', x1: left, x2: W - right, y1: y, y2: y }, svg);
+  });
+  for (let s = 0; s <= dur; s += dur > 90 ? 20 : 10) {
+    const t = svgEl('text', { class: 'axis-text', x: x(s), y: H - 2, 'text-anchor': 'middle' }, svg); t.textContent = clock(s);
+  }
+  d.possession.forEach((seg) => {
+    if (seg.team === null) return;
+    svgEl('rect', { class: `ctrl ctrl--${role(seg.team)}`, x: x(seg.t0), y: lanes.control - 7, width: Math.max(x(seg.t1) - x(seg.t0), 1), height: 14 }, svg);
+  });
+  const head = svgEl('line', { class: 'playhead', x1: left, x2: left, y1: 8, y2: lanes.control + 10 }, svg);
+
+  allPlays().forEach((p) => {
+    const cx = x(p.t);
+    const g = svgEl('g', { class: `mark mark--${role(p.team)}`, tabindex: '0', role: 'button' }, svg);
+    const text = playText(p);
+    g.setAttribute('aria-label', `${clock(p.t)} ${code(p.team)} ${text.kind}: ${text.detail}. Watch.`);
+    if (p.type === 'shot') {
+      const y = lanes.shot;
+      svgEl('circle', { class: 'mark__hit', cx, cy: y, r: 14 }, g);
+      if (p.made) svgEl('circle', { class: `mark__dot${p.confirmed ? '' : ' is-open'}`, cx, cy: y, r: 7 }, g);
+      else svgEl('path', { class: 'mark__x', d: `M${cx - 5} ${y - 5}l10 10m0-10l-10 10` }, g);
+    } else if (p.type === 'interception') {
+      const y = lanes.interception;
+      svgEl('circle', { class: 'mark__hit', cx, cy: y, r: 14 }, g);
+      svgEl('path', { class: 'mark__dot', d: `M${cx} ${y - 7}l7 7-7 7-7-7z` }, g);
+    } else {
+      const y = lanes.pass;
+      svgEl('rect', { class: 'mark__hit', x: cx - 6, y: y - 12, width: 12, height: 24 }, g);
+      svgEl('rect', { class: 'mark__dot', x: cx - 2, y: y - 8, width: 4, height: 16, rx: 2 }, g);
+    }
+    const show = () => {
+      tip.innerHTML = `<b>${clock(p.t)} · ${esc(code(p.team))} ${esc(text.kind)}</b><span>${esc(text.detail)}</span>`;
+      tip.hidden = false;
+      const scale = svg.getBoundingClientRect().width / W;
+      placeTip(tip, box, cx * scale, (lanes[p.type] - 10) * scale);
+    };
+    const hide = () => { tip.hidden = true; };
+    g.addEventListener('pointerenter', show); g.addEventListener('pointerleave', hide);
+    g.addEventListener('focus', show); g.addEventListener('blur', hide);
+    g.addEventListener('click', () => watch(p.t));
+    g.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); watch(p.t); } });
+  });
+
+  // clicking empty timeline space also jumps there
+  svg.addEventListener('click', (e) => {
+    if (e.target.closest('.mark')) return;
+    const r = svg.getBoundingClientRect();
+    const t = (((e.clientX - r.left) * (W / r.width)) - left) / (W - left - right) * dur;
+    if (t >= 0 && t <= dur) { $('[data-video]').currentTime = t; }
+  });
+  const v = $('[data-video]');
+  const move = () => { const px = x(Math.min(v.currentTime || 0, dur)); head.setAttribute('x1', px); head.setAttribute('x2', px); };
+  v.ontimeupdate = move;
+  move();
+
+  $('[data-timeline-legend]').innerHTML = `<span><i class="swatch swatch--team"></i>${esc(code(mine()))}</span><span><i class="swatch swatch--opp"></i>${esc(code(theirs()))}</span><span><i class="dot dot--grey"></i>Made</span><span><i class="cross"></i>Missed</span><span><i class="ring ring--grey"></i>Made, not confirmed</span>`;
+
+  // key moments: every shot and interception as a button
+  const keys = allPlays().filter((p) => p.type !== 'pass');
+  $('[data-moments]').innerHTML = keys.map((p) => {
+    const text = playText(p);
+    return `<button class="moment moment--${role(p.team)}" type="button" data-t="${p.t}"><span class="moment__t">${clock(p.t)}</span><b>${esc(code(p.team))} · ${esc(text.kind)}</b><span>${esc(text.detail)}</span></button>`;
+  }).join('');
+}
+
+// ---------------------------------------------------------------- shot chart (FIBA half court, 1 m = 100 units)
+const ZONES = ['Paint', 'Mid-range', 'Corner 3', 'Above-break 3'];
+const toCourt = (s) => ({ x: 750 + s.x * 100, y: s.y * 100 });
+
+function shotTeams() {
+  return state.shotTeam === 'mine' ? [mine()] : state.shotTeam === 'theirs' ? [theirs()] : [0, 1];
+}
 function filteredShots() {
-  return state.game.shots.filter((s) => (state.player === 'all' || String(s.player) === state.player)
-    && (state.q === 'all' || String(s.q) === state.q)
+  const teams = shotTeams();
+  return state.data.shots.filter((s) => s.kind === 'field_goal' && teams.includes(s.team)
+    && (state.player === 'all' || `${s.team}-${s.no}` === state.player)
     && (state.result === 'all' || (state.result === 'made') === s.made));
+}
+
+function buildShotFilters() {
+  const seg = (name, options) => {
+    $(`[data-seg="${name}"]`).innerHTML = options.map(([v, label, aria]) => `<button type="button" data-value="${v}" aria-pressed="${String(state[name] === v)}"${aria ? ` aria-label="${aria}"` : ''}>${label}</button>`).join('');
+  };
+  seg('shotTeam', [['mine', esc(code(mine())), `${code(mine())} shots`], ['theirs', esc(code(theirs())), `${code(theirs())} shots`], ['both', 'Both', 'Both teams']]);
+  seg('result', [['all', 'All', 'All shots'], ['made', 'Made', 'Made shots'], ['missed', 'Missed', 'Missed shots']]);
+  const teams = shotTeams();
+  const ps = state.data.players.filter((p) => teams.includes(p.team));
+  const select = $('[data-player-select]');
+  select.innerHTML = `<option value="all">All players</option>${ps.map((p) => `<option value="${p.team}-${p.no}">${esc(code(p.team))} #${esc(p.no)}</option>`).join('')}`;
+  if (state.player !== 'all' && !ps.some((p) => `${p.team}-${p.no}` === state.player)) state.player = 'all';
+  select.value = state.player;
 }
 
 function renderShots(animate) {
   const layer = $('[data-shot-layer]');
   layer.replaceChildren();
-  layer.classList.toggle('shot-layer', true);
+  layer.classList.add('shot-layer');
   layer.classList.toggle('is-new', Boolean(animate) && !reduced);
-  const shots = filteredShots();
-  shots.forEach((s, i) => {
+  const all = filteredShots();
+  const placed = all.filter((s) => s.x !== null);
+  placed.forEach((s, i) => {
     const { x, y } = toCourt(s);
-    const g = svgEl('g', { class: `shot ${s.made ? 'shot--made' : 'shot--miss'}`, style: `--i: ${i}` }, layer);
-    g.dataset.index = String(state.game.shots.indexOf(s));
-    svgEl('circle', { class: 'shot__hit', cx: x, cy: y, r: 13 }, g);
-    if (s.made) svgEl('circle', { class: 'shot__mark', cx: x, cy: y, r: 7.5 }, g);
-    else svgEl('path', { class: 'shot__mark', d: `M${x - 6} ${y - 6}l12 12m0-12l-12 12` }, g);
+    const g = svgEl('g', { class: `shot shot--${role(s.team)} ${s.made ? 'shot--made' : 'shot--miss'}${s.made && !s.confirmed ? ' is-open' : ''}`, style: `--i: ${i}` }, layer);
+    g.dataset.index = String(state.data.shots.indexOf(s));
+    svgEl('circle', { class: 'shot__hit', cx: x, cy: y, r: 40 }, g);
+    if (s.made) svgEl('circle', { class: 'shot__mark', cx: x, cy: y, r: 22 }, g);
+    else svgEl('path', { class: 'shot__mark', d: `M${x - 18} ${y - 18}l36 36m0-36l-36 36` }, g);
   });
-  if (!shots.length) {
-    const t = svgEl('text', { class: 'empty-shots', x: 250, y: 300, 'text-anchor': 'middle' }, layer);
+  if (!placed.length) {
+    const t = svgEl('text', { class: 'empty-shots', x: 750, y: 760, 'text-anchor': 'middle' }, layer);
     t.textContent = 'No shots match these filters';
   }
-
-  const made = shots.filter((s) => s.made).length;
-  const who = state.player === 'all' ? 'All players' : `No. ${state.player}`;
-  const when = state.q === 'all' ? 'all quarters' : `quarter ${state.q}`;
-  const summary = shots.length ? `${who}, ${when}: ${made} of ${shots.length} made (${pct.format(ratio(made, shots.length))})` : `${who}, ${when}: no shots`;
+  const made = all.filter((s) => s.made).length;
+  const pts = all.reduce((a, s) => a + (s.made ? s.points || 0 : 0), 0);
+  const who = state.player === 'all' ? (state.shotTeam === 'both' ? 'Both teams' : code(shotTeams()[0])) : `${code(Number(state.player[0]))} #${state.player.split('-')[1]}`;
+  const summary = all.length ? `${who}: ${made} of ${all.length} made, ${pts} points` : `${who}: no shots`;
   $('[data-shot-summary]').textContent = summary;
-  $('[data-court-desc]').textContent = `Half court. ${summary}. The table beside it lists the same shots by zone.`;
-
-  // the table by zone: the same shots, readable without the picture
+  $('[data-court-desc]').textContent = `FIBA half court. ${summary}. The table beside it lists the same shots by zone.`;
   const rows = ZONES.map((z) => {
-    const zs = shots.filter((s) => s.zone === z);
-    const m = zs.filter((s) => s.made).length;
-    return { z, m, a: zs.length };
+    const zs = all.filter((s) => s.zone === z);
+    return { z, m: zs.filter((s) => s.made).length, a: zs.length, p: zs.reduce((a, s) => a + (s.made ? s.points || 0 : 0), 0) };
   });
-  const best = Math.max(...rows.map((r) => ratio(r.m, r.a)), 0.01);
+  const best = Math.max(...rows.map((r) => r.p), 1);
   $('[data-zones]').innerHTML = rows.map((r) => `<tr>
-      <th scope="row">${r.z}<span class="zone-bar" aria-hidden="true"><i style="width:${(ratio(r.m, r.a) / best) * 100}%"></i></span></th>
-      <td class="num">${r.m}/${r.a}</td>
-      <td class="num">${r.a ? pct.format(ratio(r.m, r.a)) : '–'}</td>
-    </tr>`).join('') + `<tr class="zones__total"><th scope="row">All zones</th><td class="num">${made}/${shots.length}</td><td class="num">${shots.length ? pct.format(ratio(made, shots.length)) : '–'}</td></tr>`;
-
-  document.querySelectorAll('[data-players] tr').forEach((tr) => tr.classList.toggle('is-picked', tr.dataset.no === state.player));
-  document.querySelectorAll('.pdot').forEach((d) => {
-    d.classList.toggle('is-picked', d.dataset.no === state.player);
-    d.setAttribute('aria-pressed', String(d.dataset.no === state.player));
-  });
+      <th scope="row">${r.z}<span class="zone-bar" aria-hidden="true"><i style="width:${(r.p / best) * 100}%"></i></span></th>
+      <td class="num">${r.m}/${r.a}</td><td class="num">${r.p}</td></tr>`).join('')
+    + `<tr class="zones__total"><th scope="row">All shots</th><td class="num">${made}/${all.length}</td><td class="num">${pts}</td></tr>`;
+  const unplaced = all.filter((s) => s.x === null);
+  $('[data-shots-unplaced]').textContent = unplaced.length
+    ? `Not drawn, because the shooter's position could not be measured: ${unplaced.map((s) => `${clock(s.t)} ${s.player}, ${s.made ? `${s.points} points` : 'missed'}`).join('; ')}.`
+    : '';
+  document.querySelectorAll('[data-players] tr').forEach((tr) => tr.classList.toggle('is-picked', tr.dataset.key === state.player));
   document.querySelectorAll('[data-shots-for]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.shotsFor === state.player)));
 }
 
-function shotTooltip() {
-  const court = $('[data-court]');
-  const tip = $('[data-tip]');
-  const svg = $('[data-court-svg]');
-  const show = (target) => {
-    const g = target.closest('.shot');
+function wireShots() {
+  const court = $('[data-court]'); const tip = $('[data-tip]'); const svg = $('[data-court-svg]');
+  svg.addEventListener('pointermove', (e) => {
+    const g = e.target.closest('.shot');
     if (!g) { tip.hidden = true; return; }
-    const s = state.game.shots[Number(g.dataset.index)];
-    const feet = Math.round(Math.hypot(s.x, s.y - 5.25));
-    tip.innerHTML = `<b>No. ${s.player} · ${s.made ? 'Made' : 'Missed'}</b><span>${s.zone}, ${feet} ft · Q${s.q} · ${s.three ? '3' : '2'} points</span>`;
-    const box = court.getBoundingClientRect();
-    const scale = svg.getBoundingClientRect().width / 500;
+    const s = state.data.shots[Number(g.dataset.index)];
+    const value = s.made ? `${s.points} points${s.confirmed ? ', confirmed by the TV scoreboard' : ', not confirmed'}` : `${s.value || 2}-point attempt`;
+    tip.innerHTML = `<b>${esc(s.player)} · ${s.made ? 'Made' : 'Missed'}</b><span>${s.zone}, ${one.format(s.distance_m)} m · ${clock(s.t)} · ${value}${s.near_line ? ' · close to the line' : ''}</span>`;
+    const scale = svg.getBoundingClientRect().width / 1500;
     const { x, y } = toCourt(s);
-    const left = Math.min(Math.max(x * scale, 90), box.width - 90);
-    tip.style.left = `${left}px`;
-    tip.style.top = `${y * scale}px`;
+    placeTip(tip, court, x * scale, y * scale);
     tip.hidden = false;
-  };
-  svg.addEventListener('pointermove', (e) => show(e.target));
-  svg.addEventListener('pointerleave', () => { tip.hidden = true; });
-}
-
-function buildFilters() {
-  const select = $('[data-player-select]');
-  select.innerHTML = `<option value="all">All players</option>${state.game.players.map((p) => `<option value="${p.no}">${playerLabel(p)} · ${esc(p.pos)}</option>`).join('')}`;
-  if (state.player !== 'all' && !state.game.players.some((p) => String(p.no) === state.player)) state.player = 'all';
-  select.value = state.player;
-
-  const quarters = [...new Set(state.game.shots.map((s) => s.q))].sort((a, b) => a - b);
-  const seg = (name, options) => {
-    const box = $(`[data-seg="${name}"]`);
-    box.innerHTML = options.map(([v, label, aria]) => `<button type="button" data-value="${v}" aria-pressed="${String(state[name] === v)}"${aria ? ` aria-label="${aria}"` : ''}>${label}</button>`).join('');
-  };
-  seg('q', [['all', 'All', 'All quarters'], ...quarters.map((q) => [String(q), q > 4 ? `OT${q - 4}` : `Q${q}`, q > 4 ? `Overtime ${q - 4}` : `Quarter ${q}`])]);
-  seg('result', [['all', 'All', 'All shots'], ['made', 'Made', 'Made shots'], ['missed', 'Missed', 'Missed shots']]);
-}
-
-function wireFilters() {
-  $('[data-player-select]').addEventListener('change', (e) => { state.player = e.target.value; writeUrl(); renderShots(true); });
-  document.querySelectorAll('[data-seg]').forEach((box) => {
-    box.addEventListener('click', (e) => {
-      const b = e.target.closest('button');
-      if (!b) return;
-      state[box.dataset.seg] = b.dataset.value;
-      box.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-      writeUrl();
-      renderShots(true);
-    });
   });
+  svg.addEventListener('pointerleave', () => { tip.hidden = true; });
+  svg.addEventListener('click', (e) => { const g = e.target.closest('.shot'); if (g) watch(state.data.shots[Number(g.dataset.index)].t); });
+  $('[data-player-select]').addEventListener('change', (e) => { state.player = e.target.value; writeUrl(); renderShots(true); });
+  ['shotTeam', 'result'].forEach((name) => $(`[data-seg="${name}"]`).addEventListener('click', (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    state[name] = b.dataset.value;
+    if (name === 'shotTeam') { state.player = 'all'; buildShotFilters(); }
+    $(`[data-seg="${name}"]`).querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.value === state[name])));
+    writeUrl();
+    renderShots(true);
+  }));
+}
+
+function showPlayerShots(key) {
+  state.shotTeam = Number(key[0]) === mine() ? 'mine' : 'theirs';
+  state.player = state.player === key ? 'all' : key;
+  buildShotFilters();
+  writeUrl();
+  renderShots(true);
+  if (state.player !== 'all') $('#shots').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
 }
 
 // ---------------------------------------------------------------- players
 const COLS = [
-  { key: 'no', label: 'Player', sort: (p) => p.no, left: true },
-  { key: 'min', label: 'MIN', title: 'Minutes', sort: (p) => p.min },
+  { key: 'no', label: 'Player', sort: (p) => Number(p.no) || 999, left: true },
+  { key: 'seconds', label: 'TIME', title: 'Time seen on court', sort: (p) => p.seconds },
   { key: 'pts', label: 'PTS', title: 'Points', sort: (p) => p.pts },
-  { key: 'reb', label: 'REB', title: 'Rebounds', sort: (p) => p.reb },
-  { key: 'ast', label: 'AST', title: 'Assists', sort: (p) => p.ast },
-  { key: 'tov', label: 'TOV', title: 'Turnovers', sort: (p) => p.tov },
-  { key: 'fg', label: 'FG', title: 'Field goals made of attempted', sort: (p) => ratio(p.fgm, p.fga) },
-  { key: 'tp', label: '3P', title: 'Three-pointers made of attempted', sort: (p) => ratio(p.tpm, p.tpa) },
-  { key: 'ft', label: 'FT', title: 'Free throws made of attempted', sort: (p) => ratio(p.ftm, p.fta) },
-  { key: 'pm', label: '+/−', title: 'Plus-minus', sort: (p) => p.pm },
+  { key: 'fg', label: 'FG', title: 'Field goals made of attempted', sort: (p) => p.fgm * 100 + p.fga },
+  { key: 'tp', label: '3P', title: 'Three-pointers made of attempted', sort: (p) => p.tpm * 100 + p.tpa },
+  { key: 'passes', label: 'PASS', title: 'Passes made', sort: (p) => p.passes },
+  { key: 'received', label: 'REC', title: 'Passes received', sort: (p) => p.received },
+  { key: 'int', label: 'INT', title: 'Interceptions', sort: (p) => p.int },
+  { key: 'ball_s', label: 'BALL', title: 'Seconds with the ball', sort: (p) => p.ball_s },
+  { key: 'distance_m', label: 'DIST', title: 'Metres covered', sort: (p) => p.distance_m },
+  { key: 'top_kmh', label: 'TOP', title: 'Top speed in km/h', sort: (p) => p.top_kmh || 0 },
 ];
 
 function renderPlayers() {
+  const team = mine();
+  $('[data-players-title]').textContent = `Players: ${state.data.teams[team].name}`;
   const arrow = '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M5 8 1 2h8z"/></svg>';
-  $('[data-players-head]').innerHTML = `<tr>${COLS.map((c) => `<th scope="col" class="${c.left ? '' : 'num'}"${state.sort.key === c.key ? ` aria-sort="${state.sort.dir}"` : ''}><button class="sort" type="button" data-sort="${c.key}"${c.title ? ` aria-label="Sort by ${c.title.toLowerCase()}"` : ' aria-label="Sort by jersey number"'}>${c.label}${arrow}</button></th>`).join('')}<th scope="col"><span class="visually-hidden">Shot chart</span></th></tr>`;
+  $('[data-players-head]').innerHTML = `<tr>${COLS.map((c) => `<th scope="col" class="${c.left ? '' : 'num'}"${state.sort.key === c.key ? ` aria-sort="${state.sort.dir}"` : ''}${c.title ? ` title="${c.title}"` : ''}><button class="sort" type="button" data-sort="${c.key}" aria-label="Sort by ${c.title ? c.title.toLowerCase() : 'jersey number'}">${c.label}${arrow}</button></th>`).join('')}<th scope="col"><span class="visually-hidden">Views</span></th></tr>`;
   const col = COLS.find((c) => c.key === state.sort.key);
   const dir = state.sort.dir === 'ascending' ? 1 : -1;
-  const rows = [...state.game.players].sort((a, b) => (col.sort(a) - col.sort(b)) * dir || b.pts - a.pts);
-  const frac = (m, a) => `${m}/${a}`;
-  $('[data-players]').innerHTML = rows.map((p) => `<tr data-no="${p.no}">
-      <td class="who"><b>${playerLabel(p)}</b><span>${esc(p.pos)}${p.starter ? ' · Starter' : ''}</span></td>
-      <td class="num">${p.min}</td><td class="num"><b>${p.pts}</b></td><td class="num">${p.reb}</td><td class="num">${p.ast}</td><td class="num">${p.tov}</td>
-      <td class="num">${frac(p.fgm, p.fga)}</td><td class="num">${frac(p.tpm, p.tpa)}</td><td class="num">${frac(p.ftm, p.fta)}</td>
-      <td class="num ${p.pm >= 0 ? 'pm-pos' : 'pm-neg'}">${signed(p.pm)}</td>
-      <td><button class="mini-btn" type="button" data-shots-for="${p.no}" aria-pressed="false" aria-label="Show shots for number ${p.no}">Shots</button></td>
-    </tr>`).join('');
+  const rows = state.data.players.filter((p) => p.team === team).sort((a, b) => (col.sort(a) - col.sort(b)) * dir || b.pts - a.pts);
+  const u = state.data.teams[team].unidentified || {};
+  const cell = (v, fmt = (x) => x) => (v === null || v === undefined ? '–' : fmt(v));
+  $('[data-players]').innerHTML = rows.map((p) => {
+    const key = `${p.team}-${p.no}`;
+    return `<tr data-key="${key}">
+      <td class="who"><b>No. ${esc(p.no)}</b><span>${esc(code(p.team))}</span></td>
+      <td class="num">${clock(p.seconds)}</td><td class="num"><b>${p.pts}</b></td>
+      <td class="num">${p.fgm}/${p.fga}</td><td class="num">${p.tpm}/${p.tpa}</td>
+      <td class="num">${p.passes}</td><td class="num">${p.received}</td><td class="num">${p.int}</td>
+      <td class="num">${cell(p.ball_s, (v) => `${one.format(v)} s`)}</td>
+      <td class="num">${whole.format(p.distance_m)} m</td><td class="num">${cell(p.top_kmh, (v) => `${one.format(v)}`)}</td>
+      <td class="views"><button class="mini-btn" type="button" data-shots-for="${key}" aria-pressed="false" aria-label="Show shots for number ${esc(p.no)}">Shots</button><button class="mini-btn" type="button" data-map-for="${key}" aria-label="Show where number ${esc(p.no)} moved">Map</button></td>
+    </tr>`;
+  }).join('') + (u.seconds ? `<tr class="row--muted">
+      <td class="who"><b>Not identified</b><span>Number not readable</span></td>
+      <td class="num">${clock(u.seconds)}</td><td class="num">${u.pts || 0}</td><td class="num">${u.fgm || 0}/${u.fga || 0}</td><td class="num">${u.tpm || 0}/${u.tpa || 0}</td>
+      <td class="num">${u.passes || 0}</td><td class="num">${u.received || 0}</td><td class="num">${u.int || 0}</td>
+      <td class="num">${one.format(u.ball_s || 0)} s</td><td class="num">${whole.format(u.distance_m || 0)} m</td><td class="num">–</td><td></td></tr>` : '');
   renderShots(false);
 }
 
@@ -253,316 +356,192 @@ function wirePlayers() {
     const b = e.target.closest('[data-sort]');
     if (!b) return;
     const key = b.dataset.sort;
-    state.sort = state.sort.key === key
-      ? { key, dir: state.sort.dir === 'descending' ? 'ascending' : 'descending' }
-      : { key, dir: key === 'no' || key === 'tov' ? 'ascending' : 'descending' };
+    state.sort = state.sort.key === key ? { key, dir: state.sort.dir === 'descending' ? 'ascending' : 'descending' }
+      : { key, dir: key === 'no' ? 'ascending' : 'descending' };
     renderPlayers();
     $(`[data-sort="${key}"]`).focus();
   });
   $('[data-players]').addEventListener('click', (e) => {
-    const b = e.target.closest('[data-shots-for]');
-    if (b) showPlayerShots(b.dataset.shotsFor, true);
+    const s = e.target.closest('[data-shots-for]');
+    if (s) showPlayerShots(s.dataset.shotsFor);
+    const m = e.target.closest('[data-map-for]');
+    if (m) { state.heat = m.dataset.mapFor; $('[data-heat-select]').value = state.heat; renderHeat(); $('#movement').scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }); }
   });
 }
 
-// ---------------------------------------------------------------- where the points came from
-function pointsBySource(g) {
-  const zone = (names) => {
-    const zs = g.shots.filter((s) => names.includes(s.zone));
-    return { m: zs.filter((s) => s.made).length, a: zs.length };
+// ---------------------------------------------------------------- full court drawing (metres, 1 m = 100 units)
+function drawFullCourt(svg) {
+  const g = svgEl('g', { class: 'fc' }, svg);
+  svgEl('rect', { class: 'fc__floor', width: 2800, height: 1500, rx: 8 }, g);
+  const arc = (side) => {
+    const bx = side ? 2800 - 157.5 : 157.5; const s = side ? -1 : 1;
+    return `M${side ? 2800 : 0} 90H${bx + s * 141.5}A675 675 0 0 ${side ? 0 : 1} ${bx + s * 141.5} 1410H${side ? 2800 : 0}`;
   };
-  const paint = zone(['Paint']);
-  const mid = zone(['Mid-range']);
-  const three = zone(['Corner 3', 'Above-break 3']);
-  const ft = { m: g.players.reduce((a, p) => a + p.ftm, 0), a: g.players.reduce((a, p) => a + p.fta, 0) };
-  return [
-    { label: 'Paint', pts: paint.m * 2, ...paint },
-    { label: 'Mid-range', pts: mid.m * 2, ...mid },
-    { label: 'Three-pointers', pts: three.m * 3, ...three },
-    { label: 'Free throws', pts: ft.m, ...ft },
-  ];
+  const d = [
+    'M0 0H2800V1500H0Z', 'M1400 0V1500', 'M1220 750A180 180 0 0 0 1580 750A180 180 0 0 0 1220 750',
+    'M0 505H580V995H0', 'M580 570A180 180 0 0 1 580 930', 'M2800 505H2220V995H2800', 'M2220 570A180 180 0 0 0 2220 930',
+    arc(0), arc(1),
+  ].join('');
+  svgEl('path', { class: 'fc__line', d }, g);
+  svgEl('circle', { class: 'fc__rim', cx: 157.5, cy: 750, r: 22.5 }, g);
+  svgEl('circle', { class: 'fc__rim', cx: 2642.5, cy: 750, r: 22.5 }, g);
+  return g;
 }
 
-function renderScoring(animate) {
-  const box = $('[data-mix]');
-  const rows = pointsBySource(state.game);
-  const others = state.data.games.filter((g) => g !== state.game).map(pointsBySource);
-  const total = rows.reduce((a, r) => a + r.pts, 0);
-  rows.forEach((r, i) => { r.avg = others.length ? others.reduce((a, o) => a + o[i].pts, 0) / others.length : null; });
-  const max = Math.max(...rows.flatMap((r) => [r.pts, r.avg ?? 0]), 1);
-  $('[data-mix-sub]').textContent = `${total} points in this game, split by shot type.`;
-  box.classList.toggle('is-new', Boolean(animate) && !reduced);
-  box.innerHTML = rows.map((r) => {
-    const share = ratio(r.pts, total);
-    const avgText = r.avg === null ? '' : ` Average of the other games: ${one.format(r.avg)}.`;
-    return `<div class="mix__row">
-      <div class="mix__name"><b>${r.label}</b><span>${r.m} of ${r.a} made</span></div>
-      <div class="mix__track" role="img" aria-label="${r.label}: ${r.pts} points, ${pct.format(share)} of the total.${avgText}">
-        <span class="mix__bar" style="width:${(r.pts / max) * 100}%"></span>
-        ${r.avg === null ? '' : `<span class="mix__avg" style="left:${(r.avg / max) * 100}%"></span>`}
-      </div>
-      <div class="mix__val"><b>${r.pts}</b><span>${pct.format(share)}</span></div>
-    </div>`;
-  }).join('');
+// ---------------------------------------------------------------- heatmap
+function buildHeatSelect() {
+  const sel = $('[data-heat-select]');
+  const opts = [['team', `${code(mine())}: whole team`], ['opp', `${code(theirs())}: whole team`],
+    ...state.data.players.filter((p) => p.team === mine()).map((p) => [`${p.team}-${p.no}`, `${code(p.team)} #${p.no}`]),
+    ...state.data.players.filter((p) => p.team === theirs()).map((p) => [`${p.team}-${p.no}`, `${code(p.team)} #${p.no}`])];
+  sel.innerHTML = opts.map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join('');
+  if (!opts.some(([v]) => v === state.heat)) state.heat = 'team';
+  sel.value = state.heat;
 }
 
-// ---------------------------------------------------------------- shot volume and accuracy
-function renderShooters() {
-  const box = $('[data-shooters]');
-  const tip = $('[data-shooters-tip]');
+function renderHeat() {
+  const d = state.data.heat;
+  const box = $('[data-heat]');
+  const tip = $('[data-heat-tip]');
   box.querySelector('svg')?.remove();
-  tip.hidden = true;
-  const ps = state.game.players.filter((p) => p.fga > 0).sort((a, b) => b.fga - a.fga);
-  const W = Math.max(Math.round(box.clientWidth) || 520, 280); const H = W < 480 ? 280 : 320;
-  const top = 18; const bottom = 46; const left = 46; const right = 18;
-  const step = Math.max(...ps.map((p) => p.fga), 1) > 12 ? 5 : 2;
-  const xmax = Math.max(Math.ceil(Math.max(...ps.map((p) => p.fga), 1) / step) * step, step);
-  const x = (v) => left + ((W - left - right) * v) / xmax;
-  const y = (v) => top + (H - top - bottom) * (1 - v);
-  const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, role: 'group', 'aria-label': 'Shots attempted and field goal percentage for each player' });
-  box.prepend(svg);
-  [0, 0.25, 0.5, 0.75, 1].forEach((v) => {
-    svgEl('line', { class: 'gridline', x1: left, x2: W - right, y1: y(v), y2: y(v) }, svg);
-    const t = svgEl('text', { class: 'axis-text', x: left - 8, y: y(v) + 4, 'text-anchor': 'end' }, svg);
-    t.textContent = `${v * 100}%`;
-  });
-  for (let v = 0; v <= xmax; v += step) {
-    const t = svgEl('text', { class: 'axis-text', x: x(v), y: H - 24, 'text-anchor': 'middle' }, svg);
-    t.textContent = v;
+  let grid; let team; let label;
+  if (state.heat === 'team' || state.heat === 'opp') {
+    team = state.heat === 'team' ? mine() : theirs();
+    grid = d.teams[team]; label = `${state.data.teams[team].name}, all players`;
+  } else {
+    team = Number(state.heat[0]); grid = d.players[state.heat] || [];
+    label = `${code(team)} #${state.heat.split('-')[1]}`;
   }
-  const xt = svgEl('text', { class: 'axis-title', x: (left + W - right) / 2, y: H - 4, 'text-anchor': 'middle' }, svg);
-  xt.textContent = 'Shots attempted';
-  const t = totals(state.game);
-  const ty = y(ratio(t.fgm, t.fga));
-  svgEl('line', { class: 'avg-line', x1: left, x2: W - right, y1: ty, y2: ty }, svg);
-  $('[data-team-fg]').textContent = pct.format(ratio(t.fgm, t.fga));
-
-  ps.forEach((p) => {
-    const cx = x(p.fga); const cy = y(ratio(p.fgm, p.fga));
-    const g = svgEl('g', { class: `pdot${String(p.no) === state.player ? ' is-picked' : ''}`, tabindex: '0', role: 'button', 'aria-pressed': String(String(p.no) === state.player),
-      'aria-label': `Number ${p.no}, ${p.pos}: ${p.fgm} of ${p.fga} made, ${pct.format(ratio(p.fgm, p.fga))}. Show on the shot chart.` }, svg);
-    g.dataset.no = String(p.no);
-    svgEl('circle', { class: 'pdot__hit', cx, cy, r: 20 }, g);
-    svgEl('circle', { class: 'pdot__mark', cx, cy, r: 13 }, g);
-    const n = svgEl('text', { class: 'pdot__no', x: cx, y: cy + 4.5, 'text-anchor': 'middle' }, g);
-    n.textContent = p.no;
-    const show = () => {
-      tip.innerHTML = `<b>No. ${p.no} · ${esc(p.pos)}</b><span>${p.fgm} of ${p.fga} made (${pct.format(ratio(p.fgm, p.fga))}) · ${p.pts} points</span>`;
-      tip.hidden = false;
-      const scale = svg.getBoundingClientRect().width / W;
-      placeTip(tip, box, cx * scale, (cy - 12) * scale);
-    };
-    const hide = () => { tip.hidden = true; };
-    g.addEventListener('pointerenter', show);
-    g.addEventListener('pointerleave', hide);
-    g.addEventListener('focus', show);
-    g.addEventListener('blur', hide);
-    g.addEventListener('click', () => showPlayerShots(p.no, true));
-    g.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showPlayerShots(p.no, true); } });
+  const max = Math.max(...grid.flat(), 0.001);
+  const total = grid.flat().reduce((a, v) => a + v, 0);
+  const svg = svgEl('svg', { viewBox: '-20 -20 2840 1540', role: 'img', 'aria-label': `Heatmap of where ${label} spent time on the court` });
+  box.prepend(svg);
+  drawFullCourt(svg);
+  const cells = svgEl('g', { class: `heat__cells heat--${role(team)}` }, svg);
+  grid.forEach((row, r) => row.forEach((v, c) => {
+    if (v <= 0) return;
+    const rect = svgEl('rect', { x: c * 100 + 4, y: r * 100 + 4, width: 92, height: 92, rx: 10, style: `opacity:${(0.18 + 0.82 * Math.sqrt(v / max)).toFixed(3)}` }, cells);
+    rect.dataset.v = v; rect.dataset.c = c; rect.dataset.r = r;
+  }));
+  svgEl('path', { class: 'fc__line fc__line--top', d: 'M0 0H2800V1500H0Z' }, svg);
+  svg.addEventListener('pointermove', (e) => {
+    const rect = e.target.closest('rect[data-v]');
+    if (!rect) { tip.hidden = true; return; }
+    const v = Number(rect.dataset.v);
+    tip.innerHTML = `<b>${one.format(v)} s here</b><span>${pct.format(v / total)} of ${esc(label)}'s time</span>`;
+    tip.hidden = false;
+    const scale = svg.getBoundingClientRect().width / 2840;
+    placeTip(tip, box, (Number(rect.dataset.c) * 100 + 70) * scale, (Number(rect.dataset.r) * 100 + 20) * scale);
   });
+  svg.addEventListener('pointerleave', () => { tip.hidden = true; });
+  $('[data-heat-sub]').textContent = `${label}: time spent in each square metre of the court (${one.format(total)} s in total). Both ends of the court are shown, because teams attack and defend.`;
+  $('[data-heat-key]').innerHTML = `<span>Less time</span><i class="ramp ramp--${role(team)}" aria-hidden="true"></i><span>More time</span>`;
 }
 
-// ---------------------------------------------------------------- season trends
-const TRENDS = [
-  { label: 'Field goal %', get: (t) => ratio(t.fgm, t.fga), fmt: (v) => pct.format(v) },
-  { label: 'Three-point %', get: (t) => ratio(t.tpm, t.tpa), fmt: (v) => pct.format(v) },
-  { label: 'Free throw %', get: (t) => ratio(t.ftm, t.fta), fmt: (v) => pct.format(v) },
-  { label: 'Rebounds', get: (t) => t.reb, fmt: (v) => one.format(v).replace(/\.0$/, '') },
-  { label: 'Assists', get: (t) => t.ast, fmt: (v) => one.format(v).replace(/\.0$/, '') },
-  { label: 'Turnovers', note: 'lower is better', get: (t) => t.tov, fmt: (v) => one.format(v).replace(/\.0$/, '') },
-];
-
-function renderTrends() {
-  const games = state.data.games;
-  const box = $('[data-trends]');
-  const all = games.map(totals);
-  const cur = games.indexOf(state.game);
-  box.innerHTML = TRENDS.map((m) => {
-    const vals = all.map(m.get);
-    const avg = vals.reduce((a, v) => a + v, 0) / vals.length;
-    return `<article class="trend">
-      <span class="trend__label">${m.label}${m.note ? ` <i>(${m.note})</i>` : ''}</span>
-      <span class="trend__value">${m.fmt(vals[cur])}</span>
-      <span class="trend__avg">Season average ${m.fmt(avg)}</span>
-      <div class="trend__chart"><div class="tip" role="tooltip" hidden></div></div>
-    </article>`;
-  }).join('');
-
-  box.querySelectorAll('.trend__chart').forEach((chart, k) => {
-    const m = TRENDS[k];
-    const vals = all.map(m.get);
-    const avg = vals.reduce((a, v) => a + v, 0) / vals.length;
-    const tip = chart.querySelector('.tip');
-    const W = Math.max(Math.round(chart.clientWidth) || 220, 160); const H = 96;
-    const top = 10; const bottom = 24; const side = 10;
-    let lo = Math.min(...vals); let hi = Math.max(...vals);
-    const pad = (hi - lo || Math.abs(hi) || 1) * 0.2; lo -= pad; hi += pad;
-    const x = (i) => side + (games.length === 1 ? (W - 2 * side) / 2 : ((W - 2 * side) * i) / (games.length - 1));
-    const y = (v) => top + (H - top - bottom) * (1 - (v - lo) / (hi - lo));
-    const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, role: 'group',
-      'aria-label': `${m.label} by game: ${games.map((g, i) => `game ${g.number} ${m.fmt(vals[i])}`).join(', ')}. Season average ${m.fmt(avg)}.` });
-    chart.prepend(svg);
-    svgEl('line', { class: 'avg-line', x1: 0, x2: W, y1: y(avg), y2: y(avg) }, svg);
-    svgEl('path', { class: 'spark', d: vals.map((v, i) => `${i ? 'L' : 'M'}${x(i)} ${y(v)}`).join('') }, svg);
-    games.forEach((g, i) => {
-      svgEl('circle', { class: `pt${i === cur ? ' is-current' : ''}`, cx: x(i), cy: y(vals[i]), r: i === cur ? 6 : 4 }, svg);
-      const t = svgEl('text', { class: `axis-text${i === cur ? ' is-current' : ''}`, x: x(i), y: H - 4, 'text-anchor': i === 0 ? 'start' : i === games.length - 1 ? 'end' : 'middle' }, svg);
-      t.textContent = `G${g.number}`;
-    });
-    const half = (W - 2 * side) / Math.max(games.length - 1, 1) / 2;
-    games.forEach((g, i) => {
-      const hit = svgEl('rect', { class: 'hit', x: Math.max(x(i) - half, 0), y: 0, width: Math.min(half * 2, W), height: H }, svg);
-      hit.addEventListener('pointerenter', () => {
-        tip.innerHTML = `<b>Game ${g.number} vs ${esc(g.opponent)}</b><span>${m.label}: ${m.fmt(vals[i])}</span>`;
-        tip.hidden = false;
-        const scale = svg.getBoundingClientRect().width / W;
-        placeTip(tip, chart, x(i) * scale, (y(vals[i]) - 4) * scale);
-      });
-      hit.addEventListener('pointerleave', () => { tip.hidden = true; });
-      hit.addEventListener('click', () => openGame(g.number));
-    });
-  });
-}
-
-// ---------------------------------------------------------------- lineups
-function renderLineups(animate) {
-  const box = $('[data-lineups]');
-  const rows = [...state.game.lineups].sort((a, b) => b.pm - a.pm);
-  const max = Math.max(...rows.map((l) => Math.abs(l.pm)), 1);
+// ---------------------------------------------------------------- distance and speed
+function renderRuns(animate) {
+  const ps = state.data.players.filter((p) => p.team === mine()).sort((a, b) => b.distance_m - a.distance_m);
+  const max = Math.max(...ps.map((p) => p.distance_m), 1);
+  const box = $('[data-runs]');
   box.classList.toggle('is-new', Boolean(animate) && !reduced);
-  box.innerHTML = rows.map((l) => {
-    const w = (Math.abs(l.pm) / max) * 36;
-    const pos = l.pm >= 0;
-    const label = `<span class="lineup__val" style="${pos ? `left:calc(50% + ${w}% + 8px)` : `right:calc(50% + ${w}% + 8px)`}">${signed(l.pm)}</span>`;
-    return `<div class="lineup">
-      <div class="lineup__name"><b>${esc(l.name)}</b><span>${l.min} min · No. ${l.players.join(', ')}</span></div>
-      <div class="lineup__track" role="img" aria-label="${esc(l.name)}: ${pos ? 'plus' : 'minus'} ${Math.abs(l.pm)} in ${l.min} minutes">
-        ${l.pm ? `<span class="lineup__bar lineup__bar--${pos ? 'pos' : 'neg'}" style="width:${w}%"></span>` : ''}${label}
+  box.innerHTML = ps.map((p) => `<div class="run">
+      <span class="run__no">#${esc(p.no)}</span>
+      <div class="run__track" role="img" aria-label="Number ${esc(p.no)}: ${whole.format(p.distance_m)} metres, top speed ${p.top_kmh ? one.format(p.top_kmh) : 'unknown'} km/h">
+        <span class="run__bar" style="width:${(p.distance_m / max) * 100}%"></span>
       </div>
+      <span class="run__val"><b>${whole.format(p.distance_m)} m</b><span>${p.top_kmh ? `top ${one.format(p.top_kmh)} km/h` : 'top –'}</span></span>
+    </div>`).join('');
+}
+
+// ---------------------------------------------------------------- ball control and tally
+function renderControl(animate) {
+  const me = state.data.teams[mine()]; const op = state.data.teams[theirs()];
+  const box = $('[data-control]');
+  box.classList.toggle('is-new', Boolean(animate) && !reduced);
+  box.innerHTML = `<div class="control__nums"><span><b>${whole.format(me.ball_control_pct)}%</b> ${esc(me.code)}</span><span>${esc(op.code)} <b>${whole.format(op.ball_control_pct)}%</b></span></div>
+    <div class="control__bar" role="img" aria-label="Ball control: ${esc(me.code)} ${whole.format(me.ball_control_pct)} percent, ${esc(op.code)} ${whole.format(op.ball_control_pct)} percent">
+      <span class="control__me" style="width:${me.ball_control_pct}%"></span><span class="control__op" style="width:${op.ball_control_pct}%"></span>
     </div>`;
-  }).join('');
+  const rows = [['Passes', 'passes'], ['Interceptions', 'interceptions'], ['Field goals made', 'fgm'], ['Three-pointers made', 'tpm'], ['Points in the clip', 'points'], ['Distance (m)', 'distance_m']];
+  $('[data-tally]').innerHTML = `<table class="table table--tally"><thead><tr><th scope="col"></th><th scope="col" class="num">${esc(me.code)}</th><th scope="col" class="num">${esc(op.code)}</th></tr></thead><tbody>${
+    rows.map(([l, k]) => `<tr><th scope="row">${l}</th><td class="num${me[k] > op[k] ? ' is-lead' : ''}">${whole.format(me[k])}</td><td class="num${op[k] > me[k] ? ' is-lead' : ''}">${whole.format(op[k])}</td></tr>`).join('')}</tbody></table>
+    <p class="fine">Ball holder known in ${whole.format(state.data.quality.ball_holder_known_pct)}% of frames; between holders the last team in control keeps it.</p>`;
 }
 
-// ---------------------------------------------------------------- quarters
-function renderQuarters(animate) {
-  const qs = state.game.quarters;
-  const box = $('[data-quarters]');
-  box.parentElement.classList.toggle('is-new', Boolean(animate) && !reduced);
-  const W = Math.max(Math.round(box.clientWidth) || 520, 280); const H = 220; const top = 22; const bottom = 28; const left = 28;
-  const max = Math.ceil(Math.max(...qs.flatMap((q) => [q.team, q.opp])) / 10) * 10;
-  const y = (v) => top + (H - top - bottom) * (1 - v / max);
-  const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': `Points by quarter. ${qs.map((q) => `${q.q > 4 ? `Overtime ${q.q - 4}` : `Quarter ${q.q}`}: your team ${q.team}, opponent ${q.opp}`).join('. ')}.` });
-  [0, max / 2, max].forEach((v) => {
-    svgEl('line', { class: 'gridline', x1: left, x2: W, y1: y(v), y2: y(v) }, svg);
-    const t = svgEl('text', { class: 'axis-text', x: left - 8, y: y(v) + 4, 'text-anchor': 'end' }, svg);
-    t.textContent = v;
-  });
-  const slot = (W - left) / qs.length;
-  const bw = Math.min(40, slot * 0.3);
-  const bar = (x, v, cls) => {
-    const h = y(0) - y(v);
-    const r = Math.min(4, h / 2);
-    svgEl('path', { class: cls, d: `M${x} ${y(0)}V${y(v) + r}Q${x} ${y(v)} ${x + r} ${y(v)}H${x + bw - r}Q${x + bw} ${y(v)} ${x + bw} ${y(v) + r}V${y(0)}Z` }, svg);
-    const t = svgEl('text', { class: 'val', x: x + bw / 2, y: y(v) - 6, 'text-anchor': 'middle' }, svg);
-    t.textContent = v;
-  };
-  qs.forEach((q, i) => {
-    const cx = left + slot * i + slot / 2;
-    bar(cx - bw - 1, q.team, 'bar-team');
-    bar(cx + 1, q.opp, 'bar-opp');
-    const t = svgEl('text', { class: 'axis-text', x: cx, y: H - 6, 'text-anchor': 'middle' }, svg);
-    t.textContent = q.q > 4 ? `OT${q.q - 4}` : `Q${q.q}`;
-  });
-  box.replaceChildren(svg);
-
-  $('[data-q-head]').innerHTML = `<tr><th scope="col">Quarter</th>${qs.map((q) => `<th scope="col" class="num">${q.q > 4 ? `OT${q.q - 4}` : `Q${q.q}`}</th>`).join('')}</tr>`;
-  const row = (label, key) => `<tr><th scope="row">${label}</th>${qs.map((q) => `<td class="num">${q[key]}</td>`).join('')}</tr>`;
-  $('[data-q-body]').innerHTML = `<tr><th scope="row">Margin</th>${qs.map((q) => `<td class="num">${signed(q.team - q.opp)}</td>`).join('')}</tr>${row('Turnovers', 'tov')}${row('Fouls', 'fouls')}`;
-}
-
-// ---------------------------------------------------------------- season line
-function renderSeason() {
-  const games = state.data.games;
-  const box = $('[data-season]');
-  const tip = $('[data-season-tip]');
+// ---------------------------------------------------------------- passing network
+function renderNetwork() {
+  const net = state.data.pass_network[mine()];
+  const box = $('[data-net]');
+  const tip = $('[data-net-tip]');
   box.querySelector('svg')?.remove();
-  const W = Math.max(Math.round(box.clientWidth) || 900, 300); const H = W < 600 ? 230 : 260; const top = 20; const bottom = 34; const left = 36; const right = 80;
-  const values = games.flatMap((g) => [g.score.team, g.score.opp]);
-  const lo = Math.floor((Math.min(...values) - 5) / 10) * 10;
-  const hi = Math.ceil((Math.max(...values) + 5) / 10) * 10;
-  const x = (i) => left + (games.length === 1 ? (W - left - right) / 2 : ((W - left - right) * i) / (games.length - 1));
-  const y = (v) => top + (H - top - bottom) * (1 - (v - lo) / (hi - lo));
-  const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, role: 'group', 'aria-label': 'Points scored and allowed by game' });
+  const W = Math.max(Math.round(box.clientWidth) || 420, 260); const H = Math.min(W, 380);
+  const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, role: 'group', 'aria-label': `Passing network of ${state.data.teams[mine()].name}` });
   box.prepend(svg);
-  const step = (W - left - right) / Math.max(games.length - 1, 1);
-  const span = (i) => { const a = Math.max(x(i) - step / 2 + 4, left + 4); const b = Math.min(x(i) + step / 2 - 4, W - 4); return { x: a, width: b - a }; };
-  games.forEach((g, i) => svgEl('rect', { class: `band${g === state.game ? ' is-current' : ''}`, ...span(i), y: top - 8, height: H - top - bottom + 8, rx: 8 }, svg));
-  const ticks = 4;
-  for (let k = 0; k <= ticks; k += 1) {
-    const v = lo + ((hi - lo) * k) / ticks;
-    svgEl('line', { class: 'gridline', x1: left, x2: W - right + 20, y1: y(v), y2: y(v) }, svg);
-    const t = svgEl('text', { class: 'axis-text', x: left - 8, y: y(v) + 4, 'text-anchor': 'end' }, svg);
-    t.textContent = whole.format(v);
-  }
-  const path = (key) => games.map((g, i) => `${i ? 'L' : 'M'}${x(i)} ${y(g.score[key])}`).join('');
-  svgEl('path', { class: 'series series--opp', d: path('opp') }, svg);
-  svgEl('path', { class: 'series series--team', d: path('team') }, svg);
-  const cross = svgEl('line', { class: 'crosshair', y1: top - 8, y2: H - bottom, visibility: 'hidden' }, svg);
-  games.forEach((g, i) => {
-    svgEl('circle', { class: 'pt pt--opp', cx: x(i), cy: y(g.score.opp), r: 5 }, svg);
-    svgEl('circle', { class: 'pt pt--team', cx: x(i), cy: y(g.score.team), r: 5 }, svg);
-    const t = svgEl('text', { class: `axis-text${g === state.game ? ' is-current' : ''}`, x: x(i), y: H - 10, 'text-anchor': 'middle' }, svg);
-    t.textContent = `G${g.number}`;
+  const defs = svgEl('defs', {}, svg);
+  const mk = svgEl('marker', { id: 'arrow', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 5, markerHeight: 5, orient: 'auto-start-reverse' }, defs);
+  svgEl('path', { d: 'M0 0L10 5L0 10z', class: 'net__head' }, mk);
+  const n = net.nodes.length;
+  const R = Math.min(W, H) / 2 - 40; const cx = W / 2; const cy = H / 2;
+  const pos = Object.fromEntries(net.nodes.map((no, i) => {
+    const a = -Math.PI / 2 + (2 * Math.PI * i) / Math.max(n, 1);
+    return [no, { x: cx + R * Math.cos(a), y: cy + R * Math.sin(a) }];
+  }));
+  const maxC = Math.max(...net.edges.map((e) => e.count), 1);
+  net.edges.forEach((e) => {
+    const a = pos[e.from]; const b = pos[e.to];
+    const dx = b.x - a.x; const dy = b.y - a.y; const len = Math.hypot(dx, dy) || 1;
+    const ux = dx / len; const uy = dy / len; const nr = 24;
+    const sx = a.x + ux * nr; const sy = a.y + uy * nr; const ex = b.x - ux * (nr + 4); const ey = b.y - uy * (nr + 4);
+    const bend = 26; const mx = (sx + ex) / 2 - uy * bend; const my = (sy + ey) / 2 + ux * bend;
+    const g = svgEl('g', { class: 'net__edge', tabindex: '0' }, svg);
+    g.setAttribute('aria-label', `Number ${e.from} to number ${e.to}: ${e.count} pass${e.count > 1 ? 'es' : ''}`);
+    svgEl('path', { class: 'net__hit', d: `M${sx} ${sy}Q${mx} ${my} ${ex} ${ey}` }, g);
+    svgEl('path', { class: `net__line net__line--${role(mine())}`, d: `M${sx} ${sy}Q${mx} ${my} ${ex} ${ey}`, 'stroke-width': 1.5 + (4.5 * e.count) / maxC, 'marker-end': 'url(#arrow)' }, g);
+    const show = () => { tip.innerHTML = `<b>#${esc(e.from)} → #${esc(e.to)}</b><span>${e.count} pass${e.count > 1 ? 'es' : ''}</span>`; tip.hidden = false; const s = svg.getBoundingClientRect().width / W; placeTip(tip, box, mx * s, my * s); };
+    g.addEventListener('pointerenter', show); g.addEventListener('focus', show);
+    g.addEventListener('pointerleave', () => { tip.hidden = true; }); g.addEventListener('blur', () => { tip.hidden = true; });
   });
-  // direct labels at the line ends, nudged apart when close
-  const last = games.length - 1;
-  let ty = y(games[last].score.team); let oy = y(games[last].score.opp);
-  if (Math.abs(ty - oy) < 16) { const mid = (ty + oy) / 2; ty = mid + (ty <= oy ? -9 : 9); oy = mid + (oy < ty ? -9 : 9); }
-  const endLabel = (v, yy, text) => { const t = svgEl('text', { class: 'end-label', x: x(last) + 12, y: yy + 4 }, svg); t.textContent = `${text} ${v}`; };
-  endLabel(games[last].score.team, ty, 'Scored');
-  endLabel(games[last].score.opp, oy, 'Allowed');
+  net.nodes.forEach((no) => {
+    const p = pos[no];
+    svgEl('circle', { class: `net__node net__node--${role(mine())}`, cx: p.x, cy: p.y, r: 22 }, svg);
+    const t = svgEl('text', { class: 'net__no', x: p.x, y: p.y + 5, 'text-anchor': 'middle' }, svg); t.textContent = no;
+  });
+  if (!n) { const t = svgEl('text', { class: 'empty-shots', x: W / 2, y: H / 2, 'text-anchor': 'middle' }, svg); t.textContent = 'No passes between identified players'; }
+  const total = net.edges.reduce((a, e) => a + e.count, 0);
+  $('[data-net-sub]').textContent = `${state.data.teams[mine()].name}: ${total} passes between identified players. Thicker arrows mean more passes.`;
+  $('[data-pairs]').innerHTML = net.edges.slice(0, 6).map((e) => `<tr><th scope="row">#${esc(e.from)} → #${esc(e.to)}</th><td class="num">${e.count}</td></tr>`).join('');
+}
 
-  // a hit area per game: hover shows the numbers, click or Enter opens the game
-  games.forEach((g, i) => {
-    const hit = svgEl('rect', { class: 'hit', ...span(i), y: top - 8, height: H - top - bottom + 8, tabindex: '0', role: 'button',
-      'aria-label': `Game ${g.number} vs ${g.opponent}, ${shortDate.format(toDate(g.date))}: scored ${g.score.team}, allowed ${g.score.opp}. Open this game.` }, svg);
-    svgEl('rect', { class: 'focus-ring', ...span(i), y: top - 8, height: H - top - bottom + 8, rx: 8 }, svg);
-    const show = () => {
-      cross.setAttribute('x1', x(i)); cross.setAttribute('x2', x(i)); cross.setAttribute('visibility', 'visible');
-      const win = g.score.team > g.score.opp;
-      tip.innerHTML = `<b>Game ${g.number} vs ${esc(g.opponent)}</b><span>${shortDate.format(toDate(g.date))} · ${win ? 'Won' : 'Lost'} ${signed(g.score.team - g.score.opp)}</span><br><span>Scored</span> ${g.score.team} · <span>Allowed</span> ${g.score.opp}`;
-      const scale = svg.getBoundingClientRect().width / W;
-      tip.style.left = `${Math.min(Math.max(x(i) * scale, 100), box.getBoundingClientRect().width - 100)}px`;
-      tip.style.top = `${y(Math.max(g.score.team, g.score.opp)) * scale}px`;
-      tip.hidden = false;
-    };
-    const hide = () => { tip.hidden = true; cross.setAttribute('visibility', 'hidden'); };
-    hit.addEventListener('pointerenter', show);
-    hit.addEventListener('pointerleave', hide);
-    hit.addEventListener('focus', show);
-    hit.addEventListener('blur', hide);
-    const open = () => openGame(g.number);
-    hit.addEventListener('click', open);
-    hit.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
-  });
+// ---------------------------------------------------------------- all plays
+function renderPlays() {
+  const kinds = { all: () => true, shot: (p) => p.type === 'shot', pass: (p) => p.type === 'pass', interception: (p) => p.type === 'interception' };
+  $('[data-seg="playKind"]').innerHTML = [['all', 'All'], ['shot', 'Shots'], ['pass', 'Passes'], ['interception', 'Interceptions']]
+    .map(([v, l]) => `<button type="button" data-value="${v}" aria-pressed="${String(state.playKind === v)}">${l}</button>`).join('');
+  $('[data-plays]').innerHTML = allPlays().filter(kinds[state.playKind]).map((p) => {
+    const text = playText(p);
+    return `<tr><td><button class="mini-btn" type="button" data-t="${p.t}" aria-label="Watch ${clock(p.t)}">▶ ${clock(p.t)}</button></td>
+      <td><i class="swatch swatch--${role(p.team)}"></i> ${esc(code(p.team))}</td><td>${esc(text.kind)}</td><td class="muted">${esc(text.detail)}</td></tr>`;
+  }).join('');
+  const q = state.data.quality;
+  $('[data-about]').innerHTML = `<h3>About these numbers</h3><ul>${[
+    `Jersey numbers are known for ${whole.format(q.players_with_number_pct)}% of the time players are on court; the rest is listed as "Not identified".`,
+    ...q.notes].map((t) => `<li>${esc(t)}</li>`).join('')}</ul>`;
 }
 
 // ---------------------------------------------------------------- the whole page
-function selectGame(number, animate) {
-  const games = state.data.games;
-  state.game = games.find((g) => String(g.number) === String(number)) || games[games.length - 1];
-  $('[data-game-select]').value = String(state.game.number);
-  document.title = `Game ${state.game.number} vs ${state.game.opponent}: ClutchMetrics coach dashboard`;
-  buildFilters();
+function renderAll(animate) {
+  document.title = `${state.data.teams[mine()].name} vs ${state.data.teams[theirs()].name}: ClutchMetrics coach dashboard`;
   renderOverview();
-  renderShooters();
+  renderTimeline();
+  buildShotFilters();
   renderPlayers();
   renderShots(animate);
-  renderScoring(animate);
-  renderLineups(animate);
-  renderQuarters(animate);
-  renderSeason();
-  renderTrends();
+  buildHeatSelect();
+  renderHeat();
+  renderRuns(animate);
+  renderControl(animate);
+  renderNetwork();
+  renderPlays();
   writeUrl();
 }
 
@@ -584,30 +563,33 @@ function trackSections() {
 async function start() {
   if (!document.querySelector('[data-dashboard]')) return;
   try {
-    const res = await fetch('data/games.json', { cache: 'no-cache' });
+    const res = await fetch('data/match.json', { cache: 'no-cache' });
     if (!res.ok) throw new Error(`status ${res.status}`);
     state.data = await res.json();
-    if (!state.data.games?.length) throw new Error('no games in the file');
+    if (!state.data.teams?.length) throw new Error('no teams in the file');
   } catch (err) {
     const box = $('[data-load-error]');
-    box.textContent = `The game data could not load (${err.message}). Check that data/games.json exists, and open the site through a web server, not by double-clicking the file.`;
+    box.textContent = `The match data could not load (${err.message}). Check that data/match.json exists, and open the site through a web server, not by double-clicking the file.`;
     box.hidden = false;
-    $('[data-game-title]').textContent = 'No game data';
+    $('[data-title]').textContent = 'No match data';
     return;
   }
   $('[data-sample]').hidden = !state.data.sample;
   const url = readUrl();
-  Object.assign(state, { player: url.player, q: url.q, result: url.result });
-  $('[data-game-select]').innerHTML = [...state.data.games].reverse()
-    .map((g) => `<option value="${g.number}">Game ${g.number} vs ${esc(g.opponent)} · ${shortDate.format(toDate(g.date))}</option>`).join('');
-  $('[data-game-select]').addEventListener('change', (e) => { state.player = 'all'; state.q = 'all'; state.result = 'all'; selectGame(e.target.value, true); });
-  wireFilters();
+  const t = state.data.teams.findIndex((x) => x.code === url.team);
+  Object.assign(state, { team: t >= 0 ? t : 0, player: url.player, result: url.result, shotTeam: ['mine', 'theirs', 'both'].includes(url.shotTeam) ? url.shotTeam : 'mine' });
+  $('[data-video]').src = state.data.video;
+  buildTeamSwitch();
+  wireShots();
   wirePlayers();
-  shotTooltip();
-  selectGame(url.game, true);
+  $('[data-heat-select]').addEventListener('change', (e) => { state.heat = e.target.value; renderHeat(); });
+  $('[data-moments]').addEventListener('click', (e) => { const b = e.target.closest('[data-t]'); if (b) watch(Number(b.dataset.t)); });
+  $('[data-plays]').addEventListener('click', (e) => { const b = e.target.closest('[data-t]'); if (b) watch(Number(b.dataset.t)); });
+  $('[data-seg="playKind"]').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { state.playKind = b.dataset.value; renderPlays(); } });
+  renderAll(true);
   trackSections();
-  let t;
-  addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => { renderSeason(); renderQuarters(false); renderShooters(); renderTrends(); }, 150); });
+  let timer;
+  addEventListener('resize', () => { clearTimeout(timer); timer = setTimeout(() => { renderTimeline(); renderNetwork(); }, 150); });
 }
 
 start();

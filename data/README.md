@@ -1,8 +1,11 @@
 # Dashboard data
 
-The coach dashboard reads `games.json` from this folder. Right now it holds **sample data**
-made by `make-sample-data.mjs`. When your analysis model is ready, have it write `games.json`
-in the same shape and the dashboard will show the real results with no other changes.
+**The coach dashboard now reads `match.json` and plays `analysis.mp4`**, both written by the analysis model's
+exporter from a real analysed match. Their format is in [`MATCH_FORMAT.md`](MATCH_FORMAT.md).
+
+The rest of this file describes the older **multi-game sample format** (`games.json`, made by
+`make-sample-data.mjs`). No page reads it at the moment; it is kept for a future season view once
+several matches have been analysed.
 
 ## Shape
 

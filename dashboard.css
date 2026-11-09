@@ -31,7 +31,7 @@ html { scroll-padding-top: 16px; }
   .side__user b { font-weight: 500; font-size: 14px; overflow-wrap: anywhere; margin-bottom: 10px; }
 }
 
-.main { display: grid; gap: 20px; width: min(100%, 1240px); margin: 0 auto; padding: 20px 16px 48px; min-width: 0; }
+.main { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; width: min(100%, 1240px); margin: 0 auto; padding: 20px 16px 48px; min-width: 0; }
 @media (min-width: 1024px) { .main { padding: 32px 40px 64px; gap: 24px; } }
 .block { min-width: 0; scroll-margin-top: 16px; }
 
@@ -152,7 +152,7 @@ th[aria-sort="ascending"] .sort svg { transform: rotate(180deg); }
 .pm-neg { color: var(--muted); }
 
 /* ---- lineups and quarters */
-.pair { display: grid; gap: 20px; }
+.pair { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; min-width: 0; }
 @media (min-width: 1100px) { .pair { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; } }
 .diverge { display: grid; gap: 14px; }
 .lineup { display: grid; grid-template-columns: minmax(120px, 1fr) minmax(0, 1.6fr); gap: 12px; align-items: center; }
@@ -264,4 +264,150 @@ th[aria-sort="ascending"] .sort svg { transform: rotate(180deg); }
 }
 @media (prefers-reduced-motion: reduce) {
   .shot-layer.is-new .shot, .is-new .lineup__bar, .is-new .mix__bar, .is-new .bars .bar-team, .is-new .bars .bar-opp { animation: none; }
+}
+
+/* ================================================================ match dashboard (data/match.json) */
+.game-head__sub { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+.pick__label { color: var(--muted); font-size: 13px; font-weight: 500; }
+.scorebox { display: grid; gap: 4px; justify-items: end; }
+.scorebox__main { display: inline-flex; align-items: center; gap: 12px; height: 52px; padding: 0 16px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--card); }
+.scorebox__main b { font: 500 30px/1 var(--font); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.scorebox__main b span { margin: 0 6px; color: var(--muted); }
+.scorebox__team { display: inline-flex; align-items: center; gap: 6px; font: 500 15px var(--font); color: var(--muted); }
+.scorebox__note { color: var(--muted); font-size: 12px; text-align: right; max-width: 320px; }
+.kpi__opp { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; padding-top: 8px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.kpi__opp b { color: var(--ink); font-weight: 500; }
+.kpi__delta.is-good { color: var(--ink); }
+.swatch { display: inline-block; flex: none; }
+.fine { margin: 12px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.muted { color: var(--muted); }
+.sub-h { margin: 20px 0 8px; font-size: 16px; font-weight: 500; }
+
+/* video */
+.video-wrap { border-radius: 12px; overflow: hidden; background: #000; border: 1px solid var(--line); }
+.video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #000; }
+
+/* timeline */
+.timeline { position: relative; }
+.timeline svg { display: block; width: 100%; height: auto; overflow: visible; }
+.timeline .gridline { stroke: var(--grid); }
+.timeline .axis-text { fill: var(--muted); font: 12px var(--font); }
+.timeline .ctrl--team { fill: var(--series-team); }
+.timeline .ctrl--opp { fill: var(--series-opp); }
+.timeline .playhead { stroke: var(--ink); stroke-width: 2; }
+.mark { outline: none; cursor: pointer; }
+.mark__hit { fill: transparent; }
+.mark--team .mark__dot { fill: var(--series-team); }
+.mark--opp .mark__dot { fill: var(--series-opp); }
+.mark__dot { stroke: var(--card); stroke-width: 2; }
+.mark__dot.is-open { fill: var(--card) !important; stroke-width: 3; }
+.mark--team .mark__dot.is-open { stroke: var(--series-team); }
+.mark--opp .mark__dot.is-open { stroke: var(--series-opp); }
+.mark__x { fill: none; stroke-width: 2.6; stroke-linecap: round; }
+.mark--team .mark__x { stroke: var(--series-team); }
+.mark--opp .mark__x { stroke: var(--series-opp); }
+.mark:hover .mark__dot, .mark:focus-visible .mark__dot { stroke: var(--ink); }
+.mark:focus-visible .mark__hit { stroke: var(--accent); stroke-width: 2; }
+.dot--grey { background: var(--muted); }
+.ring { display: inline-block; width: 11px; height: 11px; border-radius: 50%; border: 2.5px solid var(--series-team); }
+.ring--grey { border-color: var(--muted); }
+.moments { display: flex; gap: 10px; margin-top: 16px; overflow-x: auto; padding-bottom: 6px; overscroll-behavior-x: contain; }
+.moment { display: grid; gap: 2px; flex: none; min-width: 190px; max-width: 240px; min-height: 44px; padding: 10px 12px; border: 1px solid var(--line-strong); border-left-width: 4px; border-radius: 10px; background: var(--card-2); color: var(--ink); text-align: left; font: 14px var(--font); transition: border-color .15s ease; }
+.moment--team { border-left-color: var(--series-team); }
+.moment--opp { border-left-color: var(--series-opp); }
+.moment:hover { border-color: var(--accent); }
+.moment b { font-weight: 500; }
+.moment span { color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.moment .moment__t { font-family: var(--mono); color: var(--ink); font-size: 12px; }
+
+/* shot chart: team colours, FIBA court (1 m = 100 units) */
+.court__board { stroke: #f7f1e8; stroke-width: 6; stroke-opacity: .8; }
+.court__svg .court__line { stroke-width: 8; }
+.court__svg .court__rim { stroke-width: 7; }
+.court__svg .shot__mark { stroke-width: 6; }
+.shot--opp.shot--made .shot__mark { fill: var(--series-opp); }
+.shot--team.shot--miss .shot__mark { stroke: #ffb27a; }
+.shot--opp.shot--miss .shot__mark { stroke: #9cc4f5; }
+.shot.is-open .shot__mark { fill: #3a2010 !important; stroke-width: 9; }
+.shot--team.is-open .shot__mark { stroke: var(--series-team); }
+.shot--opp.is-open .shot__mark { stroke: var(--series-opp); }
+.court__svg .shot:hover .shot__mark { stroke-width: 10; }
+.court__svg .empty-shots { font-size: 54px; }
+.court__svg .shot { cursor: pointer; }
+
+/* players table */
+.table--players { min-width: 900px; }
+.views { display: flex; gap: 6px; }
+.row--muted td, .row--muted th { color: var(--muted); }
+.table .swatch { width: 10px; height: 10px; vertical-align: -1px; }
+
+/* full court + heatmap */
+.heat { position: relative; }
+.heat svg { display: block; width: 100%; height: auto; }
+.fc__floor { fill: #3a2010; }
+.fc__line { fill: none; stroke: #f7f1e8; stroke-opacity: .55; stroke-width: 7; }
+.fc__line--top { stroke-opacity: .7; pointer-events: none; }
+.fc__rim { fill: none; stroke: #ff7a1a; stroke-width: 7; }
+.heat--team rect { fill: var(--series-team); }
+.heat--opp rect { fill: var(--series-opp); }
+.heat__cells rect:hover { stroke: var(--ink); stroke-width: 8; }
+.heat-key { align-items: center; margin-top: 12px; }
+.ramp { width: 120px; height: 10px; border-radius: 5px; }
+.ramp--team { background: linear-gradient(90deg, rgb(232 101 15 / .18), rgb(232 101 15)); }
+.ramp--opp { background: linear-gradient(90deg, rgb(57 135 229 / .18), rgb(57 135 229)); }
+
+/* distance and speed */
+.runs { display: grid; gap: 12px; }
+.run { display: grid; grid-template-columns: 44px minmax(0, 1fr) 120px; gap: 12px; align-items: center; }
+.run__no { font: 500 15px var(--font); }
+.run__track { height: 20px; border-radius: 4px; background: var(--grid); overflow: hidden; }
+.run__bar { display: block; height: 100%; border-radius: 0 4px 4px 0; background: var(--series-team); transform-origin: left; }
+.run__val { text-align: right; font-variant-numeric: tabular-nums; line-height: 1.25; }
+.run__val b { display: block; font-weight: 500; }
+.run__val span { color: var(--muted); font-size: 13px; }
+.is-new .run__bar { animation: grow .6s cubic-bezier(.22, 1, .36, 1) backwards; }
+
+/* ball control */
+.control__nums { display: flex; justify-content: space-between; margin-bottom: 8px; color: var(--muted); font-size: 15px; }
+.control__nums b { color: var(--ink); font: 500 28px var(--font); font-variant-numeric: tabular-nums; }
+.control__bar { display: flex; gap: 2px; height: 22px; }
+.control__me { background: var(--series-team); border-radius: 4px 0 0 4px; transform-origin: left; }
+.control__op { background: var(--series-opp); border-radius: 0 4px 4px 0; transform-origin: right; }
+.is-new .control__me, .is-new .control__op { animation: grow .6s cubic-bezier(.22, 1, .36, 1) backwards; }
+.tally { margin-top: 20px; }
+.table--tally td.is-lead { color: var(--ink); font-weight: 500; }
+.table--tally td { color: var(--muted); }
+
+/* passing network */
+.net { position: relative; }
+.net svg { display: block; width: 100%; height: auto; overflow: visible; }
+.net__hit { fill: none; stroke: transparent; stroke-width: 18; }
+.net__line { fill: none; stroke-linecap: round; opacity: .85; }
+.net__line--team { stroke: var(--series-team); }
+.net__line--opp { stroke: var(--series-opp); }
+.net__head { fill: var(--ink); }
+.net__edge { outline: none; }
+.net__edge:hover .net__line, .net__edge:focus-visible .net__line { opacity: 1; stroke: var(--ink); }
+.net__node { stroke: var(--card); stroke-width: 3; }
+.net__node--team { fill: var(--series-team); }
+.net__node--opp { fill: var(--series-opp); }
+.net__no { fill: #160b03; font: 600 15px var(--font); pointer-events: none; }
+.net .empty-shots { fill: var(--muted); font: 15px var(--font); }
+.table--pairs { margin-top: 12px; }
+
+/* plays and notes */
+.table--plays { min-width: 640px; }
+.table--plays td { white-space: normal; }
+.about { margin-top: 20px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--card-2); color: var(--muted); font-size: 14px; line-height: 1.55; }
+.about h3 { margin: 0 0 6px; color: var(--ink); font-size: 15px; font-weight: 500; }
+.about ul { margin: 0; padding-left: 18px; }
+
+@media (max-width: 639px) {
+  .scorebox { justify-items: start; width: 100%; }
+  .scorebox__note { text-align: left; }
+  .run { grid-template-columns: 36px minmax(0, 1fr) 96px; gap: 8px; }
+  .card__head .pick--inline { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .is-new .run__bar, .is-new .control__me, .is-new .control__op { animation: none; }
 }
