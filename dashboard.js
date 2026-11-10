@@ -21,7 +21,7 @@ const ratio = (a, b) => (b ? a / b : 0);
 const clock = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
 const dateFmt = new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
 
-const state = { data: null, match: null, sample: false, team: 0,shotTeam: 'mine', player: 'all', result: 'all', playKind: 'all', heat: 'team',
+const state = { data: null, match: null, team: 0,shotTeam: 'mine', player: 'all', result: 'all', playKind: 'all', heat: 'team',
   sort: { key: 'pts', dir: 'descending' } };
 const mine = () => state.team;
 const theirs = () => 1 - state.team;
@@ -36,7 +36,6 @@ function readUrl() {
 function writeUrl() {
   const p = new URLSearchParams();
   if (state.match) p.set('match', state.match);
-  if (state.sample) p.set('sample', '1');
   p.set('team', code(state.team));
   if (state.shotTeam !== 'mine') p.set('shots', state.shotTeam);
   if (state.player !== 'all') p.set('player', state.player);
@@ -585,17 +584,15 @@ async function myAnalyses() {
   } catch { return null; }
 }
 
-// The match picker: the user's own analyses, plus the clearly labelled built-in sample
+// The match picker: only the signed-in user's own analyses
 function buildMatchPicker(mine) {
   const select = $('[data-match-select]');
-  select.innerHTML = (mine || []).map((j) => `<option value="${j.id}">${esc(j.title)}</option>`).join('')
-    + '<option value="sample">Sample analysis: Australia vs India</option>';
-  if (!state.match && !state.sample) select.insertAdjacentHTML('afterbegin', '<option value="" selected>No analysis yet</option>');
-  select.value = state.sample ? 'sample' : (state.match || '');
+  select.innerHTML = (mine || []).map((j) => `<option value="${j.id}">${esc(j.title)}</option>`).join('');
+  if (!state.match) select.insertAdjacentHTML('afterbegin', '<option value="" selected>No analysis yet</option>');
+  select.value = state.match || '';
   select.addEventListener('change', () => {
     const p = new URLSearchParams();
-    if (select.value === 'sample') p.set('sample', '1');
-    else if (select.value) p.set('match', select.value);
+    if (select.value) p.set('match', select.value);
     location.search = p.toString();
   });
 }
@@ -608,7 +605,7 @@ function showEmpty(serverOffline) {
   });
   const box = $('[data-empty]');
   box.querySelector('[data-empty-text]').textContent = serverOffline
-    ? 'Your analyses are kept on the analysis server, which is offline right now. Try again later, or look at the sample analysis.'
+    ? 'Your analyses are kept on the analysis server, which is offline right now. Please try again later.'
     : 'You have not analysed a game yet. Upload a game video below; when the analysis is ready it opens here. Only you can see your videos and results.';
   box.hidden = false;
   document.title = 'Your dashboard: ClutchMetrics';
@@ -618,12 +615,11 @@ async function start() {
   if (!document.querySelector('[data-dashboard]')) return;
   const url = readUrl();
   state.match = url.match && /^[a-f0-9]{12}$/.test(url.match) ? url.match : null;
-  state.sample = !state.match && new URLSearchParams(location.search).get('sample') === '1';
   const mine = await myAnalyses();
   // open the user's latest analysis when none is chosen; with none at all, show the empty state
-  if (!state.match && !state.sample && mine && mine.length) state.match = mine[0].id;
+  if (!state.match && mine && mine.length) state.match = mine[0].id;
   buildMatchPicker(mine);
-  if (!state.match && !state.sample) { showEmpty(mine === null); return; }
+  if (!state.match) { showEmpty(mine === null); return; }
   try {
     const res = state.match ? await serverFetch(`/api/jobs/${state.match}/match.json`, { cache: 'no-store' })
       : await fetch('data/match.json', { cache: 'no-cache' });
@@ -639,7 +635,6 @@ async function start() {
     $('[data-title]').textContent = 'No match data';
     return;
   }
-  $('[data-sample]').hidden = !state.sample;
   const t = state.data.teams.findIndex((x) => x.code === url.team);
   Object.assign(state, { team: t >= 0 ? t : 0, player: url.player, result: url.result, shotTeam: ['mine', 'theirs', 'both'].includes(url.shotTeam) ? url.shotTeam : 'mine' });
   if (state.match) {
