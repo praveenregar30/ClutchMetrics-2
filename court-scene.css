@@ -137,6 +137,8 @@ main > section.asks { position: relative; overflow: clip; }
 .about__facts div { display: grid; gap: 4px; align-content: start; padding: 14px 16px; background: #15120f; }
 .about__facts dt { color: var(--accent); font-size: 13px; font-weight: 500; }
 .about__facts dd { margin: 0; font-size: 14px; line-height: 1.45; color: rgb(247 241 232 / .85); }
+/* About us holds more than one screen: it grows with its content instead of overflowing into Questions */
+main > section#about { height: auto; min-height: 100vh; min-height: 100svh; }
 /* how it works: three steps from the video to the views */
 .how { margin-top: var(--s-7); }
 .how__title { margin: 0 0 var(--s-5); font: 500 clamp(24px, 2.4vw, 30px)/1.15 var(--font-display); letter-spacing: -.02em; }
