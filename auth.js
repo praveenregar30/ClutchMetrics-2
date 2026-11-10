@@ -4,6 +4,11 @@
 // Without one: the old front-end demo (any email, any password of 6+ characters).
 import { firebaseReady } from './firebase-config.js';
 
+// Login-page animations (SVG scenes): with reduced motion, rest on a finished frame instead of looping
+if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.querySelectorAll('svg.scene').forEach((s) => { s.setCurrentTime(7.2); s.pauseAnimations(); });
+}
+
 const fb = firebaseReady ? await import('./firebase.js') : null;
 const DEMO_KEY = 'clutchmetrics-session';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

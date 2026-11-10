@@ -112,6 +112,54 @@ button, input, a { touch-action: manipulation; }
 .side__list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
 .side__list li { display: flex; gap: 10px; align-items: flex-start; }
 .side__list svg { flex: none; width: 20px; height: 20px; margin-top: 2px; fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.side__text p { margin: 0; max-width: 46ch; color: rgb(247 241 232 / .78); font-size: 17px; line-height: 1.55; }
+
+/* ---- animated scenes on the login pages (SVG + SMIL, built by a script; one loop of 10 s) */
+.auth__side--coach, .auth__side--player { justify-content: space-between; padding: 40px 48px 44px; }
+.scene-wrap { flex: 1; display: grid; place-items: center; min-height: 0; animation: card-in .9s cubic-bezier(.22, 1, .36, 1) both .1s; }
+.scene { display: block; width: min(100%, 470px); max-height: calc(100svh - 300px); height: auto; overflow: visible; font-family: var(--font); }
+.sc-floor { fill: #3a2010; stroke: rgb(247 241 232 / .12); stroke-width: 2; }
+.sc-paint { fill: #4d260d; }
+.sc-line { fill: none; stroke: rgb(247 241 232 / .55); stroke-width: 2.5; }
+.sc-board { stroke: rgb(247 241 232 / .8); stroke-width: 4; }
+.sc-rim { fill: none; stroke: var(--accent); stroke-width: 3; }
+.sc-o circle { fill: var(--accent); stroke: #160b03; stroke-width: 2.5; }
+.sc-o text, .sp-me text { fill: #160b03; font-size: 15px; font-weight: 700; text-anchor: middle; font-variant-numeric: tabular-nums; }
+.sc-d circle { fill: none; stroke: #6fa8ee; stroke-width: 3; }
+.sc-ball { fill: #ffd2a8; stroke: #160b03; stroke-width: 1.5; }
+.sc-drib, .sc-cut { fill: none; stroke: #f7f1e8; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.sc-arrowhead { fill: #f7f1e8; }
+.sc-pass { fill: none; stroke: #f7f1e8; stroke-width: 2.5; stroke-dasharray: 9 8; stroke-linecap: round; }
+.sc-shot { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linecap: round; opacity: .9; }
+.sc-swish { fill: none; stroke: var(--accent); stroke-width: 3; }
+.sc-plus { fill: var(--accent); font: 400 34px "Anton", var(--font); text-anchor: middle; }
+.sc-track path { fill: none; stroke: #8df0b4; stroke-width: 2.5; stroke-linecap: round; }
+.sc-track text { fill: #8df0b4; font: 500 12px var(--mono); text-anchor: middle; }
+.sc-card rect:first-of-type { fill: rgb(16 14 12 / .92); stroke: rgb(247 241 232 / .16); }
+.sc-card__bar { fill: #6fa8ee; }
+.sc-card__bar.is-made { fill: var(--accent); }
+.sc-card__t { fill: var(--muted); font: 500 14px var(--mono); }
+.sc-card__k { fill: var(--ink); font-size: 15px; font-weight: 500; }
+.sc-card__d { fill: var(--muted); font-size: 14px; }
+.sp-me circle:not(.sp-me__glow) { fill: var(--accent); stroke: #160b03; stroke-width: 2.5; }
+.sp-me__glow { fill: rgb(255 122 26 / .25); }
+.sp-trail { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; opacity: .9; }
+.sp-heat { fill: var(--accent); }
+.sp-tag rect { fill: #100e0c; stroke: rgb(247 241 232 / .2); }
+.sp-tag__t { fill: var(--ink); font: 500 13px var(--font); text-anchor: middle; font-variant-numeric: tabular-nums; }
+.sp-tag__t.is-hot { fill: var(--accent); }
+.sp-chart circle { fill: var(--accent); fill-opacity: .55; stroke: #160b03; stroke-width: 2; }
+.sp-miss { fill: none; stroke: #ffb27a; stroke-width: 3; stroke-linecap: round; }
+.sp-made circle { fill: var(--accent); stroke: #fff; stroke-width: 2.5; }
+.sp-made text { fill: var(--ink); font: 500 13px var(--font); text-anchor: middle; paint-order: stroke; stroke: #3a2010; stroke-width: 5px; }
+.sp-toast rect { fill: #100e0c; stroke: rgb(255 122 26 / .55); }
+.sp-toast__ic { fill: var(--accent); }
+.sp-toast text { fill: var(--ink); font-size: 15px; font-weight: 500; }
+.sp-strip rect { fill: rgb(16 14 12 / .9); stroke: rgb(247 241 232 / .14); }
+.sp-strip__label { fill: var(--muted); font-size: 14px; }
+.sp-strip__val { fill: var(--ink); font-size: 14px; font-weight: 500; }
+.sp-speed { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.sp-peak { fill: var(--accent); stroke: #100e0c; stroke-width: 2; }
 
 /* ---- dashboard placeholder */
 .dash { width: min(100% - 32px, 960px); margin: 0 auto; padding: 24px 0 48px; display: grid; gap: 40px; }

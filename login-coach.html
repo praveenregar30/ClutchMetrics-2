@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Coach sign-in: ClutchMetrics</title>
-<meta name="description" content="Sign in to the ClutchMetrics coach dashboard to see the whole team, every lineup and each quarter.">
+<meta name="description" content="Sign in to the ClutchMetrics coach dashboard: your team's shots, passes, movement and match video.">
 <meta name="theme-color" content="#100e0c">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400..700&family=JetBrains+Mono:wght@400..500&family=Anton&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="auth.css?v=2">
+<link rel="stylesheet" href="auth.css?v=3">
 <link rel="stylesheet" href="cursor.css">
 </head>
 <body>
@@ -25,7 +25,7 @@
       <nav class="roles" aria-label="Choose your login"><a href="login-coach.html" aria-current="page">Coach</a><a href="login-player.html">Player</a></nav>
       <div class="auth__head">
         <h1>Welcome back, coach</h1>
-        <p>Sign in to see your team’s games, lineups and shot charts.</p>
+        <p>Sign in to your team's games: shots, passes, movement and video.</p>
       </div>
       <form class="form" id="signin" data-signin="coach" novalidate>
         <div class="field">
@@ -53,22 +53,21 @@
       <p class="switch-line">Not a coach? <a href="login-player.html">Sign in as player</a></p>
     </div>
   </main>
-  <aside class="auth__side" aria-label="What the coach login shows">
-    <svg class="side__court" viewBox="0 0 600 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect x="40" y="40" width="520" height="720"/><path d="M40 400H560"/><ellipse cx="300" cy="400" rx="70" ry="70"/><path d="M220 40V230H380V40M220 760V570H380V760M80 40V150A220 220 0 0 0 520 150V40M80 760V650A220 220 0 0 1 520 650V760"/><ellipse cx="300" cy="230" rx="60" ry="60"/><ellipse cx="300" cy="570" rx="60" ry="60"/></svg>
-    <div class="side__card" aria-hidden="true">
-          <div class="side__card-top"><b>Lineups, game 14</b><span>Coach view</span></div>
-          <div class="mini-row mini-row--head"><span>Lineup</span><span>+/−</span><span>Min</span></div>
-          <div class="mini-row is-mark"><span>Starters</span><span>+11</span><span>19</span></div>
-          <div class="mini-row"><span>Small lineup</span><span>+6</span><span>8</span></div>
-          <div class="mini-row"><span>Big lineup</span><span>+2</span><span>7</span></div>
-          <div class="mini-row"><span>Bench unit</span><span>−3</span><span>11</span></div>
-        </div>
+  <aside class="auth__side auth__side--coach" aria-label="What the coach login shows">
+    <div class="scene-wrap"><svg class="scene scene--coach" viewBox="0 -10 600 800" role="img" aria-label="Animation: the model follows a play on a half court. Number 1 dribbles and passes to number 4, number 2 cuts, number 4 passes to number 3 in the corner, who makes a three-pointer; each pass and the shot appears as an event card."><defs><marker id="sc-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" class="sc-arrowhead"/></marker></defs>
+  <g class="sc-court">
+    <rect class="sc-floor" x="0" y="40" width="600" height="560" rx="6"/>
+    <rect class="sc-paint" x="202" y="40" width="196" height="232"/>
+    <path class="sc-line" d="M0 40H600M202 40V272H398V40M228 272A72 72 0 0 0 372 272M228 272A72 72 0 0 1 372 272M36 40V159.6A270 270 0 0 0 564 159.6V40M0 600H600M228 600A72 72 0 0 1 372 600"/>
+    <path class="sc-board" d="M270 88H330"/>
+    <circle class="sc-rim" cx="300" cy="103" r="9"/>
+  </g><path class="sc-drib" d="M300 470 L319.5 468.99 L325.5 444.76 L349.5 451.49 L355.5 427.26 L379.5 433.99 L385.5 409.76 L409.5 416.49 L420 400" stroke-dasharray="188.738" stroke-dashoffset="188.738"><animate attributeName="stroke-dashoffset" values="188.738;188.738;0;0" keyTimes="0;0.04;0.17;1" dur="10s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.93;0.97;1" dur="10s" repeatCount="indefinite"/></path><path class="sc-pass" d="M420 400 L110 300" opacity="0"><animate attributeName="opacity" values="0;0;0.85;0.85;0;0" keyTimes="0;0.17;0.2;0.93;0.97;1" dur="10s" repeatCount="indefinite"/></path><path class="sc-cut" d="M60 120 Q150 230 282 196" stroke-dasharray="249.7418" stroke-dashoffset="249.7418"><animate attributeName="stroke-dashoffset" values="249.7418;249.7418;0;0" keyTimes="0;0.26;0.4;1" dur="10s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.93;0.97;1" dur="10s" repeatCount="indefinite"/></path><path class="sc-cut" d="M276 197.5 L282 196" marker-end="url(#sc-arrow)" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.39;0.42;0.93;0.97;1" dur="10s" repeatCount="indefinite"/></path><path class="sc-pass" d="M110 300 L548 118" opacity="0"><animate attributeName="opacity" values="0;0;0.85;0.85;0;0" keyTimes="0;0.4;0.43;0.93;0.97;1" dur="10s" repeatCount="indefinite"/></path><path class="sc-shot" d="M548 118 Q430 10 300 103" stroke-dasharray="273.4475" stroke-dashoffset="273.4475"><animate attributeName="stroke-dashoffset" values="273.4475;273.4475;0;0" keyTimes="0;0.5;0.59;1" dur="10s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.93;0.97;1" dur="10s" repeatCount="indefinite"/></path><g class="sc-d"><circle r="11"/><animateMotion path="M300 425 L405 362" keyTimes="0;0.04;0.2;1" keyPoints="0;0;1;1" calcMode="linear" dur="10s" repeatCount="indefinite"/></g><g class="sc-d"><circle r="11"/><animateMotion path="M95 140 Q170 220 300 225" keyTimes="0;0.26;0.43;1" keyPoints="0;0;1;1" calcMode="linear" dur="10s" repeatCount="indefinite"/></g><g class="sc-d"><circle r="11"/><animateMotion path="M520 140 L530 132" keyTimes="0;0.4;0.5;1" keyPoints="0;0;1;1" calcMode="linear" dur="10s" repeatCount="indefinite"/></g><g class="sc-d"><circle r="11"/><animateMotion path="M150 285" dur="10s" repeatCount="indefinite"/></g><g class="sc-d"><circle r="11"/><animateMotion path="M345 205" dur="10s" repeatCount="indefinite"/></g><g class="sc-o"><circle r="15"/><text y="5">1</text><animateMotion path="M300 470 L420 400" keyTimes="0;0.04;0.17;1" keyPoints="0;0;1;1" calcMode="linear" dur="10s" repeatCount="indefinite"/></g><g class="sc-o"><circle r="15"/><text y="5">2</text><animateMotion path="M60 120 Q150 230 282 196" keyTimes="0;0.26;0.4;1" keyPoints="0;0;1;1" calcMode="linear" dur="10s" repeatCount="indefinite"/></g><g class="sc-o"><circle r="15"/><text y="5">3</text><animateMotion path="M548 118" dur="10s" repeatCount="indefinite"/></g><g class="sc-o"><circle r="15"/><text y="5">4</text><animateMotion path="M110 300" dur="10s" repeatCount="indefinite"/></g><g class="sc-o"><circle r="15"/><text y="5">5</text><animateMotion path="M380 228" dur="10s" repeatCount="indefinite"/></g><g class="sc-track" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.46;0.49;0.67;0.71;1" dur="10s" repeatCount="indefinite"/><path d="M522 104v-12h12M562 92h12v12M574 132v12h-12M534 144h-12v-12"/><text x="548" y="84">#3 · 98%</text></g><circle class="sc-ball" r="7"><animateMotion path="M300 470 L319.5 468.99 L325.5 444.76 L349.5 451.49 L355.5 427.26 L379.5 433.99 L385.5 409.76 L409.5 416.49 L420 400 L110 300 L548 118 Q430 10 300 103" keyTimes="0;0.04;0.17;0.24;0.4;0.47;0.5;0.59;1" keyPoints="0;0;0.1495;0.4076;0.4076;0.7834;0.7834;1;1" calcMode="linear" dur="10s" repeatCount="indefinite"/><animate attributeName="r" values="7;7;12;6;6" keyTimes="0;0.5;0.545;0.59;1" dur="10s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.6;0.61;0.97;1" dur="10s" repeatCount="indefinite"/></circle><circle class="sc-swish" cx="300" cy="103" r="9" opacity="0"><animate attributeName="r" values="9;9;34;34" keyTimes="0;0.59;0.67;1" dur="10s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;1;0;0" keyTimes="0;0.59;0.6;0.67;1" dur="10s" repeatCount="indefinite"/></circle><text class="sc-plus" x="300" y="70" opacity="0">+3<animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.59;0.62;0.8;0.84;1" dur="10s" repeatCount="indefinite"/></text><g class="sc-card" opacity="0" transform="translate(0 636)"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.17;0.2;0.9;0.94;1" dur="10s" repeatCount="indefinite"/><animateTransform attributeName="transform" type="translate" values="18 636;18 636;0 636;0 636" keyTimes="0;0.17;0.21;1" dur="10s" repeatCount="indefinite"/><rect width="600" height="44" rx="10"/><rect class="sc-card__bar" width="4" height="44" rx="2"/><text class="sc-card__t" x="18" y="27">0:12</text><text class="sc-card__k" x="76" y="27">Pass</text><text class="sc-card__d" x="124" y="27">#1 → #4</text></g><g class="sc-card" opacity="0" transform="translate(0 688)"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.4;0.43;0.9;0.94;1" dur="10s" repeatCount="indefinite"/><animateTransform attributeName="transform" type="translate" values="18 688;18 688;0 688;0 688" keyTimes="0;0.4;0.44;1" dur="10s" repeatCount="indefinite"/><rect width="600" height="44" rx="10"/><rect class="sc-card__bar" width="4" height="44" rx="2"/><text class="sc-card__t" x="18" y="27">0:14</text><text class="sc-card__k" x="76" y="27">Pass</text><text class="sc-card__d" x="124" y="27">#4 → #3</text></g><g class="sc-card" opacity="0" transform="translate(0 740)"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.59;0.62;0.9;0.94;1" dur="10s" repeatCount="indefinite"/><animateTransform attributeName="transform" type="translate" values="18 740;18 740;0 740;0 740" keyTimes="0;0.59;0.63;1" dur="10s" repeatCount="indefinite"/><rect width="600" height="44" rx="10"/><rect class="sc-card__bar is-made" width="4" height="44" rx="2"/><text class="sc-card__t" x="18" y="27">0:15</text><text class="sc-card__k" x="76" y="27">3-pointer made</text><text class="sc-card__d" x="210" y="27">#3, 6.4 m from the basket</text></g></svg></div>
     <div class="side__text">
-      <h2>Your whole team on one screen</h2>
-      <ul class="side__list"><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.500 4.500 4.500L19 7.500"/></svg>Compare lineups by plus-minus</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.500 4.500 4.500L19 7.500"/></svg>See every shot on the court</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.500 4.500 4.500L19 7.500"/></svg>Track turnovers by quarter</li></ul>
+      <h2>Game film in, plays out.</h2>
+      <p>Upload a game and the model marks every pass, shot and interception, with each player tracked by jersey number.</p>
     </div>
   </aside>
 </div>
-<script type="module" src="auth.js?v=2"></script>
+<script type="module" src="auth.js?v=3"></script>
 </body>
 </html>
