@@ -66,16 +66,18 @@ main > section.process { height: auto; min-height: 0; padding: 0; }
 .bar i { display: block; height: 100%; border-radius: 4px; background: var(--accent); transform-origin: left; transform: scaleX(var(--p, 1)); }
 
 .quarters { position: relative; display: grid; grid-auto-rows: minmax(40px, 1fr); gap: var(--s-3); flex: 1; min-height: 0; }
-.quarter { display: grid; grid-template-columns: 26px minmax(0, 1fr); align-items: center; gap: var(--s-3); font: 500 13px var(--font-mono); color: var(--ink); }
+.quarter { display: grid; grid-template-columns: 38px minmax(0, 1fr); align-items: center; gap: var(--s-3); font: 500 13px var(--font-mono); color: var(--ink); }
 .quarter__track { position: relative; height: 100%; border-radius: 8px; background: rgb(247 241 232 / .05); }
 .tick { position: absolute; top: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; border: 1.5px solid #f7f1e8; opacity: clamp(0, calc((var(--p, 1) - var(--at)) * 40), 1); }
 .tick--made { background: var(--accent); border-color: var(--accent); }
+.tick--play { width: 6px; height: 6px; margin: -3px 0 0 -3px; border: 0; background: rgb(247 241 232 / .55); }
 .playhead { position: absolute; top: 0; bottom: 0; left: 38px; right: 0; pointer-events: none; }
 .playhead i { position: absolute; top: 0; bottom: 0; left: calc(var(--p, 1) * 100%); width: 2px; background: var(--accent); box-shadow: 0 0 18px 3px rgb(255 122 26 / .7); opacity: calc((1 - var(--p, 1)) * 40); }
 .legend { display: flex; gap: var(--s-4); color: var(--muted); }
 .legend span { display: inline-flex; align-items: center; gap: 7px; }
 .legend i { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid #f7f1e8; }
 .legend i.is-made { background: var(--accent); border-color: var(--accent); }
+.legend i.is-play { width: 6px; height: 6px; border: 0; background: rgb(247 241 232 / .55); }
 .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-3); }
 .tile-n { padding: var(--s-3) var(--s-4); border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--bg); }
 .tile-n b { display: block; font: 500 clamp(26px, 2.6vw, 34px)/1.1 var(--font-display); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }

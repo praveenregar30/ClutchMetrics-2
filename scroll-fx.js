@@ -4,28 +4,22 @@
 const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 const easeOut = (u) => 1 - (1 - u) ** 3;
 
-// the analysis timeline: 79 shots across 4 quarters, 37 of them made, the same every load
+// the analysis timeline: the 38 plays the model found in Australia vs India (1:50 of play), in four slices of 27.5 s
 const timeline = document.querySelector('[data-timeline]');
 if (timeline) {
-  const quarters = [21, 18, 22, 18];
-  let seed = 14;
-  const next = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
-  let made = 0;
-  let seen = 0;
-  quarters.forEach((count, q) => {
-    const row = timeline.querySelector(`[data-quarter="${q}"]`);
-    for (let i = 0; i < count; i += 1) {
-      const left = (i + 0.2 + next() * 0.6) / count;
-      const remaining = 79 - seen;
-      const isMade = next() < (37 - made) / remaining;
-      if (isMade) made += 1;
-      seen += 1;
-      const tick = document.createElement('i');
-      tick.className = `tick${isMade ? ' tick--made' : ''}`;
-      tick.style.left = `${(left * 100).toFixed(1)}%`;
-      tick.style.setProperty('--at', ((q + left) / 4).toFixed(3));
-      row.append(tick);
-    }
+  const made = [29.5, 56.1, 76.3, 90.9, 109.3];
+  const missed = [65.1, 68.8];
+  const plays = [2.3, 7.2, 10.4, 20.9, 26.7, 27.8, 33.7, 37.3, 39.5, 41.5, 45.9, 49.5, 51.6, 58.1, 59.3, 61.3, 62, 63.4, 71.6, 74.5,
+    78.9, 81.5, 84.3, 86, 88.8, 93.9, 97.3, 101.3, 102.8, 108, 108.7];
+  const slice = 110 / 4;
+  [...plays.map((t) => [t, 'tick tick--play']), ...missed.map((t) => [t, 'tick']), ...made.map((t) => [t, 'tick tick--made'])].forEach(([t, cls]) => {
+    const q = Math.min(3, Math.floor(t / slice));
+    const left = (t - q * slice) / slice;
+    const tick = document.createElement('i');
+    tick.className = cls;
+    tick.style.left = `${(4 + left * 92).toFixed(1)}%`;
+    tick.style.setProperty('--at', (t / 110).toFixed(3));
+    timeline.querySelector(`[data-quarter="${q}"]`).append(tick);
   });
 }
 

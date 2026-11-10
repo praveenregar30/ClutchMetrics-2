@@ -276,7 +276,7 @@ if (svg) {
     if (t >= ARRIVE) action = 'Shot made';
     if (t >= 4.7) action = 'Back in play';
     write('action', action);
-    write('arc', t >= RELEASE + 0.3 && t < 4.7 ? '47\u00B0' : '\u2013');
+    write('arc', t >= RELEASE + 0.3 && t < 4.7 ? '4.2 m' : '\u2013');
     write('result', t >= ARRIVE && t < 4.7 ? 'Made, +2' : '\u2013');
     write('points', t >= ARRIVE ? '21' : '19');
   }

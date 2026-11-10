@@ -138,7 +138,7 @@
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } #logins .panel { transition: none; } }
   @media (max-width: 1023px) { .scene { min-height: 280px; } }
 </style>
-<link rel="stylesheet" href="scroll-fx.css">
+<link rel="stylesheet" href="scroll-fx.css?v=2">
 <link rel="stylesheet" href="court-scene.css">
 <link rel="stylesheet" href="cursor.css">
 </head>
@@ -174,15 +174,15 @@
       <div class="hero-text grid hero-split">
         <div class="hero-copy span-5">
           <h1 id="hero-h">Basketball analysis for your team</h1>
-          <p class="t-lead"><span class="brand" translate="no">ClutchMetrics</span> turns each game into shot charts and player reports.</p>
+          <p class="t-lead">Upload a game video. <span class="brand" translate="no">ClutchMetrics</span> finds every player by jersey number, follows the ball, and marks each pass, interception and shot.</p>
           <div class="btn-row">
             <a class="btn btn--primary" href="login-coach.html">Sign in as coach<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
             <a class="btn btn--secondary" href="login-player.html">Sign in as player</a>
           </div>
           <div class="hero-roles">
             <p class="hero-roles__label">2 logins, 2 views</p>
-            <div class="role"><svg class="role__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11a3.500 3.500 0 1 0 0-7 3.500 3.500 0 0 0 0 7ZM2.500 20c.5-3.600 3-5.500 6.500-5.500s6 1.900 6.500 5.500M16 4.500a3.500 3.500 0 0 1 0 6.500M18.500 14.800c1.700.8 2.700 2.500 3 5.200"/></svg><h2 class="role__title">For the coach</h2><p>The whole team, every lineup and each quarter.</p></div>
-            <div class="role"><svg class="role__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4.500 21c.6-4.300 3.500-6.500 7.500-6.500s6.900 2.200 7.500 6.500"/></svg><h2 class="role__title">For the player</h2><p>Your own shots, points and form, game by game.</p></div>
+            <div class="role"><svg class="role__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11a3.500 3.500 0 1 0 0-7 3.500 3.500 0 0 0 0 7ZM2.500 20c.5-3.600 3-5.500 6.500-5.500s6 1.900 6.500 5.500M16 4.500a3.500 3.500 0 0 1 0 6.500M18.500 14.800c1.700.8 2.700 2.500 3 5.200"/></svg><h2 class="role__title">For the coach</h2><p>The match video, shot chart, players, movement and every play.</p></div>
+            <div class="role"><svg class="role__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM4.500 21c.6-4.300 3.500-6.500 7.500-6.500s6.900 2.200 7.500 6.500"/></svg><h2 class="role__title">For the player</h2><p>Your own shots, speed and highlights, game by game.</p></div>
           </div>
         </div>
         <div class="hero-visual span-7 start-6 scene">
@@ -248,13 +248,13 @@
               <text data-p="trackLabel" class="scene__tag" stroke="none">Player 7</text>
             </g>
             <g data-p="trackBall" opacity="0"><circle r="27" fill="none" stroke="#ff9a52" stroke-width="2" stroke-dasharray="5 6"/><text class="scene__tag" text-anchor="middle" y="-37">Ball</text></g>
-            <g data-p="arcTag" opacity="0" transform="translate(446 -16)"><text class="scene__stat" text-anchor="middle">Shot arc 47°</text></g>
+            <g data-p="arcTag" opacity="0" transform="translate(446 -16)"><text class="scene__stat" text-anchor="middle">Shot, 4.2 m out</text></g>
             <g data-p="score" opacity="0"><text class="scene__score" text-anchor="end">+2</text></g>
           </svg>
           <div class="read" data-read aria-hidden="true">
             <p class="read__title"><span class="read__dot"></span>What the model reads</p>
             <div class="read__row"><span>Action</span><b data-read-action>Dribbling</b></div>
-            <div class="read__row"><span>Shot arc</span><b data-read-arc>–</b></div>
+            <div class="read__row"><span>Shot distance</span><b data-read-arc>–</b></div>
             <div class="read__row"><span>Result</span><b data-read-result>–</b></div>
             <div class="read__row"><span>Points, No. 7</span><b data-read-points>19</b></div>
           </div>
@@ -269,7 +269,7 @@
   <section class="court-sec" id="court" aria-labelledby="court-h">
     <div class="wrap court-sec__wrap"><div class="court-sec__head">
       <h2 id="court-h">Every play, on the court</h2>
-      <p>From the first dribble to the basket, <span class="brand" translate="no">ClutchMetrics</span> follows the pass, the cut and the shot.</p>
+      <p>From the video alone, <span class="brand" translate="no">ClutchMetrics</span> tracks each player, follows the ball from pass to shot, and keeps the score.</p>
     </div></div>
     <div class="court-stage">
       <svg class="court-stage__svg" data-court-scene viewBox="0 0 1440 640" preserveAspectRatio="xMidYMax meet" role="img" aria-label="Six players on a court run one play: a guard dribbles and passes to the wing, the wing lobs to a cutting team-mate, he dunks for 2 points and the crowd reacts">
@@ -330,7 +330,7 @@
         <g data-c="sparks"></g>
         <g data-c="points" opacity="0"><text class="court__points" text-anchor="end">+2</text></g>
         <g data-c="tagPass" opacity="0" transform="translate(640 270)"><text class="court__tag" text-anchor="middle">Pass</text></g>
-        <g data-c="tagAssist" opacity="0" transform="translate(1000 60)"><text class="court__tag" text-anchor="middle">Assist</text></g>
+        <g data-c="tagAssist" opacity="0" transform="translate(1000 60)"><text class="court__tag" text-anchor="middle">Shot</text></g>
       </svg>
       <button class="scene__pause court-stage__pause" type="button" data-court-pause aria-pressed="false" aria-label="Pause the animation">
         <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5 3v10M11 3v10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
@@ -342,35 +342,35 @@
     <div class="wrap">
       <div class="grid grid--top">
         <h2 class="span-5" id="dashboard-h">The <span class="brand" translate="no">ClutchMetrics</span> dashboard for every game</h2>
-        <p class="span-7 start-6">Pick a game and <span class="brand" translate="no">ClutchMetrics</span> lists the players beside the analysis. The court shows where each shot came from, and whether it went in.</p>
+        <p class="span-7 start-6">Pick a game and <span class="brand" translate="no">ClutchMetrics</span> lists every player it found by jersey number beside the analysis. The court shows where each shot came from, and whether it went in. These figures are from a real analysed game.</p>
       </div>
-      <div class="ui app fill" role="img" aria-label="The ClutchMetrics dashboard: a list of players beside a half-court shot chart with field goal, three-point and turnover figures for one game" data-ui-pause-host>
+      <div class="ui app fill" role="img" aria-label="The ClutchMetrics dashboard for Australia vs India: the players found by jersey number beside a half-court shot chart, with field goals, three-pointers, ball control, passes and interceptions" data-ui-pause-host>
         <div class="app__pane app__pane--list" data-ui-loop>
           <div class="ui ui-panel ui-win" data-ui="window" data-open="Queued" data-work="Analysing" data-done="Ready">
             <div class="ui-win__bar">
               <span class="ui-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="ui-win__crumb">Game 14 <i>/</i> <b>Players</b></span>
+              <span class="ui-win__crumb">Australia vs India <i>/</i> <b>Players</b></span>
               <span class="ui-spacer"></span>
             </div>
             <div class="ui-win__body">
               <nav class="ui-win__side" aria-hidden="true">
-                <span class="ui-win__nav is-on">Players<em>10</em></span>
-                <span class="ui-win__nav">Lineups<em>6</em></span>
-                <span class="ui-win__nav">Quarters<em>4</em></span>
+                <span class="ui-win__nav is-on">Players<em>11</em></span>
+                <span class="ui-win__nav">Shots<em>7</em></span>
+                <span class="ui-win__nav">Passes<em>29</em></span>
               </nav>
               <div class="ui-win__main">
-                <div class="ui-win__cols" aria-hidden="true"><span>No.</span><span>Position</span><span>Status</span><span>Pts</span></div>
+                <div class="ui-win__cols" aria-hidden="true"><span>No.</span><span>Team</span><span>Status</span><span>Pts</span></div>
                 <ul class="ui-win__rows">
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">7</span><span class="ui-win__who">No. 7</span><span class="ui-win__sub">Point guard</span><span class="ui-win__st" data-st>Queued</span><span class="ui-win__age">21</span></li>
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="3">11</span><span class="ui-win__who">No. 11</span><span class="ui-win__sub">Shooting guard</span><span class="ui-win__st" data-st>Queued</span><span class="ui-win__age">17</span></li>
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="4">23</span><span class="ui-win__who">No. 23</span><span class="ui-win__sub">Small forward</span><span class="ui-win__st" data-st>Queued</span><span class="ui-win__age">14</span></li>
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="2">32</span><span class="ui-win__who">No. 32</span><span class="ui-win__sub">Power forward</span><span class="ui-win__st is-done" data-st>Ready</span><span class="ui-win__age">12</span></li>
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="5">44</span><span class="ui-win__who">No. 44</span><span class="ui-win__sub">Center</span><span class="ui-win__st is-done" data-st>Ready</span><span class="ui-win__age">9</span></li>
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">3</span><span class="ui-win__who">No. 3</span><span class="ui-win__sub">Guard</span><span class="ui-win__st is-done" data-st>Ready</span><span class="ui-win__age">8</span></li>
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="3">15</span><span class="ui-win__who">No. 15</span><span class="ui-win__sub">Forward</span><span class="ui-win__st is-done" data-st>Ready</span><span class="ui-win__age">6</span></li>
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="4">20</span><span class="ui-win__who">No. 20</span><span class="ui-win__sub">Forward</span><span class="ui-win__st is-done" data-st>Ready</span><span class="ui-win__age">5</span></li>
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="2">9</span><span class="ui-win__who">No. 9</span><span class="ui-win__sub">Guard</span><span class="ui-win__st is-done" data-st>Ready</span><span class="ui-win__age">2</span></li>
-                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="5">50</span><span class="ui-win__who">No. 50</span><span class="ui-win__sub">Center</span><span class="ui-win__st is-done" data-st>Ready</span><span class="ui-win__age">0</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="2">7</span><span class="ui-win__who">No. 7</span><span class="ui-win__sub">India</span><span class="ui-win__st" data-st>Queued</span><span class="ui-win__age">5</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">4</span><span class="ui-win__who">No. 4</span><span class="ui-win__sub">Australia</span><span class="ui-win__st" data-st>Queued</span><span class="ui-win__age">3</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="2">18</span><span class="ui-win__who">No. 18</span><span class="ui-win__sub">India</span><span class="ui-win__st" data-st>Queued</span><span class="ui-win__age">2</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">2</span><span class="ui-win__who">No. 2</span><span class="ui-win__sub">Australia</span><span class="ui-win__st is-done" data-st>Ready</span><span class="ui-win__age">0</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">5</span><span class="ui-win__who">No. 5</span><span class="ui-win__sub">Australia</span><span class="ui-win__st is-done" data-st>Ready</span><span class="ui-win__age">0</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="2">36</span><span class="ui-win__who">No. 36</span><span class="ui-win__sub">India</span><span class="ui-win__st is-done" data-st>Ready</span><span class="ui-win__age">0</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">6</span><span class="ui-win__who">No. 6</span><span class="ui-win__sub">Australia</span><span class="ui-win__st is-done" data-st>Ready</span><span class="ui-win__age">0</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="2">23</span><span class="ui-win__who">No. 23</span><span class="ui-win__sub">India</span><span class="ui-win__st is-done" data-st>Ready</span><span class="ui-win__age">0</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">16</span><span class="ui-win__who">No. 16</span><span class="ui-win__sub">Australia</span><span class="ui-win__st is-done" data-st>Ready</span><span class="ui-win__age">0</span></li>
+                  <li class="ui-win__row" data-row><span class="ui-avatar" data-tone="1">18</span><span class="ui-win__who">No. 18</span><span class="ui-win__sub">Australia</span><span class="ui-win__st is-done" data-st>Ready</span><span class="ui-win__age">0</span></li>
                 </ul>
               </div>
             </div>
@@ -378,7 +378,7 @@
         </div>
         <div class="app__pane app__pane--open">
           <div class="game" data-plot>
-            <div class="game__head"><b>Game 14, full team</b><span>4 quarters</span></div>
+            <div class="game__head"><b>Australia vs India, both teams</b><span>1:50 analysed</span></div>
             <div class="game__left"><div class="game__court">
               <svg class="court" viewBox="0 0 500 470" aria-hidden="true">
                 <rect class="court__floor" width="500" height="470"/>
@@ -387,8 +387,8 @@
                 <path class="court__line" d="M170 0V190H330V0M190 190A60 60 0 0 0 310 190M190 190A60 60 0 0 1 310 190M30 0V140A237.5 237.5 0 0 0 470 140V0M190 470A60 60 0 0 1 310 470"/>
                 <path class="court__rim" d="M220 40H280"/>
                 <circle class="court__rim" cx="250" cy="52.5" r="8"/>
-                <circle data-shot class="shot--in" cx="250" cy="100" r="9"/><circle data-shot class="shot--in" cx="210" cy="78" r="9"/><circle data-shot class="shot--in" cx="292" cy="82" r="9"/><circle data-shot class="shot--in" cx="250" cy="165" r="9"/><circle data-shot class="shot--in" cx="52" cy="90" r="9"/><circle data-shot class="shot--in" cx="448" cy="72" r="9"/><circle data-shot class="shot--in" cx="112" cy="262" r="9"/><circle data-shot class="shot--in" cx="250" cy="322" r="9"/><circle data-shot class="shot--in" cx="392" cy="268" r="9"/><circle data-shot class="shot--in" cx="150" cy="170" r="9"/><circle data-shot class="shot--in" cx="350" cy="150" r="9"/>
-                <path data-shot class="shot--out" d="M120 60l13 13m0-13l-13 13"/><path data-shot class="shot--out" d="M360 220l13 13m0-13l-13 13"/><path data-shot class="shot--out" d="M420 330l13 13m0-13l-13 13"/><path data-shot class="shot--out" d="M65 340l13 13m0-13l-13 13"/><path data-shot class="shot--out" d="M225 240l13 13m0-13l-13 13"/><path data-shot class="shot--out" d="M30 190l13 13m0-13l-13 13"/><path data-shot class="shot--out" d="M300 355l13 13m0-13l-13 13"/>
+                <circle data-shot class="shot--in" cx="458" cy="145" r="9"/><circle data-shot class="shot--in" cx="429" cy="189" r="9"/><circle data-shot class="shot--in" cx="133" cy="178" r="9"/><circle data-shot class="shot--in" cx="141" cy="65" r="9"/>
+                <path data-shot class="shot--out" d="M431.5 195.5l13 13m0-13l-13 13"/><path data-shot class="shot--out" d="M181.5 64.5l13 13m0-13l-13 13"/>
               </svg>
             </div>
             <div class="game__legend">
@@ -396,11 +396,11 @@
               <span><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 2l8 8m0-8l-8 8" stroke="#f7f1e8" stroke-width="2"/></svg>Missed</span>
             </div></div>
             <div class="game__stats">
-              <div class="game__tile">Field goals<b data-count="46.8" data-places="1" data-unit="%">46.8%</b><div class="meter"><i class="is-mark" style="width: 46.8%"></i></div></div>
-              <div class="game__tile">Three-pointers<b data-count="36.4" data-places="1" data-unit="%">36.4%</b><div class="meter"><i style="width: 36.4%"></i></div></div>
-              <div class="game__tile">Free throws<b data-count="81" data-places="1" data-unit="%">81.0%</b><div class="meter"><i style="width: 81%"></i></div></div>
-              <div class="game__tile">Turnovers<b data-count="12">12</b></div>
-              <div class="game__tile">Assists<b data-count="24">24</b></div>
+              <div class="game__tile">Field goals<b data-count="71.4" data-places="1" data-unit="%">71.4%</b><div class="meter"><i class="is-mark" style="width: 71.4%"></i></div></div>
+              <div class="game__tile">Three-pointers<b data-count="75" data-places="1" data-unit="%">75.0%</b><div class="meter"><i style="width: 75%"></i></div></div>
+              <div class="game__tile">Ball control, AUS<b data-count="49.4" data-places="1" data-unit="%">49.4%</b><div class="meter"><i style="width: 49.4%"></i></div></div>
+              <div class="game__tile">Passes<b data-count="29">29</b></div>
+              <div class="game__tile">Interceptions<b data-count="2">2</b></div>
             </div>
           </div>
         </div>
@@ -411,40 +411,40 @@
   <section class="section ground-surface" id="logins" aria-labelledby="logins-h">
     <div class="wrap">
       <div class="section-head">
-        <h2 id="logins-h">Two <span class="brand" translate="no">ClutchMetrics</span> logins for one team. <span class="muted">Each opens a different view.</span></h2>
+        <h2 id="logins-h">Two <span class="brand" translate="no">ClutchMetrics</span> logins, one game. <span class="muted">The coach sees the team, the player sees themselves.</span></h2>
       </div>
       <div class="grid">
         <article class="card card--row card--open span-6 m-nolift">
-          <h3>Shows the coach lineup analysis</h3>
-          <p>The coach login opens the whole team: every player, lineup and quarter from a game.</p>
+          <h3>The coach sees the whole match</h3>
+          <p>The coach login opens the team dashboard: the match video with its timeline, shot chart, players, movement, passing network and every play.</p>
           <div class="panel" data-fx="grain-gradient" data-fx-seed="31" data-fx-palette='{"bg":"#b4581c","surface":"#d9762e","ink":"#160b03","muted":"#3a2413","accent":"#f09a54"}' data-fx-params='{"speed":0,"grainMotion":0,"calm":0.2}'>
             <div class="stage stage--fade-b"><div class="at-rise fit" style="--fit-max:440px;--ax:max(24px, 50% - 220px);--ay:40px;--ay-sm:16px">
-              <div class="ui ui-panel view" role="img" aria-label="Coach view: three lineups compared by plus-minus and minutes">
-                <div class="view__title"><span>Lineups, game 14</span><span>Coach view</span></div>
-                <div class="view__row view__row--head"><span>Lineup</span><span>+/−</span><span>Min</span></div>
-                <div class="view__row is-mark"><span>Starters</span><span>+11</span><span>19</span></div>
-                <div class="view__row"><span>Small lineup</span><span>+6</span><span>8</span></div>
-                <div class="view__row"><span>Bench unit</span><span>−3</span><span>11</span></div>
-                <div class="view__row"><span>Big lineup</span><span>+2</span><span>7</span></div>
-                <div class="view__row"><span>Closing five</span><span>+4</span><span>5</span></div>
-                <div class="view__row"><span>Second unit</span><span>−1</span><span>6</span></div>
+              <div class="ui ui-panel view" role="img" aria-label="Coach view: Australia's players in the game against India, with passes made and metres covered">
+                <div class="view__title"><span>Players, Australia vs India</span><span>Coach view</span></div>
+                <div class="view__row view__row--head"><span>Player</span><span>Passes</span><span>Metres</span></div>
+                <div class="view__row is-mark"><span>No. 5</span><span>5</span><span>119</span></div>
+                <div class="view__row"><span>No. 2</span><span>3</span><span>159</span></div>
+                <div class="view__row"><span>No. 6</span><span>2</span><span>128</span></div>
+                <div class="view__row"><span>No. 4</span><span>1</span><span>98</span></div>
+                <div class="view__row"><span>No. 18</span><span>1</span><span>47</span></div>
+                <div class="view__row"><span>No. 16</span><span>0</span><span>101</span></div>
               </div>
             </div></div>
           </div>
         </article>
         <article class="card card--row card--open span-6 m-nolift">
-          <h3>Shows the player form analysis</h3>
-          <p>The player login opens one report: that player’s shots, points and trend, game by game.</p>
+          <h3>The player sees their own game</h3>
+          <p>The player login opens one report: that player’s stats, shots, speed, highlights and form across games.</p>
           <div class="panel" data-fx="grain-gradient" data-fx-seed="58" data-fx-palette='{"bg":"#b4581c","surface":"#d9762e","ink":"#160b03","muted":"#3a2413","accent":"#f09a54"}' data-fx-params='{"speed":0,"grainMotion":0,"calm":0.2}'>
             <div class="stage stage--fade-b"><div class="at-rise fit" style="--fit-max:440px;--ax:max(24px, 50% - 220px);--ay:40px;--ay-sm:16px">
-              <div class="ui ui-panel view" role="img" aria-label="Player view: 18.4 points a game for player number 7, with a rising line over the last 5 games">
-                <div class="view__title"><span>Your report, No. 7</span><span>Player view</span></div>
-                <div class="view__big">18.4</div>
-                <span>Points a game, last 5 games</span>
-                <svg class="view__line" viewBox="0 0 400 88" preserveAspectRatio="none" aria-hidden="true"><path vector-effect="non-scaling-stroke" d="M4 60L102 44L200 70L298 26L394 10"/><circle cx="394" cy="10" r="5"/></svg>
-                <div class="view__row"><span>Field goals</span><span>48%</span><span></span></div>
-                <div class="view__row"><span>Assists</span><span>5.2</span><span></span></div>
-                <div class="view__row"><span>Rebounds</span><span>3.8</span><span></span></div>
+              <div class="ui ui-panel view" role="img" aria-label="Player view: number 2 of Australia reached 19.2 km/h and covered 159 metres, the most in his team">
+                <div class="view__title"><span>Your report, No. 2</span><span>Player view</span></div>
+                <div class="view__big">19.2</div>
+                <span>Top speed in km/h, Australia vs India</span>
+                <svg class="view__line" viewBox="0 0 400 88" preserveAspectRatio="none" aria-hidden="true"><path vector-effect="non-scaling-stroke" d="M4 70L60 52L104 62L150 30L196 44L246 12L292 40L346 50L394 34"/><circle cx="246" cy="12" r="5"/></svg>
+                <div class="view__row"><span>Distance</span><span>159 m</span><span></span></div>
+                <div class="view__row"><span>Passes received</span><span>4</span><span></span></div>
+                <div class="view__row"><span>Interceptions</span><span>1</span><span></span></div>
               </div>
             </div></div>
           </div>
@@ -463,73 +463,73 @@
         <svg class="steps__ball" viewBox="-18 -18 36 36" aria-hidden="true"><circle r="17" fill="#ff7a1a"/><path d="M-17 0H17M0-17V17M-12-12Q-4 0-12 12M12-12Q4 0 12 12" fill="none" stroke="#160b03" stroke-width="1.8"/></svg>
         <li class="step is-on">
           <span class="step__disc" aria-hidden="true">1</span>
-          <h3>Add the game</h3>
-          <p>The coach adds the game to <span class="brand" translate="no">ClutchMetrics</span> and picks who played.</p>
-          <dl class="step__meta"><div><dt>Who</dt><dd>Coach</dd></div><div><dt>You get</dt><dd>A game ready to analyse</dd></div></dl>
+          <h3>Upload the game</h3>
+          <p>The coach or a player uploads the game video to <span class="brand" translate="no">ClutchMetrics</span>. Any common format works; it is converted automatically.</p>
+          <dl class="step__meta"><div><dt>Who</dt><dd>Coach or player</dd></div><div><dt>You get</dt><dd>A video ready to analyse</dd></div></dl>
         </li>
         <li class="step">
           <span class="step__disc" aria-hidden="true">2</span>
           <h3>Run the analysis</h3>
-          <p>The model finds every shot, compares lineups and works out each player’s figures.</p>
-          <dl class="step__meta"><div><dt>Who</dt><dd><span class="brand" translate="no">ClutchMetrics</span></dd></div><div><dt>You get</dt><dd>Shots, lineups and figures</dd></div></dl>
+          <p>The model finds the players, reads their jersey numbers, follows the ball, and marks every pass, interception and shot.</p>
+          <dl class="step__meta"><div><dt>Who</dt><dd><span class="brand" translate="no">ClutchMetrics</span></dd></div><div><dt>You get</dt><dd>Plays, shots and figures</dd></div></dl>
         </li>
         <li class="step">
           <span class="step__disc" aria-hidden="true">3</span>
           <h3>Open your view</h3>
-          <p>The coach opens the team dashboard. Each player opens a personal report.</p>
+          <p>The coach opens the team dashboard. Each player opens a personal report with their own highlights.</p>
           <dl class="step__meta"><div><dt>Who</dt><dd>Coach and player</dd></div><div><dt>You get</dt><dd>A view made for your role</dd></div></dl>
         </li>
       </ol>
       <div class="screens">
-        <div class="screen is-on" role="group" aria-label="Step 1 on screen: adding game 14 with 10 players">
-          <div class="screen__bar"><span class="screen__dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="brand" translate="no">ClutchMetrics</span> / <b>New game</b></div>
-          <p class="screen__title">Game 14</p>
-          <div class="field"><span>Added by</span><b>Coach</b></div>
-          <div class="field"><span>Who played</span><b>10 players</b></div>
-          <div class="roster"><div class="roster__tile" style="--at: 0.080"><b>No. 7</b><span>Guard</span></div><div class="roster__tile" style="--at: 0.135"><b>No. 11</b><span>Guard</span></div><div class="roster__tile" style="--at: 0.190"><b>No. 23</b><span>Forward</span></div><div class="roster__tile" style="--at: 0.245"><b>No. 32</b><span>Forward</span></div><div class="roster__tile" style="--at: 0.300"><b>No. 44</b><span>Center</span></div><div class="roster__tile" style="--at: 0.355"><b>No. 3</b><span>Guard</span></div><div class="roster__tile" style="--at: 0.410"><b>No. 15</b><span>Forward</span></div><div class="roster__tile" style="--at: 0.465"><b>No. 20</b><span>Forward</span></div><div class="roster__tile" style="--at: 0.520"><b>No. 9</b><span>Guard</span></div><div class="roster__tile" style="--at: 0.575"><b>No. 50</b><span>Center</span></div></div>
+        <div class="screen is-on" role="group" aria-label="Step 1 on screen: uploading the Australia vs India video, with the ten steps the model will run">
+          <div class="screen__bar"><span class="screen__dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="brand" translate="no">ClutchMetrics</span> / <b>Analyse a video</b></div>
+          <p class="screen__title">Australia vs India</p>
+          <div class="field"><span>Uploaded by</span><b>Coach</b></div>
+          <div class="field"><span>Video</span><b>1:50 of play, MP4</b></div>
+          <div class="roster"><div class="roster__tile" style="--at: 0.080"><b>Convert</b><span>the video</span></div><div class="roster__tile" style="--at: 0.135"><b>Find</b><span>players</span></div><div class="roster__tile" style="--at: 0.190"><b>Track</b><span>both teams</span></div><div class="roster__tile" style="--at: 0.245"><b>Follow</b><span>the ball</span></div><div class="roster__tile" style="--at: 0.300"><b>Read</b><span>numbers</span></div><div class="roster__tile" style="--at: 0.355"><b>Map</b><span>the court</span></div><div class="roster__tile" style="--at: 0.410"><b>Find</b><span>passes</span></div><div class="roster__tile" style="--at: 0.465"><b>Find</b><span>shots</span></div><div class="roster__tile" style="--at: 0.520"><b>Draw</b><span>the video</span></div><div class="roster__tile" style="--at: 0.575"><b>Build</b><span>dashboards</span></div></div>
           <div class="upload">
-            <div class="upload__row"><span>Game data added</span><b data-count="100" data-unit="%">100%</b></div>
+            <div class="upload__row"><span>Video uploaded</span><b data-count="100" data-unit="%">100%</b></div>
             <div class="bar"><i></i></div>
           </div>
         </div>
-        <div class="screen" role="group" aria-label="Step 2 on screen: the analysis marks 79 shots across 4 quarters, compares 6 lineups and covers 10 players">
-          <div class="screen__bar"><span class="screen__dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="brand" translate="no">ClutchMetrics</span> / <b>Analysis</b><span class="screen__status">Reading game 14</span></div>
-          <p class="screen__title">Every shot, in order</p>
+        <div class="screen" role="group" aria-label="Step 2 on screen: the analysis marks 38 plays in 1 minute 50 seconds of Australia vs India: 7 shots, 29 passes and 2 interceptions, with 11 players identified">
+          <div class="screen__bar"><span class="screen__dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="brand" translate="no">ClutchMetrics</span> / <b>Analysis</b><span class="screen__status">Reading Australia vs India</span></div>
+          <p class="screen__title">Every play, in order</p>
           <div class="quarters" data-timeline>
-            <div class="quarter"><span>Q1</span><div class="quarter__track" data-quarter="0"></div></div>
-            <div class="quarter"><span>Q2</span><div class="quarter__track" data-quarter="1"></div></div>
-            <div class="quarter"><span>Q3</span><div class="quarter__track" data-quarter="2"></div></div>
-            <div class="quarter"><span>Q4</span><div class="quarter__track" data-quarter="3"></div></div>
+            <div class="quarter"><span>0:00</span><div class="quarter__track" data-quarter="0"></div></div>
+            <div class="quarter"><span>0:28</span><div class="quarter__track" data-quarter="1"></div></div>
+            <div class="quarter"><span>0:55</span><div class="quarter__track" data-quarter="2"></div></div>
+            <div class="quarter"><span>1:23</span><div class="quarter__track" data-quarter="3"></div></div>
             <div class="playhead" aria-hidden="true"><i></i></div>
           </div>
-          <div class="legend"><span><i class="is-made"></i>Made</span><span><i></i>Missed</span></div>
+          <div class="legend"><span><i class="is-made"></i>Shot made</span><span><i></i>Shot missed</span><span><i class="is-play"></i>Pass or interception</span></div>
           <div class="tiles">
-            <div class="tile-n">Shots<b data-count="79">79</b></div>
-            <div class="tile-n">Lineups<b data-count="6">6</b></div>
-            <div class="tile-n">Players<b data-count="10">10</b></div>
+            <div class="tile-n">Plays<b data-count="38">38</b></div>
+            <div class="tile-n">Shots<b data-count="7">7</b></div>
+            <div class="tile-n">Players<b data-count="11">11</b></div>
           </div>
         </div>
-        <div class="screen" role="group" aria-label="Step 3 on screen: the coach view and the player view of game 14, each with its login">
+        <div class="screen" role="group" aria-label="Step 3 on screen: the coach view and the player view of Australia vs India, each with its login">
           <div class="screen__bar"><span class="screen__dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="brand" translate="no">ClutchMetrics</span> / <b>Results</b><span class="screen__status"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="m3 8.4 3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Ready</span></div>
           <p class="screen__title">One game, 2 views</p>
           <div class="results">
             <article class="result">
               <h4>Coach view</h4>
-              <span>Best lineup</span>
-              <span class="result__big">+11</span>
+              <span>Passes made, Australia</span>
+              <span class="result__big">14</span>
               <div class="lineups">
-                <div class="lineup" style="--v: 1"><div class="lineup__row"><span>Starters</span><b>+11</b></div><div class="bar"><i></i></div></div>
-                <div class="lineup" style="--v: .55"><div class="lineup__row"><span>Small lineup</span><b>+6</b></div><div class="bar"><i></i></div></div>
-                <div class="lineup lineup--low" style="--v: .27"><div class="lineup__row"><span>Bench unit</span><b>−3</b></div><div class="bar"><i></i></div></div>
+                <div class="lineup" style="--v: 1"><div class="lineup__row"><span>No. 5</span><b>5</b></div><div class="bar"><i></i></div></div>
+                <div class="lineup" style="--v: .6"><div class="lineup__row"><span>No. 2</span><b>3</b></div><div class="bar"><i></i></div></div>
+                <div class="lineup lineup--low" style="--v: .4"><div class="lineup__row"><span>No. 6</span><b>2</b></div><div class="bar"><i></i></div></div>
               </div>
               <a class="link" href="login-coach.html">Sign in as coach</a>
             </article>
             <article class="result">
               <h4>Player view</h4>
-              <span>Points a game</span>
-              <span class="result__big">18.4</span>
-              <svg class="trend" viewBox="0 0 300 110" preserveAspectRatio="none" aria-hidden="true"><path vector-effect="non-scaling-stroke" d="M4 80L76 56L150 72L224 34L296 12"/></svg>
-              <div class="result__row"><span>Last game, No. 7</span><b>21</b></div>
+              <span>Top speed, No. 2 (km/h)</span>
+              <span class="result__big">19.2</span>
+              <svg class="trend" viewBox="0 0 300 110" preserveAspectRatio="none" aria-hidden="true"><path vector-effect="non-scaling-stroke" d="M4 88L46 66L80 78L114 40L148 58L184 14L218 50L258 62L296 44"/></svg>
+              <div class="result__row"><span>Distance covered</span><b>159 m</b></div>
               <a class="link" href="login-player.html">Sign in as player</a>
             </article>
           </div>
@@ -542,17 +542,17 @@
     <div class="wrap">
       <div class="asks__head">
         <h2 id="questions-h">Questions about <span class="brand" translate="no">ClutchMetrics</span></h2>
-        <p><span class="brand" translate="no">ClutchMetrics</span> is a design practicum project, so some of the answers change as the build goes on.</p>
+        <p><span class="brand" translate="no">ClutchMetrics</span> is a design practicum project: a working model and website, tested on real game videos.</p>
       </div>
       <div class="asks__grid">
         <figure class="asks__photo">
           <img src="assets/img/photo-f9917549-960.jpg" srcset="assets/img/photo-f9917549-500.jpg 500w, assets/img/photo-f9917549-960.jpg 960w" sizes="(max-width: 1023px) 100vw, 34vw" width="960" height="744" alt="An orange rim and white net in an indoor arena" loading="lazy" decoding="async" data-source="stand-in" data-subject="a basketball rim in an arena">
-          <div class="asks__status"><span class="asks__dot" aria-hidden="true"></span>Model in tuning</div>
+          <div class="asks__status"><span class="asks__dot" aria-hidden="true"></span>Model running</div>
         </figure>
-        <article class="ask"><svg class="ask__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18ZM3 12h18M12 3v18M6 5.2c3 3.8 3 9.8 0 13.6M18 5.2c-3 3.8-3 9.8 0 13.6"/></svg><h3>What does <span class="brand" translate="no">ClutchMetrics</span> do?</h3><p>It analyses basketball games and shows the results on a dashboard for coaches and players.</p></article>
+        <article class="ask"><svg class="ask__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18ZM3 12h18M12 3v18M6 5.2c3 3.8 3 9.8 0 13.6M18 5.2c-3 3.8-3 9.8 0 13.6"/></svg><h3>What does <span class="brand" translate="no">ClutchMetrics</span> do?</h3><p>It analyses basketball game videos: it tracks players by jersey number, follows the ball and finds passes, interceptions and shots, then shows them on a dashboard for coaches and a report for players.</p></article>
         <article class="ask"><svg class="ask__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM2.5 20c.5-3.6 3-5.5 6.5-5.5s6 1.900 6.500 5.500M16 4.500a3.500 3.500 0 0 1 0 6.500M18.500 14.800c1.700.8 2.700 2.500 3 5.200"/></svg><h3>Which <span class="brand" translate="no">ClutchMetrics</span> login should I use?</h3><p>Coaches use the coach login to see the whole team. Players use the player login to see their own report.</p></article>
-        <article class="ask ask--hot"><svg class="ask__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.500 12h4l2.500-7 5 14 2.500-7h5"/></svg><h3>Is the analysis running yet?</h3><p>Not yet. The model is still being tuned, so the figures on this page are made up to show the design.</p></article>
-        <article class="ask"><svg class="ask__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3.500a5.500 5.500 0 1 1-4.400 8.800L3.500 19.500V21h3v-2h2v-2h2l1.400-1.400A5.500 5.500 0 0 1 15 3.500Z"/></svg><h3>Can I sign in today?</h3><p>Not yet. The two login pages are in place, and sign-in opens once the dashboards are built.</p></article>
+        <article class="ask ask--hot"><svg class="ask__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.500 12h4l2.500-7 5 14 2.500-7h5"/></svg><h3>Is the analysis running?</h3><p>Yes. Upload a game video and the model analyses its first 3 minutes in about 20 to 30 minutes. The figures on this page come from a real analysed game, Australia vs India.</p></article>
+        <article class="ask"><svg class="ask__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3.500a5.500 5.500 0 1 1-4.400 8.800L3.500 19.500V21h3v-2h2v-2h2l1.400-1.400A5.500 5.500 0 0 1 15 3.500Z"/></svg><h3>Can I sign in today?</h3><p>Yes. Create a coach or player account with your email. Each account sees only the games it uploaded.</p></article>
       </div>
     </div>
   </section>
@@ -588,8 +588,8 @@
 <script type="module" src="assets/system.js"></script>
 <script type="module" src="assets/motion/motion.js"></script>
 <script type="module" src="assets/layout/layout.js"></script>
-<script type="module" src="hero-scene.js"></script>
-<script type="module" src="scroll-fx.js"></script>
+<script type="module" src="hero-scene.js?v=2"></script>
+<script type="module" src="scroll-fx.js?v=2"></script>
 <script type="module" src="court-scene.js"></script>
 </body>
 </html>
