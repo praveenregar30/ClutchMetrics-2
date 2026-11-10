@@ -137,8 +137,22 @@ main > section.asks { position: relative; overflow: clip; }
 .about__facts div { display: grid; gap: 4px; align-content: start; padding: 14px 16px; background: #15120f; }
 .about__facts dt { color: var(--accent); font-size: 13px; font-weight: 500; }
 .about__facts dd { margin: 0; font-size: 14px; line-height: 1.45; color: rgb(247 241 232 / .85); }
+/* how it works: three steps from the video to the views */
+.how { margin-top: var(--s-7); }
+.how__title { margin: 0 0 var(--s-5); font: 500 clamp(24px, 2.4vw, 30px)/1.15 var(--font-display); letter-spacing: -.02em; }
+.how__steps { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-3); margin: 0; padding: 0; list-style: none; }
+.how__steps::before { content: ""; position: absolute; left: 36px; right: 36px; top: 35px; height: 1px; background: linear-gradient(90deg, var(--accent), rgb(255 122 26 / .15)); }
+.how__step { position: relative; display: grid; align-content: start; gap: var(--s-3); padding: var(--s-5); border: 1px solid var(--line-strong); border-radius: var(--r-md); background: linear-gradient(160deg, #1f1a15, #15120f); transition: border-color .28s ease, transform .28s cubic-bezier(.22, 1, .36, 1); }
+.how__step:hover { transform: translateY(-2px); border-color: rgb(255 122 26 / .7); }
+.how__no { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #160b03; font: 600 13px/1 var(--font-display); }
+.how__step h4 { margin: 0; font: 500 18px/1.3 var(--font-display); letter-spacing: -.01em; }
+.how__step ul { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.how__step li { font-size: 14px; line-height: 1.5; color: rgb(247 241 232 / .78); }
+.how__step li b { color: var(--ink); font-weight: 500; }
 @media (max-width: 1099px) {
   .about__head, .about__foot { grid-template-columns: minmax(0, 1fr); }
+  .how__steps { grid-template-columns: minmax(0, 1fr); }
+  .how__steps::before { display: none; }
   .about__team { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .about__facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -146,4 +160,4 @@ main > section.asks { position: relative; overflow: clip; }
   .about__team { grid-template-columns: minmax(0, 1fr); }
   .about__facts { grid-template-columns: minmax(0, 1fr); }
 }
-@media (prefers-reduced-motion: reduce) { .member { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .member, .how__step { transition: none; } }

@@ -139,7 +139,7 @@
   @media (max-width: 1023px) { .scene { min-height: 280px; } }
 </style>
 <link rel="stylesheet" href="scroll-fx.css?v=3">
-<link rel="stylesheet" href="court-scene.css?v=3">
+<link rel="stylesheet" href="court-scene.css?v=4">
 <link rel="stylesheet" href="cursor.css">
 </head>
 <body>
@@ -566,6 +566,40 @@
           <div><dt>Scoring</dt><dd>FIBA rules: 2 or 3 points from where the shot was released.</dd></div>
           <div><dt>Two views</dt><dd>A team dashboard for coaches and a personal report for each player.</dd></div>
         </dl>
+      </div>
+
+      <div class="how" aria-labelledby="how-h">
+        <h3 class="how__title" id="how-h">How <span class="brand" translate="no">ClutchMetrics</span> works</h3>
+        <ol class="how__steps">
+          <li class="how__step">
+            <span class="how__no" aria-hidden="true">1</span>
+            <h4>The models look at every frame</h4>
+            <ul>
+              <li><b>Players, referees and the ball:</b> an RF-DETR detector we fine-tuned on basketball broadcast frames.</li>
+              <li><b>Jersey numbers and the rim:</b> a second, smaller RF-DETR model finds the number on each shirt and the rim.</li>
+              <li><b>Reading the digits:</b> Qwen3-VL-2B, a small vision-language model on our own GPU, reads each number. Votes over many frames give every player one number.</li>
+              <li><b>The TV scoreboard:</b> the same model reads the score to check each basket.</li>
+            </ul>
+          </li>
+          <li class="how__step">
+            <span class="how__no" aria-hidden="true">2</span>
+            <h4>We work out what happened</h4>
+            <ul>
+              <li><b>Tracking:</b> our tracker follows each player from frame to frame; jersey colour splits the two teams.</li>
+              <li><b>Court mapping:</b> a few court views mapped by hand, carried along by the camera's movement, turn pixels into metres for speed, distance, heat maps and shot positions.</li>
+              <li><b>Game events:</b> who holds the ball gives possession, passes and interceptions. A shot counts as made when the ball drops through the rim, worth 2 or 3 by FIBA rules.</li>
+            </ul>
+          </li>
+          <li class="how__step">
+            <span class="how__no" aria-hidden="true">3</span>
+            <h4>You see it three ways</h4>
+            <ul>
+              <li><b>Analysis video:</b> boxes, jersey numbers, the ball and a live court map drawn on the match.</li>
+              <li><b>Coach dashboard:</b> the video with a timeline, shot chart, players, movement, passing network and every play.</li>
+              <li><b>Player report:</b> your stats against your team, your shots, speed, heat map, a highlights reel and your form across games.</li>
+            </ul>
+          </li>
+        </ol>
       </div>
     </div>
   </section>
