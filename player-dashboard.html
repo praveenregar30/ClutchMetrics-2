@@ -4,37 +4,150 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Your player report: ClutchMetrics</title>
-<meta name="description" content="The ClutchMetrics player dashboard.">
+<meta name="description" content="Your ClutchMetrics player report: your stats, shots, speed and movement in each game, your highlights and your form across games.">
 <meta name="theme-color" content="#100e0c">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400..700&family=JetBrains+Mono:wght@400..500&family=Anton&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="auth.css?v=2">
-<link rel="stylesheet" href="dashboard.css?v=5">
-<link rel="stylesheet" href="analyze.css?v=1">
+<link rel="stylesheet" href="dashboard.css?v=7">
+<link rel="stylesheet" href="player.css?v=1">
+<link rel="stylesheet" href="analyze.css?v=2">
 <link rel="stylesheet" href="court-map.css?v=1">
 <link rel="stylesheet" href="cursor.css">
 </head>
 <body>
+<a class="skip" href="#main">Skip to your report</a>
 <noscript><p style="padding:24px">The dashboard needs JavaScript. <a href="login-player.html">Back to sign-in</a></p></noscript>
-<div class="dash" data-dashboard="player" hidden>
-  <div class="dash__top">
-    <a class="logo-link" href="index.html" aria-label="ClutchMetrics home"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="8.500" r="7.500" fill="#ff7a1a"/><path d="M8.500 8.500h15M16 1v15M10.800 3.200q3 5.300 0 10.600M21.200 3.200q-3 5.300 0 10.600" fill="none" stroke="#160b03" stroke-width="1.100"/><path d="M4.500 18h23" fill="none" stroke="#ff7a1a" stroke-width="2.800" stroke-linecap="round"/><path d="M7 19.500 10.500 30h11L25 19.500M11.500 19.500 13.500 30M20.500 19.500 18.500 30M16 19.500V30M8.800 24.800h14.400" fill="none" stroke="#f7f1e8" stroke-width="1.200" stroke-linejoin="round"/></svg><span class="brand" translate="no">ClutchMetrics</span></a>
-    <button class="dash__out" type="button" data-signout>Sign out</button>
-  </div>
-  <main class="dash__hello">
-    <h1>Your player report</h1>
-    <p>Signed in as <b data-email></b>. Upload a game video below to get the analysis video and match numbers. Your personal report is being built.</p>
+
+<div class="app" data-dashboard="player" hidden>
+  <aside class="side">
+    <div class="side__brand">
+      <a class="logo-link" href="index.html" aria-label="ClutchMetrics home"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="8.500" r="7.500" fill="#ff7a1a"/><path d="M8.500 8.500h15M16 1v15M10.800 3.200q3 5.300 0 10.600M21.200 3.200q-3 5.300 0 10.600" fill="none" stroke="#160b03" stroke-width="1.100"/><path d="M4.500 18h23" fill="none" stroke="#ff7a1a" stroke-width="2.800" stroke-linecap="round"/><path d="M7 19.500 10.500 30h11L25 19.500M11.500 19.500 13.500 30M20.500 19.500 18.500 30M16 19.500V30M8.800 24.800h14.400" fill="none" stroke="#f7f1e8" stroke-width="1.200" stroke-linejoin="round"/></svg><span class="brand" translate="no">ClutchMetrics</span></a>
+      <button class="side__out side__out--top" type="button" data-signout>Sign out</button>
+    </div>
+    <nav class="side__nav" aria-label="Report sections">
+      <a href="#report"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z"/></svg>Game report</a>
+      <a href="#vs-team"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M4 12h16M4 17h7"/></svg>You vs your team</a>
+      <a href="#highlights"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.500"/><path d="m10 9 5 3-5 3z"/></svg>Highlights</a>
+      <a href="#game"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.500"/><path d="M3.500 12h17M12 3.500v17M6.500 5.500c2.700 3.500 2.700 9.500 0 13M17.500 5.500c-2.700 3.500-2.700 9.500 0 13"/></svg>Shots and movement</a>
+      <a href="#form"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17l5-5 4 3 8-8"/><path d="M15 7h5v5"/></svg>Across games</a>
+      <a href="#analyze"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M7.500 8.500 12 4l4.500 4.500"/><path d="M4 15v3.500A1.500 1.500 0 0 0 5.500 20h13a1.500 1.500 0 0 0 1.500-1.500V15"/></svg>Analyse a game</a>
+    </nav>
+    <div class="side__user">
+      <span class="side__label">Signed in as</span>
+      <b data-email></b>
+      <button class="side__out" type="button" data-signout>Sign out</button>
+    </div>
+  </aside>
+
+  <main class="main" id="main">
+    <p class="note note--error" data-load-error hidden></p>
+
+    <div class="match-bar">
+      <div class="pick pick--inline">
+        <label for="match">Game</label>
+        <select id="match" data-match-select></select>
+      </div>
+      <a class="mini-btn" href="#analyze">+ Analyse a new game</a>
+    </div>
+
+    <section class="block card empty" data-empty hidden aria-labelledby="empty-h">
+      <h1 id="empty-h">Your player report</h1>
+      <p data-empty-text></p>
+      <div class="empty__actions"><a class="mini-btn mini-btn--primary" href="#analyze">Upload a game video</a></div>
+    </section>
+
+    <!-- shown when we do not know (or could not find) which player in this game is you -->
+    <section class="block card whoami" data-whoami hidden aria-labelledby="whoami-h">
+      <h2 id="whoami-h">Which player are you in this game?</h2>
+      <p class="card__sub" data-whoami-text></p>
+      <div class="whoami__teams seg" role="group" aria-label="Your team" data-whoami-team></div>
+      <div class="whoami__nos" role="group" aria-label="Your jersey number" data-whoami-nos></div>
+      <p class="fine" data-whoami-status aria-live="polite"></p>
+    </section>
+
+    <section class="block" id="report" aria-labelledby="report-h" data-part hidden>
+      <div class="me-head">
+        <span class="me-head__no" data-me-no aria-hidden="true"></span>
+        <div class="me-head__text">
+          <p class="eyebrow" data-meta></p>
+          <h1 id="report-h" data-me-title>Loading your report…</h1>
+          <p class="game-head__sub" data-me-sub></p>
+        </div>
+        <button class="mini-btn me-head__fix" type="button" data-whoami-open>Not you? Change player</button>
+      </div>
+      <dl class="me-stats" data-me-stats></dl>
+    </section>
+
+    <section class="block card" id="vs-team" aria-labelledby="vs-h" data-part hidden>
+      <div class="card__head">
+        <div>
+          <h2 id="vs-h">You vs your team</h2>
+          <p class="card__sub" data-vs-sub></p>
+        </div>
+      </div>
+      <div class="vs" data-vs></div>
+      <div class="legend legend--row vs-key"><span><i class="swatch swatch--team"></i>You</span><span><i class="tick" aria-hidden="true"></i>Team average</span></div>
+    </section>
+
+    <section class="block card" id="highlights" aria-labelledby="hl-h" data-part hidden>
+      <div class="card__head">
+        <div>
+          <h2 id="hl-h">Your highlights</h2>
+          <p class="card__sub" data-hl-sub>Every moment of yours in this game. Play them all one after another, or pick one.</p>
+        </div>
+        <div class="seg" role="group" aria-label="Which moments" data-seg="hlKind"></div>
+      </div>
+      <div class="reel">
+        <div class="reel__video">
+          <div class="video-wrap"><video class="video" data-video controls preload="metadata" playsinline></video></div>
+          <div class="reel__bar">
+            <button class="mini-btn mini-btn--primary" type="button" data-reel-play>Play all</button>
+            <p class="reel__now" data-reel-now aria-live="polite"></p>
+          </div>
+        </div>
+        <ol class="feed reel__list" data-reel-list></ol>
+      </div>
+    </section>
+
+    <div class="pair" id="game" data-part hidden>
+      <section class="block card" aria-labelledby="pshots-h">
+        <div class="card__head"><div><h2 id="pshots-h">Your shots</h2><p class="card__sub" data-pshots-sub></p></div></div>
+        <div class="court" data-pcourt><div class="tip" data-pcourt-tip role="tooltip" hidden></div></div>
+        <div class="legend"><span><i class="dot dot--made"></i>Made</span><span><i class="cross"></i>Missed</span></div>
+      </section>
+      <section class="block card" aria-labelledby="ppass-h">
+        <div class="card__head"><div><h2 id="ppass-h">Your passing</h2><p class="card__sub">Team-mates you passed to and received from most.</p></div></div>
+        <div class="spot__passing" data-ppass></div>
+      </section>
+      <section class="block card" aria-labelledby="pspeed-h">
+        <div class="card__head"><div><h2 id="pspeed-h">Speed through the game</h2><p class="card__sub">Select a moment on the line to watch it. Gaps are times you were off screen.</p></div></div>
+        <div class="spot__speed" data-pspeed><div class="tip" data-pspeed-tip role="tooltip" hidden></div></div>
+      </section>
+      <section class="block card" aria-labelledby="pheat-h">
+        <div class="card__head"><div><h2 id="pheat-h">Where you played</h2><p class="card__sub" data-pheat-sub>Time spent in each square metre of the court.</p></div></div>
+        <div class="heat" data-pheat></div>
+      </section>
+    </div>
+
+    <section class="block card" id="form" aria-labelledby="form-h" data-part hidden>
+      <div class="card__head">
+        <div>
+          <h2 id="form-h">Across games</h2>
+          <p class="card__sub" data-form-sub></p>
+        </div>
+      </div>
+      <div class="trends" data-form></div>
+    </section>
+
+    <section class="block card" id="analyze" aria-labelledby="analyze-h" data-analyze="player"></section>
   </main>
-  <section class="card" id="analyze" aria-labelledby="analyze-h" data-analyze="player"></section>
-  <section class="dash__grid" aria-label="Coming to this dashboard">
-    <article class="tile"><span class="tile__tag">Coming soon</span><h2>Your shot chart</h2><p>Where you shot from in each game, and what went in.</p></article>
-    <article class="tile"><span class="tile__tag">Coming soon</span><h2>Points and form</h2><p>Your points over the season, with your trend.</p></article>
-    <article class="tile"><span class="tile__tag">Coming soon</span><h2>Next focus</h2><p>One area to work on, based on your last games.</p></article>
-  </section>
 </div>
+
 <script type="module" src="auth.js?v=2"></script>
-<script type="module" src="analyze.js?v=4"></script>
+<script type="module" src="player.js?v=1"></script>
+<script type="module" src="analyze.js?v=5"></script>
 </body>
 </html>

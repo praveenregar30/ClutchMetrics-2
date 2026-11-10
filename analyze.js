@@ -36,6 +36,8 @@ function template() {
       <div class="upload__fields">
         <div class="field"><label for="team-a">Team A (lighter jersey)</label><input id="team-a" name="team_a" required maxlength="30" placeholder="e.g. Australia" autocomplete="off"></div>
         <div class="field"><label for="team-b">Team B (darker jersey)</label><input id="team-b" name="team_b" required maxlength="30" placeholder="e.g. India" autocomplete="off"></div>
+        ${role === 'player' ? `<div class="field"><label for="my-team">Your team</label><select id="my-team" name="my_team" required data-my-team><option value="a">Team A</option><option value="b">Team B</option></select></div>
+        <div class="field"><label for="my-number">Your jersey number</label><input id="my-number" name="my_number" required inputmode="numeric" pattern="[0-9]{1,2}" maxlength="2" placeholder="e.g. 7" autocomplete="off" aria-describedby="my-number-help"><p class="fine" id="my-number-help">So your report can find you in the video.</p></div>` : ''}
         <div class="field"><label for="m-title">Title <span class="opt">optional</span></label><input id="m-title" name="title" maxlength="60" placeholder="e.g. League round 3" autocomplete="off"></div>
         <div class="field"><label for="m-date">Date <span class="opt">optional</span></label><input id="m-date" name="date" type="date"></div>
       </div>
@@ -91,7 +93,15 @@ function pick(f) {
 }
 
 function updateSubmit() {
-  const ready = file && $('#team-a', root).value.trim() && $('#team-b', root).value.trim();
+  const teamSelect = $('[data-my-team]', root);
+  if (teamSelect) {
+    // the "Your team" choices show the team names as they are typed
+    teamSelect.options[0].textContent = $('#team-a', root).value.trim() || 'Team A';
+    teamSelect.options[1].textContent = $('#team-b', root).value.trim() || 'Team B';
+  }
+  const number = $('#my-number', root);
+  const numberOk = !number || /^\d{1,2}$/.test(number.value.trim());
+  const ready = file && $('#team-a', root).value.trim() && $('#team-b', root).value.trim() && numberOk;
   $('[data-submit]', root).disabled = !ready;
 }
 
@@ -150,7 +160,7 @@ async function loadJobs() {
   if (!jobs.length) { box.innerHTML = '<p class="fine">No uploaded videos yet.</p>'; return; }
   box.innerHTML = `<h3 class="sub-h">Uploaded videos</h3>${jobs.map((j) => {
     const open = role === 'coach' ? `<a class="mini-btn" href="coach-dashboard.html?match=${j.id}">Open dashboard</a>`
-      : `<button class="mini-btn" type="button" data-watch="${j.id}">Watch analysis</button>`;
+      : `<a class="mini-btn" href="player-dashboard.html?match=${j.id}">Open my report</a>`;
     const state = j.status === 'done' ? `<span class="tag tag--done">Ready</span>`
       : j.status === 'failed' ? `<span class="tag tag--fail">Failed</span>`
       : j.status === 'queued' ? `<span class="tag">Waiting${j.queue_position ? ` (#${j.queue_position})` : ''}</span>`

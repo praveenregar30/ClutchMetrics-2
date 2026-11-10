@@ -1,0 +1,73 @@
+/* ClutchMetrics player report (player.js). Shell, cards, feed and charts come from dashboard.css. */
+
+/* ---- head: the player's own number, large */
+.me-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 24px; align-items: end; margin-bottom: 20px; }
+.me-head__no { grid-row: span 2; font: 400 clamp(96px, 12vw, 148px)/.8 "Anton", var(--font); color: var(--series-team); font-variant-numeric: tabular-nums; }
+.me-head__text h1 { margin: 0; font-size: clamp(28px, 4vw, 44px); line-height: 1.05; letter-spacing: -.03em; font-weight: 500; text-wrap: balance; }
+.me-head__fix { justify-self: start; min-height: 40px; }
+@media (min-width: 900px) {
+  .me-head { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .me-head__no { grid-row: auto; }
+  .me-head__fix { justify-self: end; align-self: end; }
+}
+
+.me-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 0; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--line); }
+@media (min-width: 720px) { .me-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.me-stats div { display: grid; gap: 2px; align-content: start; padding: 16px; background: var(--card); }
+.me-stats dt { color: var(--muted); font-size: 14px; }
+.me-stats dd { margin: 0; font: 500 clamp(26px, 2.6vw, 32px)/1.1 var(--font); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.me-stats span { color: var(--muted); font-size: 13px; }
+@media (max-width: 719px) { .me-stats div:last-child:nth-child(odd) { grid-column: 1 / -1; } }
+@media (min-width: 720px) { .me-stats div:last-child:nth-child(3n + 1) { grid-column: 1 / -1; } .me-stats div:last-child:nth-child(3n + 2) { grid-column: span 2; } }
+
+/* ---- you vs your team */
+.vs { display: grid; gap: 14px; }
+.vs__row { display: grid; grid-template-columns: minmax(130px, .8fr) minmax(0, 2fr) minmax(150px, .9fr); gap: 16px; align-items: center; }
+.vs__label { font-weight: 500; font-size: 15px; }
+.vs__track { position: relative; height: 22px; border-radius: 4px; background: var(--grid); }
+.vs__bar { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 4px; background: var(--series-team); transform-origin: left; }
+.vs__avg { position: absolute; top: -5px; bottom: -5px; width: 3px; margin-left: -1.5px; border-radius: 2px; background: var(--ink); box-shadow: 0 0 0 2px var(--card); }
+.vs__val { text-align: right; font-variant-numeric: tabular-nums; line-height: 1.25; }
+.vs__val b { display: block; font-weight: 500; font-size: 17px; }
+.vs__val span { color: var(--muted); font-size: 13px; }
+.vs.is-new .vs__bar { animation: grow .6s cubic-bezier(.22, 1, .36, 1) backwards; }
+.vs-key { margin: 16px 0 0; }
+@media (max-width: 639px) {
+  .vs__row { grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; }
+  .vs__track { grid-column: 1 / -1; grid-row: 2; }
+  .vs__val { grid-row: 1; grid-column: 2; }
+  .vs__val b { display: inline; margin-right: 6px; }
+}
+
+/* ---- highlights reel */
+.reel { display: grid; gap: 16px; }
+@media (min-width: 1100px) { .reel { grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr); align-items: start; } }
+.reel__bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-top: 12px; }
+.reel__bar .mini-btn--primary { min-width: 110px; }
+.reel__now { margin: 0; color: var(--muted); font-size: 14px; }
+.reel__list { max-height: 460px; overflow-y: auto; overscroll-behavior: contain; padding-right: 4px; }
+.reel__list .feed__item.is-now { border-color: var(--accent); background: rgb(255 122 26 / .08); }
+.you { color: var(--accent); font-weight: 500; }
+.feed__ic--received { background: rgb(247 241 232 / .06); color: var(--ink); }
+.feed__ic--interception { background: rgb(255 122 26 / .16); color: var(--accent); }
+.feed__ic--lost { background: rgb(247 241 232 / .06); color: var(--muted); }
+
+/* ---- shots, passing, speed, heat */
+.court svg { display: block; width: 100%; height: auto; border-radius: 12px; }
+.court .shot { cursor: pointer; outline: none; }
+.court .shot:focus-visible .shot__mark { stroke: var(--ink); stroke-width: 10; }
+.pass-h { margin: 0 0 8px; color: var(--muted); font-size: 13px; font-weight: 500; }
+.spot__pairs li span { font-size: 15px; }
+
+/* ---- which player are you */
+.whoami { display: grid; gap: 14px; border-color: rgb(255 122 26 / .5); }
+.whoami h2 { margin: 0; }
+.whoami__teams { justify-self: start; }
+.whoami__nos { display: flex; flex-wrap: wrap; gap: 8px; }
+.whoami__no { display: grid; justify-items: center; gap: 2px; min-width: 76px; min-height: 64px; padding: 8px 10px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--card-2); color: var(--ink); font: inherit; cursor: pointer; transition: border-color .15s ease, background-color .15s ease; }
+.whoami__no b { font: 400 26px/1 "Anton", var(--font); }
+.whoami__no span { color: var(--muted); font-size: 12px; }
+.whoami__no:hover, .whoami__no[aria-pressed="true"] { border-color: var(--accent); background: rgb(255 122 26 / .08); }
+.whoami__no:active { transform: translateY(1px); }
+
+@media (prefers-reduced-motion: reduce) { .vs.is-new .vs__bar { animation: none; } }
