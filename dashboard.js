@@ -116,8 +116,7 @@ function playText(p) {
   if (p.type === 'pass') return { kind: 'Pass', detail: `${p.from} → ${p.to}` };
   if (p.type === 'interception') return { kind: 'Interception', detail: `${p.player} won it from ${p.from}` };
   const what = p.kind === 'free_throw' ? 'Free throw' : p.made ? (p.points === 3 ? '3-pointer made' : `${p.points || ''}${p.points ? '-pointer' : 'Shot'} made`) : (p.value === 3 ? '3-point miss' : 'Shot missed');
-  const note = p.made && !p.confirmed ? ' (not confirmed)' : '';
-  return { kind: what + note, detail: `${p.player}${p.distance_m ? ` · ${one.format(p.distance_m)} m from the basket` : ''}` };
+  return { kind: what, detail: `${p.player}${p.distance_m ? ` · ${one.format(p.distance_m)} m from the basket` : ''}` };
 }
 
 function allPlays() {
@@ -158,7 +157,7 @@ function renderTimeline() {
     if (p.type === 'shot') {
       const y = lanes.shot;
       svgEl('circle', { class: 'mark__hit', cx, cy: y, r: 14 }, g);
-      if (p.made) svgEl('circle', { class: `mark__dot${p.confirmed ? '' : ' is-open'}`, cx, cy: y, r: 7 }, g);
+      if (p.made) svgEl('circle', { class: 'mark__dot', cx, cy: y, r: 7 }, g);
       else svgEl('path', { class: 'mark__x', d: `M${cx - 5} ${y - 5}l10 10m0-10l-10 10` }, g);
     } else if (p.type === 'interception') {
       const y = lanes.interception;
@@ -194,7 +193,7 @@ function renderTimeline() {
   v.ontimeupdate = move;
   move();
 
-  $('[data-timeline-legend]').innerHTML = `<span><i class="swatch swatch--team"></i>${esc(code(mine()))}</span><span><i class="swatch swatch--opp"></i>${esc(code(theirs()))}</span><span><i class="dot dot--grey"></i>Made</span><span><i class="cross"></i>Missed</span><span><i class="ring ring--grey"></i>Made, not confirmed</span>`;
+  $('[data-timeline-legend]').innerHTML = `<span><i class="swatch swatch--team"></i>${esc(code(mine()))}</span><span><i class="swatch swatch--opp"></i>${esc(code(theirs()))}</span><span><i class="dot dot--grey"></i>Made</span><span><i class="cross"></i>Missed</span>`;
 
   // key moments: every shot and interception as a button
   const keys = allPlays().filter((p) => p.type !== 'pass');
@@ -242,7 +241,7 @@ function renderShots(animate) {
   $('[data-court]').classList.toggle('is-unmapped', !courtMapped());
   placed.forEach((s, i) => {
     const { x, y } = toCourt(s);
-    const g = svgEl('g', { class: `shot shot--${role(s.team)} ${s.made ? 'shot--made' : 'shot--miss'}${s.made && !s.confirmed ? ' is-open' : ''}`, style: `--i: ${i}` }, layer);
+    const g = svgEl('g', { class: `shot shot--${role(s.team)} ${s.made ? 'shot--made' : 'shot--miss'}`, style: `--i: ${i}` }, layer);
     g.dataset.index = String(state.data.shots.indexOf(s));
     svgEl('circle', { class: 'shot__hit', cx: x, cy: y, r: 40 }, g);
     if (s.made) svgEl('circle', { class: 'shot__mark', cx: x, cy: y, r: 22 }, g);
@@ -281,7 +280,7 @@ function wireShots() {
     const g = e.target.closest('.shot');
     if (!g) { tip.hidden = true; return; }
     const s = state.data.shots[Number(g.dataset.index)];
-    const value = s.made ? `${s.points} points${s.confirmed ? ', confirmed by the TV scoreboard' : ', not confirmed'}` : `${s.value || 2}-point attempt`;
+    const value = s.made ? `${s.points} points` : `${s.value || 2}-point attempt`;
     tip.innerHTML = `<b>${esc(s.player)} · ${s.made ? 'Made' : 'Missed'}</b><span>${s.zone}, ${one.format(s.distance_m)} m · ${clock(s.t)} · ${value}${s.near_line ? ' · close to the line' : ''}</span>`;
     const scale = svg.getBoundingClientRect().width / 1500;
     const { x, y } = toCourt(s);
