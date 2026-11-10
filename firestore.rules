@@ -1,0 +1,21 @@
+rules_version = '2';
+// ClutchMetrics Firestore rules. Paste into Firebase console → Firestore Database → Rules → Publish.
+// Each signed-in user has one profile, users/{uid}, holding their role. They can read only their own profile,
+// create it once (at sign-up) with role "coach" or "player", and never change or delete it from the website,
+// so a player cannot turn themselves into a coach.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['role', 'email', 'createdAt'])
+        && request.resource.data.role in ['coach', 'player']
+        && request.resource.data.email == request.auth.token.email;
+      allow update, delete: if false;
+    }
+    // everything else is closed
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

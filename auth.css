@@ -73,6 +73,19 @@ button, input, a { touch-action: manipulation; }
 .demo svg { flex: none; width: 18px; height: 18px; margin-top: 2px; fill: none; stroke: var(--accent); stroke-width: 1.8; stroke-linecap: round; }
 .demo b { color: var(--ink); font-weight: 500; }
 .switch-line { margin: 0; text-align: center; color: var(--muted); font-size: 15px; }
+.demo[hidden], .switch-line[hidden] { display: none; }
+/* sign-up page */
+.auth__head p b { color: var(--ink); font-weight: 500; }
+.field__hint { margin: 0; color: var(--muted); font-size: 13px; }
+.strength { display: grid; grid-template-columns: repeat(4, 1fr) auto; gap: 6px; align-items: center; min-height: 18px; }
+.strength i { height: 5px; border-radius: 3px; background: var(--line-strong); transition: background-color .2s ease; }
+.strength span { min-width: 82px; text-align: right; color: var(--muted); font-size: 13px; }
+.strength[data-score="1"] i:nth-child(-n+1) { background: var(--error); }
+.strength[data-score="2"] i:nth-child(-n+2) { background: #f0b04f; }
+.strength[data-score="3"] i:nth-child(-n+3) { background: #7fd9a1; }
+.strength[data-score="4"] i:nth-child(-n+4) { background: #3fbf6f; }
+.fine-print { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+@media (prefers-reduced-motion: reduce) { .strength i { transition: none; } }
 
 /* ---- the visual side */
 .auth__side { display: none; }

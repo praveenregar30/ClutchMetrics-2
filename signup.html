@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Create an account: ClutchMetrics</title>
+<meta name="description" content="Create a ClutchMetrics account as a coach or a player.">
+<meta name="theme-color" content="#100e0c">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400..700&family=JetBrains+Mono:wght@400..500&family=Anton&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="auth.css?v=2">
+<link rel="stylesheet" href="cursor.css">
+</head>
+<body>
+<a class="skip" href="#signup">Skip to the form</a>
+<div class="auth">
+  <main class="auth__main">
+    <div class="auth__top">
+      <a class="logo-link" href="index.html" aria-label="ClutchMetrics home"><svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="8.500" r="7.500" fill="#ff7a1a"/><path d="M8.500 8.500h15M16 1v15M10.800 3.200q3 5.300 0 10.600M21.200 3.200q-3 5.300 0 10.600" fill="none" stroke="#160b03" stroke-width="1.100"/><path d="M4.500 18h23" fill="none" stroke="#ff7a1a" stroke-width="2.800" stroke-linecap="round"/><path d="M7 19.500 10.500 30h11L25 19.500M11.500 19.500 13.500 30M20.500 19.500 18.500 30M16 19.500V30M8.800 24.800h14.400" fill="none" stroke="#f7f1e8" stroke-width="1.200" stroke-linejoin="round"/></svg><span class="brand" translate="no">ClutchMetrics</span></a>
+      <a class="back" href="index.html"><span aria-hidden="true">←</span> Back to home</a>
+    </div>
+    <div class="auth__body">
+      <nav class="roles" aria-label="Account type"><a href="signup.html?role=coach" data-role-pick="coach">Coach</a><a href="signup.html?role=player" data-role-pick="player">Player</a></nav>
+      <div class="auth__head">
+        <h1>Create your account</h1>
+        <p>Sign up as a <b data-role-text>coach</b>. You will use this email and password every time you sign in.</p>
+      </div>
+      <form class="form" id="signup" data-signup novalidate>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" inputmode="email" autocomplete="username" spellcheck="false" autocapitalize="off" placeholder="name@team.com…" aria-describedby="email-error" required>
+          <p class="field__error" id="email-error" aria-live="polite"></p>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="field__wrap">
+            <input id="password" name="password" type="password" autocomplete="new-password" aria-describedby="password-hint password-error" required minlength="8">
+            <button class="reveal" type="button" aria-pressed="false" aria-label="Show password">Show</button>
+          </div>
+          <p class="field__hint" id="password-hint">At least 8 characters, with letters and numbers.</p>
+          <div class="strength" data-strength data-score="0" aria-hidden="true"><i></i><i></i><i></i><i></i><span></span></div>
+          <p class="field__error" id="password-error" aria-live="polite"></p>
+        </div>
+        <div class="field">
+          <label for="confirm">Confirm password</label>
+          <div class="field__wrap">
+            <input id="confirm" name="confirm" type="password" autocomplete="new-password" aria-describedby="confirm-error" required>
+            <button class="reveal" type="button" aria-pressed="false" aria-label="Show password">Show</button>
+          </div>
+          <p class="field__error" id="confirm-error" aria-live="polite"></p>
+        </div>
+        <div class="row">
+          <label class="check"><input id="remember" name="remember" type="checkbox" checked> Keep me signed in</label>
+        </div>
+        <button class="submit" type="submit"><span class="spinner" aria-hidden="true"></span><span class="submit__label">Create account</span></button>
+        <p class="status" role="status" data-status></p>
+        <p class="fine-print">Each email can have one account. Your password is stored securely by Google Firebase; ClutchMetrics never sees it.</p>
+      </form>
+      <p class="switch-line">Already have an account? <a href="login-coach.html" data-signin-link>Sign in</a></p>
+    </div>
+  </main>
+  <aside class="auth__side" aria-label="What you get">
+    <svg class="side__court" viewBox="0 0 600 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><rect x="40" y="40" width="520" height="720"/><path d="M40 400H560"/><ellipse cx="300" cy="400" rx="70" ry="70"/><path d="M220 40V230H380V40M220 760V570H380V760M80 40V150A220 220 0 0 0 520 150V40M80 760V650A220 220 0 0 1 520 650V760"/><ellipse cx="300" cy="230" rx="60" ry="60"/><ellipse cx="300" cy="570" rx="60" ry="60"/></svg>
+    <div class="side__text">
+      <h2>Upload a game. Get the analysis.</h2>
+      <ul class="side__list"><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.500 4.500 4.500L19 7.500"/></svg>Players, jersey numbers and the ball, tracked</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.500 4.500 4.500L19 7.500"/></svg>Passes, interceptions and shots with FIBA points</li><li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.500 4.500 4.500L19 7.500"/></svg>A broadcast-style video and a full dashboard</li></ul>
+    </div>
+  </aside>
+</div>
+<script type="module" src="auth.js?v=2"></script>
+</body>
+</html>

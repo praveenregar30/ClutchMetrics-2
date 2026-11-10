@@ -1,7 +1,7 @@
 // "Analyse a video": upload a game video to the ClutchMetrics analysis server, follow its progress, open results.
 // Used by the coach and the player dashboards: <section data-analyze="coach|player"> ... </section>
 
-import { SERVER, SERVER_HEADERS, serverFetch, serverVideoUrl } from './config.js';
+import { SERVER, serverHeaders, serverFetch, serverVideoUrl } from './config.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -93,7 +93,7 @@ function updateSubmit() {
 }
 
 // ---------------------------------------------------------------- uploading
-function upload(form) {
+async function upload(form) {
   const status = $('[data-upload-status]', root);
   const bar = $('[data-upload-bar]', root);
   const data = new FormData(form);
@@ -101,7 +101,7 @@ function upload(form) {
   data.set('role', role);
   const xhr = new XMLHttpRequest();
   xhr.open('POST', `${SERVER}/api/jobs`);
-  Object.entries(SERVER_HEADERS).forEach(([k, v]) => xhr.setRequestHeader(k, v));
+  Object.entries(await serverHeaders()).forEach(([k, v]) => xhr.setRequestHeader(k, v));
   bar.hidden = false;
   $('[data-submit]', root).disabled = true;
   xhr.upload.onprogress = (e) => {
