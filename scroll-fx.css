@@ -77,6 +77,8 @@ main > section.process { height: auto; min-height: 0; padding: 0; }
 .legend span { display: inline-flex; align-items: center; gap: 7px; }
 .legend i { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid #f7f1e8; }
 .legend i.is-made { background: var(--accent); border-color: var(--accent); }
+.screens .legend { flex-wrap: wrap; }
+.screens .legend span { white-space: nowrap; }
 .legend i.is-play { width: 6px; height: 6px; border: 0; background: rgb(247 241 232 / .55); }
 .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-3); }
 .tile-n { padding: var(--s-3) var(--s-4); border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--bg); }

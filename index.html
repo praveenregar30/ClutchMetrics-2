@@ -138,8 +138,8 @@
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } #logins .panel { transition: none; } }
   @media (max-width: 1023px) { .scene { min-height: 280px; } }
 </style>
-<link rel="stylesheet" href="scroll-fx.css?v=2">
-<link rel="stylesheet" href="court-scene.css">
+<link rel="stylesheet" href="scroll-fx.css?v=3">
+<link rel="stylesheet" href="court-scene.css?v=2">
 <link rel="stylesheet" href="cursor.css">
 </head>
 <body>
@@ -156,6 +156,7 @@
       <div class="nav__item"><a class="nav__link" href="#dashboard">Dashboard</a></div>
       <div class="nav__item"><a class="nav__link" href="#logins">Logins</a></div>
       <div class="nav__item"><a class="nav__link" href="#process">Process</a></div>
+      <div class="nav__item"><a class="nav__link" href="#about">About us</a></div>
       <div class="nav__item"><a class="nav__link" href="#questions">Questions</a></div>
     </nav>
     <div class="nav__actions">
@@ -493,7 +494,7 @@
           </div>
         </div>
         <div class="screen" role="group" aria-label="Step 2 on screen: the analysis marks 38 plays in 1 minute 50 seconds of Australia vs India: 7 shots, 29 passes and 2 interceptions, with 11 players identified">
-          <div class="screen__bar"><span class="screen__dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="brand" translate="no">ClutchMetrics</span> / <b>Analysis</b><span class="screen__status">Reading Australia vs India</span></div>
+          <div class="screen__bar"><span class="screen__dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="brand" translate="no">ClutchMetrics</span> / <b>Analysis</b><span class="screen__status">Analysing</span></div>
           <p class="screen__title">Every play, in order</p>
           <div class="quarters" data-timeline>
             <div class="quarter"><span>0:00</span><div class="quarter__track" data-quarter="0"></div></div>
@@ -538,6 +539,37 @@
     </div></div>
   </section>
 
+  <section class="section about" id="about" aria-labelledby="about-h">
+    <div class="wrap">
+      <div class="about__head">
+        <h2 id="about-h">Built by five students at IIT Mandi</h2>
+        <p>We are 2nd-year B.Tech students at IIT Mandi. <span class="brand" translate="no">ClutchMetrics</span> is our Design Practicum project: we trained the detector on basketball video, wrote the tracking and game-event code, and built both dashboards.</p>
+      </div>
+
+      <ul class="about__team" aria-label="The team">
+        <li class="member"><span class="member__mark" aria-hidden="true">RG</span><h3>Raghav Gupta</h3><p>B.Tech, 2nd year</p></li>
+        <li class="member"><span class="member__mark" aria-hidden="true">AG</span><h3>Abhishek Gupta</h3><p>B.Tech, 2nd year</p></li>
+        <li class="member"><span class="member__mark" aria-hidden="true">HB</span><h3>Harsh Bhadana</h3><p>B.Tech, 2nd year</p></li>
+        <li class="member"><span class="member__mark" aria-hidden="true">ST</span><h3>Suyash Tiwari</h3><p>B.Tech, 2nd year</p></li>
+        <li class="member"><span class="member__mark" aria-hidden="true">R</span><h3>Raja</h3><p>B.Tech, 2nd year</p></li>
+      </ul>
+
+      <div class="about__foot">
+        <div class="guide">
+          <span class="guide__label">Faculty guide</span>
+          <p class="guide__name">Satvasheel Powar</p>
+          <p class="guide__where">IIT Mandi</p>
+        </div>
+        <dl class="about__facts" aria-label="What we built">
+          <div><dt>Detection</dt><dd>A fine-tuned RF-DETR model finds players, referees and the ball in each frame.</dd></div>
+          <div><dt>Identity</dt><dd>Jersey numbers read for 86% of court time in Australia vs India.</dd></div>
+          <div><dt>Scoring</dt><dd>FIBA rules: 2 or 3 points from where the shot was released.</dd></div>
+          <div><dt>Two views</dt><dd>A team dashboard for coaches and a personal report for each player.</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
   <section class="section asks" id="questions" aria-labelledby="questions-h">
     <div class="wrap">
       <div class="asks__head">
@@ -573,7 +605,7 @@
     <div class="closing__links">
       <div class="footer__legal">
         <span>&copy; 2026 <span class="brand" translate="no">ClutchMetrics</span>, a design practicum project</span>
-        <nav aria-label="Footer" class="foot-nav"><a href="#dashboard">Dashboard</a><a href="#logins">Logins</a><a href="#process">Process</a><a href="#questions">Questions</a></nav>
+        <nav aria-label="Footer" class="foot-nav"><a href="#dashboard">Dashboard</a><a href="#logins">Logins</a><a href="#process">Process</a><a href="#about">About us</a><a href="#questions">Questions</a></nav>
         <a class="credits" href="credits.html">Photographs via Wikimedia Commons</a>
       </div>
     </div>

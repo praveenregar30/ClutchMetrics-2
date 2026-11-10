@@ -116,3 +116,38 @@ main > section.asks { position: relative; overflow: clip; }
   .game__tile { min-width: 0; padding: var(--s-3); }
   .game__tile:nth-child(3) { grid-column: 1 / -1; }
 }
+
+/* ---- about us: the team, the faculty guide, what was built */
+.about__head { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--s-5); align-items: end; margin-bottom: var(--s-6); }
+.about__head h2 { margin: 0; text-wrap: balance; }
+.about__head p { margin: 0; color: var(--muted); }
+.about__team { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--s-4); margin: 0 0 var(--s-4); padding: 0; list-style: none; }
+.member { position: relative; display: grid; align-content: end; gap: 4px; min-height: 230px; padding: var(--s-5); border: 1px solid var(--line-strong); border-radius: var(--r-lg); background: linear-gradient(160deg, #1f1a15, #15120f); overflow: hidden; isolation: isolate; transition: transform .28s cubic-bezier(.22, 1, .36, 1), border-color .28s ease, box-shadow .28s ease; }
+.member::before { content: ""; position: absolute; right: -40px; top: -40px; z-index: -1; width: 160px; height: 160px; border-radius: 50%; background: radial-gradient(circle, rgb(255 122 26 / .22), transparent 70%); transition: transform .5s cubic-bezier(.22, 1, .36, 1); }
+.member:hover { transform: translateY(-2px); border-color: rgb(255 122 26 / .7); box-shadow: 0 22px 60px -26px rgb(255 122 26 / .7); }
+.member:hover::before { transform: scale(1.35); }
+.member__mark { position: absolute; left: var(--s-5); top: var(--s-5); display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; border: 1.5px solid rgb(255 122 26 / .7); color: var(--accent); font: 400 26px/1 "Anton", var(--font-display); letter-spacing: .02em; transition: background-color .28s ease, color .28s ease; }
+.member:hover .member__mark { background: var(--accent); color: #160b03; }
+.member h3 { margin: 0; font: 500 var(--t-card)/1.2 var(--font-display); letter-spacing: -.01em; }
+.member p { margin: 0; color: var(--muted); font-size: var(--t-small); }
+.about__foot { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: var(--s-4); }
+.guide { display: grid; align-content: center; gap: 2px; padding: var(--s-6) var(--s-5); border-radius: var(--r-lg); background: var(--accent); color: #160b03; }
+.guide__label { font-size: var(--t-small); font-weight: 500; opacity: .75; }
+.guide__name { margin: 0; font: 500 clamp(26px, 2.6vw, 34px)/1.1 var(--font-display); letter-spacing: -.02em; }
+.guide__where { margin: 0; font-weight: 500; }
+.about__facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 0; border: 1px solid var(--line-strong); border-radius: var(--r-lg); overflow: hidden; background: var(--line-strong); }
+.about__facts div { display: grid; gap: 4px; align-content: start; padding: var(--s-4) var(--s-5); background: #15120f; }
+.about__facts dt { color: var(--accent); font-size: var(--t-small); font-weight: 500; }
+.about__facts dd { margin: 0; line-height: 1.45; }
+@media (max-width: 1023px) {
+  .about__head, .about__foot { grid-template-columns: minmax(0, 1fr); }
+  .about__team { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 639px) {
+  .about__team { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .about__team .member:last-child { grid-column: 1 / -1; }
+  .member { min-height: 170px; padding: var(--s-4); }
+  .member__mark { left: var(--s-4); top: var(--s-4); width: 52px; height: 52px; font-size: 21px; }
+  .about__facts { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) { .member, .member::before { transition: none; } }
