@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400..700&family=JetBrains+Mono:wght@400..500&family=Anton&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="auth.css?v=2">
-<link rel="stylesheet" href="dashboard.css?v=5">
+<link rel="stylesheet" href="dashboard.css?v=6">
 <link rel="stylesheet" href="analyze.css?v=1">
 <link rel="stylesheet" href="cursor.css">
 </head>
@@ -43,16 +43,22 @@
   </aside>
 
   <main class="main" id="main">
-    <p class="note" data-sample hidden><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span><b>Sample data.</b> These numbers are made up to show the design.</span></p>
+    <p class="note" data-sample hidden><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span><b>Sample analysis.</b> A built-in example (Australia vs India), not one of your videos. Pick one of your own analyses in the Match list, or upload a game below.</span></p>
     <p class="note note--error" data-load-error hidden></p>
 
     <div class="match-bar">
       <div class="pick pick--inline">
         <label for="match">Match</label>
-        <select id="match" data-match-select><option value="">Australia vs India (built-in)</option></select>
+        <select id="match" data-match-select></select>
       </div>
       <a class="mini-btn" href="#analyze">+ Analyse a new video</a>
     </div>
+
+    <section class="block card empty" data-empty hidden aria-labelledby="empty-h">
+      <h1 id="empty-h">Welcome to your dashboard</h1>
+      <p data-empty-text></p>
+      <div class="empty__actions"><a class="mini-btn mini-btn--primary" href="#analyze">Upload a game video</a><a class="mini-btn" href="?sample=1">View the sample analysis</a></div>
+    </section>
 
     <section class="block" id="overview" aria-labelledby="overview-h">
       <div class="game-head">
@@ -227,7 +233,7 @@
 </div>
 
 <script type="module" src="auth.js?v=2"></script>
-<script type="module" src="dashboard.js?v=6"></script>
+<script type="module" src="dashboard.js?v=7"></script>
 <script type="module" src="analyze.js?v=2"></script>
 </body>
 </html>
