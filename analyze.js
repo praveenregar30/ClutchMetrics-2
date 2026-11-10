@@ -41,6 +41,7 @@ function template() {
       </div>
       <div class="upload__go">
         <button class="mini-btn mini-btn--primary" type="submit" data-submit disabled>Upload and analyse</button>
+        <button class="mini-btn" type="button" data-cancel-upload hidden>Cancel upload</button>
         <p class="fine" data-upload-status aria-live="polite"></p>
       </div>
       <div class="bar" data-upload-bar hidden><i></i></div>
@@ -106,6 +107,11 @@ async function upload(form) {
   Object.entries(await serverHeaders()).forEach(([k, v]) => xhr.setRequestHeader(k, v));
   bar.hidden = false;
   $('[data-submit]', root).disabled = true;
+  const cancel = $('[data-cancel-upload]', root);
+  cancel.hidden = false;
+  cancel.onclick = () => xhr.abort();
+  xhr.onloadend = () => { cancel.hidden = true; };
+  xhr.onabort = () => { bar.hidden = true; status.textContent = 'Upload cancelled. Nothing was sent for analysis.'; updateSubmit(); };
   xhr.upload.onprogress = (e) => {
     if (!e.lengthComputable) return;
     const p = e.loaded / e.total;
@@ -151,7 +157,7 @@ async function loadJobs() {
       : `<span class="tag tag--run">${j.progress}%</span>`;
     return `<article class="job" data-job="${j.id}">
       <div class="job__main"><b>${esc(j.title)}</b><span>${esc(j.teams.join(' vs '))} · ${when.format(new Date(j.created * 1000))}${j.duration_s ? ` · ${clock(j.duration_s)} of video` : ''}</span></div>
-      <div class="job__state">${state}${j.status === 'done' ? open : ''}</div>
+      <div class="job__state">${state}${j.status === 'done' ? open : ''}${j.status === 'running' || j.status === 'queued' ? `<button class="mini-btn" type="button" data-cancel="${j.id}" data-title="${esc(j.title)}">Cancel</button>` : ''}</div>
       ${j.status === 'running' || j.status === 'queued' ? `<div class="job__progress"><div class="bar"><i style="width:${j.progress}%"></i></div><span>${esc(j.step_text)}</span></div>` : ''}
       ${j.court_can_map ? `<div class="job__court"><span class="tag tag--map">Court not mapped yet</span><button class="mini-btn mini-btn--primary" type="button" data-map="${j.id}">Map the court (${j.court_pictures} pictures)</button></div>` : ''}
       ${j.status === 'failed' ? `<p class="job__msg">${esc(j.message)}</p>` : ''}
@@ -165,6 +171,24 @@ async function loadJobs() {
     mapNext = null;
     if (ready.court_can_map) map(ready.id);
   }
+}
+
+async function cancelJob(button) {
+  const id = button.dataset.cancel;
+  if (!confirm(`Cancel the analysis of "${button.dataset.title}"? The video is deleted from the server and this can't be undone.`)) return;
+  const status = $('[data-upload-status]', root);
+  button.disabled = true;
+  try {
+    const res = await serverFetch(`/api/jobs/${id}/cancel`, { method: 'POST' });
+    const out = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(out.detail || `status ${res.status}`);
+    if (mapNext === id) mapNext = null;
+    status.textContent = `"${button.dataset.title}" was cancelled.`;
+  } catch (err) {
+    status.textContent = `Could not cancel: ${err.message}`;
+    button.disabled = false;
+  }
+  loadJobs();
 }
 
 function map(id) {
@@ -216,6 +240,8 @@ async function start() {
     if (b) watch(b.dataset.watch, b);
     const m = e.target.closest('[data-map]');
     if (m) map(m.dataset.map);
+    const c = e.target.closest('[data-cancel]');
+    if (c) cancelJob(c);
   });
   if (await checkServer()) loadJobs();
   else $('[data-submit]', root).disabled = true;
