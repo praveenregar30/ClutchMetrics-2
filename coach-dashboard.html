@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400..700&family=JetBrains+Mono:wght@400..500&family=Anton&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="auth.css?v=2">
-<link rel="stylesheet" href="dashboard.css?v=6">
+<link rel="stylesheet" href="dashboard.css?v=7">
 <link rel="stylesheet" href="analyze.css?v=1">
 <link rel="stylesheet" href="court-map.css?v=1">
 <link rel="stylesheet" href="cursor.css">
@@ -118,6 +118,7 @@
             <rect class="court__floor" width="1500" height="1050"/>
             <path class="court__plank" d="M0 150H1500M0 300H1500M0 450H1500M0 600H1500M0 750H1500M0 900H1500"/>
             <rect class="court__paint" x="505" width="490" height="580"/>
+            <g class="zones-layer" data-zone-layer aria-hidden="true"></g>
             <path class="court__line" d="M505 0V580H995V0M570 580A180 180 0 0 0 930 580M570 580A180 180 0 0 1 930 580M90 0V299A675 675 0 0 0 1410 299V0M625 157.500A125 125 0 0 0 875 157.500M570 1050A180 180 0 0 1 930 1050M0 0H1500"/>
             <path class="court__board" d="M660 120H840"/>
             <circle class="court__rim" cx="750" cy="157.500" r="22.500"/>
@@ -142,7 +143,7 @@
       <div class="card__head">
         <div>
           <h2 id="players-h" data-players-title>Players</h2>
-          <p class="card__sub">Select a column to sort. <b>Shots</b> shows that player on the shot chart, <b>Map</b> shows where they moved.</p>
+          <p class="card__sub">Select a player for their spotlight: shots, movement, passing and every moment. Select a column to sort.</p>
         </div>
       </div>
       <div class="scroll">
@@ -215,16 +216,19 @@
       <div class="card__head">
         <div>
           <h2 id="plays-h">All plays</h2>
-          <p class="card__sub">Every pass, interception and shot the model found. Select a time to watch it.</p>
+          <p class="card__sub" data-feed-sub>Every pass, interception and shot the model found. Select a time to watch it, or a player for their spotlight.</p>
         </div>
-        <div class="seg" role="group" aria-label="Show plays" data-seg="playKind"></div>
       </div>
-      <div class="scroll">
-        <table class="table table--plays">
-          <thead><tr><th scope="col">Time</th><th scope="col">Team</th><th scope="col">Play</th><th scope="col">Detail</th></tr></thead>
-          <tbody data-plays></tbody>
-        </table>
+      <div class="filters" role="group" aria-label="Filter the plays">
+        <div class="seg" role="group" aria-label="Kind of play" data-seg="playKind"></div>
+        <div class="seg" role="group" aria-label="Team" data-seg="playTeam"></div>
+        <div class="pick pick--inline feed__find">
+          <label for="feed-find">Player</label>
+          <input id="feed-find" type="search" inputmode="numeric" autocomplete="off" placeholder="Number, e.g. 7" data-feed-find>
+        </div>
       </div>
+      <ol class="feed" data-plays aria-live="polite"></ol>
+      <button class="mini-btn feed__more" type="button" data-feed-more hidden></button>
       <div class="about" data-about></div>
     </section>
 
@@ -232,8 +236,12 @@
   </main>
 </div>
 
+<dialog class="spot" data-spot-dialog aria-labelledby="spot-h">
+  <div class="spot__body" data-spot-body></div>
+</dialog>
+
 <script type="module" src="auth.js?v=2"></script>
-<script type="module" src="dashboard.js?v=9"></script>
+<script type="module" src="dashboard.js?v=10"></script>
 <script type="module" src="analyze.js?v=4"></script>
 </body>
 </html>

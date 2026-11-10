@@ -427,3 +427,124 @@ th[aria-sort="ascending"] .sort svg { transform: rotate(180deg); }
 @media (prefers-reduced-motion: reduce) {
   .is-new .run__bar, .is-new .control__me, .is-new .control__op { animation: none; }
 }
+
+/* ================================================================ shot zones (accuracy shading) */
+.zone { stroke: none; transition: fill-opacity .2s ease; }
+.zone--team { fill: var(--series-team); }
+.zone--opp { fill: var(--series-opp); }
+.zone--both { fill: #f7f1e8; }
+.zone.is-empty { pointer-events: all; }
+.zone.is-hot { stroke: #f7f1e8; stroke-width: 6; stroke-opacity: .9; }
+.zone__label { fill: #f7f1e8; font: 600 46px var(--font); font-variant-numeric: tabular-nums; pointer-events: none; paint-order: stroke; stroke: #3a2010; stroke-width: 8px; }
+.zone__pct { fill: #f7f1e8; fill-opacity: .8; font: 500 32px var(--font); pointer-events: none; paint-order: stroke; stroke: #3a2010; stroke-width: 7px; }
+.zone-pct { display: block; color: var(--muted); font-size: 12px; }
+.table--zones tbody tr { transition: background-color .15s ease; }
+.table--zones tbody tr[data-zone]:hover { background: rgb(247 241 232 / .05); }
+
+/* ================================================================ passing network: focus on one player */
+.net__player { outline: none; cursor: pointer; }
+.net__player .net__node { transition: stroke .15s ease; }
+.net__player:hover .net__node, .net__player:focus-visible .net__node { stroke: var(--ink); }
+.net__player:focus-visible .net__node { stroke-width: 4; }
+.net__edge, .net__player { transition: opacity .2s ease; }
+.net svg.is-focus .net__edge { opacity: .12; }
+.net svg.is-focus .net__edge.is-on { opacity: 1; }
+.net svg.is-focus .net__edge.is-on .net__line { opacity: 1; }
+.net svg.is-focus .net__player:not(.is-on) { opacity: .35; }
+
+/* ================================================================ plays feed */
+.seg .count { margin-left: 6px; opacity: .7; font-variant-numeric: tabular-nums; font-size: 12px; }
+.feed__find input { height: 44px; width: 170px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--field); color: var(--ink); font: 16px var(--font); }
+.feed__find input:hover { border-color: rgb(247 241 232 / .35); }
+.feed { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.feed__item { display: grid; grid-template-columns: auto 34px minmax(0, 1fr); gap: 12px; align-items: center; padding: 8px 12px 8px 8px; border: 1px solid var(--line); border-left: 3px solid var(--line-strong); border-radius: 10px; background: var(--card-2); transition: background-color .15s ease; }
+.feed__item:hover { background: #221d17; }
+.feed__item--team { border-left-color: var(--series-team); }
+.feed__item--opp { border-left-color: var(--series-opp); }
+.feed__t { display: inline-flex; align-items: center; gap: 6px; min-width: 76px; min-height: 40px; padding: 0 10px; border: 1px solid var(--line-strong); border-radius: 8px; background: transparent; color: var(--ink); font: 500 13px var(--mono); font-variant-numeric: tabular-nums; cursor: pointer; transition: border-color .15s ease, color .15s ease; }
+.feed__t svg { width: 9px; height: 9px; fill: currentColor; }
+.feed__t:hover { border-color: var(--accent); color: var(--accent); }
+.feed__t:active { transform: translateY(1px); }
+.feed__ic { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: rgb(247 241 232 / .06); color: var(--muted); }
+.feed__ic--made { background: rgb(255 122 26 / .16); color: var(--accent); }
+.feed__ic--interception { background: rgb(247 241 232 / .12); color: var(--ink); }
+.ic { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.feed__text { display: grid; gap: 1px; min-width: 0; }
+.feed__text b { display: flex; align-items: baseline; gap: 8px; font-weight: 500; font-size: 15px; }
+.feed__team { color: var(--muted); font-weight: 400; font-size: 12px; }
+.feed__text > span { color: var(--muted); font-size: 14px; overflow-wrap: anywhere; }
+.name-btn { padding: 0; border: 0; background: none; color: var(--ink); font: inherit; text-decoration: underline; text-decoration-color: rgb(247 241 232 / .3); text-underline-offset: 3px; cursor: pointer; transition: color .15s ease, text-decoration-color .15s ease; }
+.name-btn:hover { color: var(--accent); text-decoration-color: currentColor; }
+.name-unknown { color: var(--muted); }
+.feed__none { padding: 16px; border: 1px dashed var(--line-strong); border-radius: 10px; color: var(--muted); list-style: none; }
+.feed__more { margin-top: 12px; min-height: 40px; }
+@media (max-width: 639px) {
+  .feed__item { grid-template-columns: auto minmax(0, 1fr); }
+  .feed__ic { display: none; }
+  .feed__find, .feed__find input { width: 100%; }
+}
+
+/* players table: the name opens the spotlight */
+.who-btn { display: grid; justify-items: start; gap: 1px; min-height: 40px; padding: 2px 8px 2px 0; border: 0; background: none; color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.who-btn b { font-weight: 500; text-decoration: underline; text-decoration-color: rgb(247 241 232 / .3); text-underline-offset: 3px; transition: color .15s ease, text-decoration-color .15s ease; }
+.who-btn span { color: var(--muted); font-size: 13px; }
+.who-btn:hover b { color: var(--accent); text-decoration-color: currentColor; }
+
+/* ================================================================ player spotlight (side panel) */
+.spot { position: fixed; inset: 0 0 0 auto; width: min(560px, 100vw); max-width: 100vw; height: 100dvh; max-height: 100dvh; margin: 0; padding: 0; border: 0; border-left: 1px solid var(--line-strong); background: var(--bg); color: var(--ink); font-family: var(--font); }
+.spot::backdrop { background: rgb(8 6 4 / .6); }
+.spot[open] { animation: spot-in .32s cubic-bezier(.22, 1, .36, 1); }
+@keyframes spot-in { from { transform: translateX(40px); opacity: 0; } }
+.spot__body { height: 100%; overflow-y: auto; overscroll-behavior: contain; padding: 0 24px 32px; }
+.spot__head { position: sticky; top: 0; z-index: 2; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 16px; align-items: center; margin: 0 -24px 20px; padding: 18px 24px; background: var(--bg); border-bottom: 1px solid var(--line); }
+.spot__no { font: 400 88px/.85 "Anton", var(--font); color: var(--series-team); font-variant-numeric: tabular-nums; }
+.spot--opp .spot__no { color: var(--series-opp); }
+.spot__who h2 { margin: 0; font-size: 20px; font-weight: 500; letter-spacing: -.01em; }
+.spot__who p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+.spot__nav { display: flex; gap: 6px; align-self: start; }
+.spot__btn { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--line-strong); border-radius: 50%; background: transparent; color: var(--ink); cursor: pointer; transition: border-color .15s ease, color .15s ease; }
+.spot__btn:hover { border-color: var(--accent); color: var(--accent); }
+.spot__btn:active { transform: scale(.96); }
+.spot__btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.spot__stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 0 0 24px; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--line); }
+@media (min-width: 480px) { .spot__stats { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.spot__stats div { display: grid; gap: 2px; align-content: start; padding: 12px 14px; background: var(--card); }
+.spot__stats dt { color: var(--muted); font-size: 13px; }
+.spot__stats dd { margin: 0; font: 500 24px/1.15 var(--font); font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.spot__stats span { color: var(--muted); font-size: 12px; }
+.spot__part { margin-bottom: 24px; }
+.spot__part h3 { margin: 0 0 10px; font-size: 16px; font-weight: 500; }
+.spot__court svg, .spot__heat svg { display: block; width: 100%; height: auto; border-radius: 10px; }
+.spot__speed { position: relative; }
+.spot__speed svg { display: block; width: 100%; height: auto; overflow: visible; cursor: crosshair; }
+.spot__speed .gridline { stroke: var(--grid); }
+.spot__speed .axis-text { fill: var(--muted); font: 12px var(--font); }
+.speed__line { fill: none; stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+.speed__area { stroke: none; opacity: .14; }
+.speed__line.speed--team { stroke: var(--series-team); }
+.speed__line.speed--opp { stroke: var(--series-opp); }
+.speed__area.speed--team, .speed__top.speed--team { fill: var(--series-team); }
+.speed__area.speed--opp, .speed__top.speed--opp { fill: var(--series-opp); }
+.speed__top { stroke: var(--bg); stroke-width: 2; }
+.speed__label { fill: var(--ink); font: 500 12px var(--font); }
+.speed__cursor { stroke: var(--ink); stroke-opacity: .5; stroke-dasharray: 3 3; pointer-events: none; }
+.spot__passing { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.spot__passing h4 { margin: 0 0 8px; color: var(--muted); font-size: 13px; font-weight: 500; }
+.spot__pairs { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.spot__pairs li { display: flex; justify-content: space-between; align-items: center; min-height: 36px; padding: 0 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); }
+.spot__pairs b { font-weight: 500; font-variant-numeric: tabular-nums; }
+.feed--spot .feed__item { background: var(--card); }
+.filters .seg { max-width: 100%; flex-wrap: wrap; }
+@media (max-width: 479px) {
+  .spot__stats div:last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .spot__who h2 { font-size: 18px; }
+  .spot__body { padding: 0 16px 24px; }
+  .spot__head { margin: 0 -16px 16px; padding: 14px 16px; gap: 12px; }
+  .spot__no { font-size: 64px; }
+  .spot__nav .spot__btn { width: 40px; height: 40px; }
+  .spot__passing { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spot[open] { animation: none; }
+  .zone, .net__edge, .net__player, .feed__item { transition: none; }
+}

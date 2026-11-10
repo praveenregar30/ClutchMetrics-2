@@ -21,8 +21,8 @@ const ratio = (a, b) => (b ? a / b : 0);
 const clock = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
 const dateFmt = new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
 
-const state = { data: null, match: null, team: 0,shotTeam: 'mine', player: 'all', result: 'all', playKind: 'all', heat: 'team',
-  sort: { key: 'pts', dir: 'descending' } };
+const state = { data: null, match: null, team: 0, shotTeam: 'mine', player: 'all', result: 'all', playKind: 'all', playTeam: 'both',
+  find: '', feedAll: false, heat: 'team', spot: null, sort: { key: 'pts', dir: 'descending' } };
 const mine = () => state.team;
 const theirs = () => 1 - state.team;
 const role = (team) => (team === state.team ? 'team' : 'opp');
@@ -31,7 +31,7 @@ const code = (team) => state.data.teams[team].code;
 // ---------------------------------------------------------------- the address
 function readUrl() {
   const p = new URLSearchParams(location.search);
-  return { match: p.get('match'), team: p.get('team'), player: p.get('player') || 'all', result: p.get('result') || 'all', shotTeam: p.get('shots') || 'mine' };
+  return { match: p.get('match'), team: p.get('team'), player: p.get('player') || 'all', result: p.get('result') || 'all', shotTeam: p.get('shots') || 'mine', spot: p.get('spot') };
 }
 function writeUrl() {
   const p = new URLSearchParams();
@@ -40,6 +40,7 @@ function writeUrl() {
   if (state.shotTeam !== 'mine') p.set('shots', state.shotTeam);
   if (state.player !== 'all') p.set('player', state.player);
   if (state.result !== 'all') p.set('result', state.result);
+  if (state.spot) p.set('spot', state.spot);
   history.replaceState(null, '', `${location.pathname}?${p}${location.hash}`);
 }
 
@@ -262,9 +263,10 @@ function renderShots(animate) {
     return { z, m: zs.filter((s) => s.made).length, a: zs.length, p: zs.reduce((a, s) => a + (s.made ? s.points || 0 : 0), 0) };
   });
   const best = Math.max(...rows.map((r) => r.p), 1);
-  $('[data-zones]').innerHTML = rows.map((r) => `<tr>
+  drawZones(rows);
+  $('[data-zones]').innerHTML = rows.map((r) => `<tr data-zone="${r.z}">
       <th scope="row">${r.z}<span class="zone-bar" aria-hidden="true"><i style="width:${(r.p / best) * 100}%"></i></span></th>
-      <td class="num">${r.m}/${r.a}</td><td class="num">${r.p}</td></tr>`).join('')
+      <td class="num">${r.m}/${r.a}${r.a ? `<span class="zone-pct">${pct.format(r.m / r.a)}</span>` : ''}</td><td class="num">${r.p}</td></tr>`).join('')
     + `<tr class="zones__total"><th scope="row">All shots</th><td class="num">${made}/${all.length}</td><td class="num">${pts}</td></tr>`;
   const unplaced = all.filter((s) => s.x === null);
   $('[data-shots-unplaced]').textContent = unplaced.length
@@ -274,10 +276,49 @@ function renderShots(animate) {
   document.querySelectorAll('[data-shots-for]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.shotsFor === state.player)));
 }
 
+// Court areas shaded by how often shots there went in (the zones table holds the same information as text)
+const ZONE_PATHS = {
+  Paint: 'M505 0H995V580H505Z',
+  'Mid-range': 'M90 0V299A675 675 0 0 0 1410 299V0ZM505 0H995V580H505Z',
+  'Corner 3': 'M0 0H90V299H0ZM1410 0H1500V299H1410Z',
+  'Above-break 3': 'M0 299H90V0H1410V299H1500V1050H0ZM90 0V299A675 675 0 0 0 1410 299V0Z',
+};
+const ZONE_LABEL = { Paint: [750, 430], 'Mid-range': [300, 330], 'Above-break 3': [210, 830] };
+function drawZones(rows) {
+  const layer = $('[data-zone-layer]');
+  layer.replaceChildren();
+  const tone = state.shotTeam === 'both' ? 'both' : role(shotTeams()[0]);
+  rows.forEach((r) => {
+    const share = r.a ? r.m / r.a : 0;
+    const path = svgEl('path', { class: `zone zone--${tone}${r.a ? '' : ' is-empty'}`, d: ZONE_PATHS[r.z], 'fill-rule': 'evenodd',
+      style: `fill-opacity:${r.a ? (0.12 + 0.5 * share).toFixed(2) : 0}` }, layer);
+    path.dataset.zone = r.z;
+    if (r.a && ZONE_LABEL[r.z]) {
+      const [x, y] = ZONE_LABEL[r.z];
+      const t = svgEl('text', { class: 'zone__label', x, y, 'text-anchor': 'middle' }, layer);
+      t.textContent = `${r.m}/${r.a}`;
+      const u = svgEl('text', { class: 'zone__pct', x, y: y + 46, 'text-anchor': 'middle' }, layer);
+      u.textContent = pct.format(share);
+    }
+  });
+  layer.dataset.rows = JSON.stringify(rows);
+}
+
 function wireShots() {
   const court = $('[data-court]'); const tip = $('[data-tip]'); const svg = $('[data-court-svg]');
+  const hotZone = (z) => $('[data-zone-layer]').querySelectorAll('.zone').forEach((q) => q.classList.toggle('is-hot', q.dataset.zone === z));
   svg.addEventListener('pointermove', (e) => {
     const g = e.target.closest('.shot');
+    const zone = !g && e.target.closest('.zone');
+    hotZone(zone ? zone.dataset.zone : null);
+    if (zone) {
+      const r = JSON.parse($('[data-zone-layer]').dataset.rows).find((x) => x.z === zone.dataset.zone);
+      tip.innerHTML = `<b>${esc(r.z)}</b><span>${r.a ? `${r.m} of ${r.a} made (${pct.format(r.m / r.a)}), ${r.p} points` : 'No shots from here'}</span>`;
+      const box = svg.getBoundingClientRect();
+      placeTip(tip, court, e.clientX - box.left, e.clientY - box.top);
+      tip.hidden = false;
+      return;
+    }
     if (!g) { tip.hidden = true; return; }
     const s = state.data.shots[Number(g.dataset.index)];
     const value = s.made ? `${s.points} points` : `${s.value || 2}-point attempt`;
@@ -287,7 +328,9 @@ function wireShots() {
     placeTip(tip, court, x * scale, y * scale);
     tip.hidden = false;
   });
-  svg.addEventListener('pointerleave', () => { tip.hidden = true; });
+  svg.addEventListener('pointerleave', () => { tip.hidden = true; hotZone(null); });
+  $('[data-zones]').addEventListener('pointerover', (e) => hotZone(e.target.closest('tr')?.dataset.zone || null));
+  $('[data-zones]').addEventListener('pointerleave', () => hotZone(null));
   svg.addEventListener('click', (e) => { const g = e.target.closest('.shot'); if (g) watch(state.data.shots[Number(g.dataset.index)].t); });
   $('[data-player-select]').addEventListener('change', (e) => { state.player = e.target.value; writeUrl(); renderShots(true); });
   ['shotTeam', 'result'].forEach((name) => $(`[data-seg="${name}"]`).addEventListener('click', (e) => {
@@ -338,7 +381,7 @@ function renderPlayers() {
   $('[data-players]').innerHTML = rows.map((p) => {
     const key = `${p.team}-${p.no}`;
     return `<tr data-key="${key}">
-      <td class="who"><b>No. ${esc(p.no)}</b><span>${esc(code(p.team))}</span></td>
+      <td class="who"><button class="who-btn" type="button" data-spot="${key}" aria-label="Open the spotlight for number ${esc(p.no)}"><b>No. ${esc(p.no)}</b><span>${esc(code(p.team))}</span></button></td>
       <td class="num">${clock(p.seconds)}</td><td class="num"><b>${p.pts}</b></td>
       <td class="num">${p.fgm}/${p.fga}</td><td class="num">${p.tpm}/${p.tpa}</td>
       <td class="num">${p.passes}</td><td class="num">${p.received}</td><td class="num">${p.int}</td>
@@ -405,6 +448,20 @@ function buildHeatSelect() {
 const NO_COURT = 'The court could not be mapped automatically for this video, so speed, distance, heatmaps and shot positions are not available. Everything else on this page is measured.';
 const courtMapped = () => state.data.court_mapped !== false;
 
+function heatSvg(grid, team, ariaLabel) {
+  const max = Math.max(...grid.flat(), 0.001);
+  const svg = svgEl('svg', { viewBox: '-20 -20 2840 1540', role: 'img', 'aria-label': ariaLabel });
+  drawFullCourt(svg);
+  const cells = svgEl('g', { class: `heat__cells heat--${role(team)}` }, svg);
+  grid.forEach((row, r) => row.forEach((v, c) => {
+    if (v <= 0) return;
+    const rect = svgEl('rect', { x: c * 100 + 4, y: r * 100 + 4, width: 92, height: 92, rx: 10, style: `opacity:${(0.18 + 0.82 * Math.sqrt(v / max)).toFixed(3)}` }, cells);
+    rect.dataset.v = v; rect.dataset.c = c; rect.dataset.r = r;
+  }));
+  svgEl('path', { class: 'fc__line fc__line--top', d: 'M0 0H2800V1500H0Z' }, svg);
+  return svg;
+}
+
 function renderHeat() {
   if (!courtMapped()) {
     $('[data-heat]').querySelector('svg')?.remove();
@@ -425,18 +482,9 @@ function renderHeat() {
     team = Number(state.heat[0]); grid = d.players[state.heat] || [];
     label = `${code(team)} #${state.heat.split('-')[1]}`;
   }
-  const max = Math.max(...grid.flat(), 0.001);
   const total = grid.flat().reduce((a, v) => a + v, 0);
-  const svg = svgEl('svg', { viewBox: '-20 -20 2840 1540', role: 'img', 'aria-label': `Heatmap of where ${label} spent time on the court` });
+  const svg = heatSvg(grid, team, `Heatmap of where ${label} spent time on the court`);
   box.prepend(svg);
-  drawFullCourt(svg);
-  const cells = svgEl('g', { class: `heat__cells heat--${role(team)}` }, svg);
-  grid.forEach((row, r) => row.forEach((v, c) => {
-    if (v <= 0) return;
-    const rect = svgEl('rect', { x: c * 100 + 4, y: r * 100 + 4, width: 92, height: 92, rx: 10, style: `opacity:${(0.18 + 0.82 * Math.sqrt(v / max)).toFixed(3)}` }, cells);
-    rect.dataset.v = v; rect.dataset.c = c; rect.dataset.r = r;
-  }));
-  svgEl('path', { class: 'fc__line fc__line--top', d: 'M0 0H2800V1500H0Z' }, svg);
   svg.addEventListener('pointermove', (e) => {
     const rect = e.target.closest('rect[data-v]');
     if (!rect) { tip.hidden = true; return; }
@@ -482,32 +530,68 @@ function renderControl(animate) {
     <p class="fine">Ball holder known in ${whole.format(state.data.quality.ball_holder_known_pct)}% of frames; between holders the last team in control keeps it.</p>`;
 }
 
+// ---------------------------------------------------------------- players by key ("team-no") and label ("AUS #4")
+const player = (key) => state.data.players.find((p) => `${p.team}-${p.no}` === key);
+const labelOf = (p) => `${code(p.team)} #${p.no}`;
+function keyOf(label) {
+  const m = /^(\S+) #(\S+)$/.exec(label || '');
+  if (!m) return null;
+  const team = state.data.teams.findIndex((t) => t.code === m[1]);
+  return team >= 0 && player(`${team}-${m[2]}`) ? `${team}-${m[2]}` : null;
+}
+// a player's name as a button that opens their spotlight (unknown players stay plain text)
+const nameBtn = (label) => {
+  const key = keyOf(label);
+  return key ? `<button class="name-btn" type="button" data-spot="${key}">${esc(label)}</button>` : `<span class="name-unknown">${esc(label)}</span>`;
+};
+const people = (p) => (p.type === 'shot' ? [p.player] : p.type === 'pass' ? [p.from, p.to] : [p.player, p.from]);
+const ICONS = {
+  made: '<circle cx="12" cy="12" r="7"/><path d="M5 12h14M12 5c-2.5 2-2.5 12 0 14M12 5c2.5 2 2.5 12 0 14"/>',
+  missed: '<path d="M7 7l10 10M17 7 7 17"/>',
+  pass: '<path d="M4 12h15M14 7l5 5-5 5"/>',
+  interception: '<path d="M12 4 20 12 12 20 4 12z"/><path d="M9 12h6"/>',
+};
+const icon = (name) => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[name]}</svg>`;
+const iconFor = (p) => (p.type === 'shot' ? (p.made ? 'made' : 'missed') : p.type);
+function playDetail(p) {
+  if (p.type === 'pass') return `${nameBtn(p.from)} <span aria-hidden="true">→</span><span class="visually-hidden">to</span> ${nameBtn(p.to)}`;
+  if (p.type === 'interception') return `${nameBtn(p.player)} won it from ${nameBtn(p.from)}`;
+  return `${nameBtn(p.player)}${p.distance_m ? `, ${one.format(p.distance_m)} m from the basket` : ''}`;
+}
+
 // ---------------------------------------------------------------- passing network
 function renderNetwork() {
   const net = state.data.pass_network[mine()];
   const box = $('[data-net]');
   const tip = $('[data-net-tip]');
   box.querySelector('svg')?.remove();
-  const W = Math.max(Math.round(box.clientWidth) || 420, 260); const H = Math.min(W, 380);
+  const W = Math.max(Math.round(box.clientWidth) || 420, 260); const H = Math.min(W, 400);
   const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, role: 'group', 'aria-label': `Passing network of ${state.data.teams[mine()].name}` });
   box.prepend(svg);
   const defs = svgEl('defs', {}, svg);
   const mk = svgEl('marker', { id: 'arrow', viewBox: '0 0 10 10', refX: 8, refY: 5, markerWidth: 5, markerHeight: 5, orient: 'auto-start-reverse' }, defs);
   svgEl('path', { d: 'M0 0L10 5L0 10z', class: 'net__head' }, mk);
   const n = net.nodes.length;
-  const R = Math.min(W, H) / 2 - 40; const cx = W / 2; const cy = H / 2;
+  // involvement: passes made + received; bigger circle = more involved
+  const inv = Object.fromEntries(net.nodes.map((no) => [no, { out: 0, in: 0 }]));
+  net.edges.forEach((e) => { inv[e.from].out += e.count; inv[e.to].in += e.count; });
+  const maxInv = Math.max(...net.nodes.map((no) => inv[no].out + inv[no].in), 1);
+  const rad = (no) => 17 + 13 * Math.sqrt((inv[no].out + inv[no].in) / maxInv);
+  const R = Math.min(W, H) / 2 - 46; const cx = W / 2; const cy = H / 2;
   const pos = Object.fromEntries(net.nodes.map((no, i) => {
     const a = -Math.PI / 2 + (2 * Math.PI * i) / Math.max(n, 1);
     return [no, { x: cx + R * Math.cos(a), y: cy + R * Math.sin(a) }];
   }));
   const maxC = Math.max(...net.edges.map((e) => e.count), 1);
+  const edges = svgEl('g', {}, svg);
   net.edges.forEach((e) => {
     const a = pos[e.from]; const b = pos[e.to];
     const dx = b.x - a.x; const dy = b.y - a.y; const len = Math.hypot(dx, dy) || 1;
-    const ux = dx / len; const uy = dy / len; const nr = 24;
-    const sx = a.x + ux * nr; const sy = a.y + uy * nr; const ex = b.x - ux * (nr + 4); const ey = b.y - uy * (nr + 4);
+    const ux = dx / len; const uy = dy / len;
+    const sx = a.x + ux * rad(e.from); const sy = a.y + uy * rad(e.from); const ex = b.x - ux * (rad(e.to) + 4); const ey = b.y - uy * (rad(e.to) + 4);
     const bend = 26; const mx = (sx + ex) / 2 - uy * bend; const my = (sy + ey) / 2 + ux * bend;
-    const g = svgEl('g', { class: 'net__edge', tabindex: '0' }, svg);
+    const g = svgEl('g', { class: 'net__edge', tabindex: '0' }, edges);
+    g.dataset.from = e.from; g.dataset.to = e.to;
     g.setAttribute('aria-label', `Number ${e.from} to number ${e.to}: ${e.count} pass${e.count > 1 ? 'es' : ''}`);
     svgEl('path', { class: 'net__hit', d: `M${sx} ${sy}Q${mx} ${my} ${ex} ${ey}` }, g);
     svgEl('path', { class: `net__line net__line--${role(mine())}`, d: `M${sx} ${sy}Q${mx} ${my} ${ex} ${ey}`, 'stroke-width': 1.5 + (4.5 * e.count) / maxC, 'marker-end': 'url(#arrow)' }, g);
@@ -515,31 +599,288 @@ function renderNetwork() {
     g.addEventListener('pointerenter', show); g.addEventListener('focus', show);
     g.addEventListener('pointerleave', () => { tip.hidden = true; }); g.addEventListener('blur', () => { tip.hidden = true; });
   });
+  // hovering or focusing a player lights up only their passes
+  const focus = (no) => {
+    svg.classList.toggle('is-focus', no !== null);
+    svg.querySelectorAll('.net__edge').forEach((g) => g.classList.toggle('is-on', no !== null && (g.dataset.from === no || g.dataset.to === no)));
+    svg.querySelectorAll('.net__player').forEach((g) => {
+      const other = g.dataset.no;
+      const linked = no !== null && (other === no || net.edges.some((e) => (e.from === no && e.to === other) || (e.to === no && e.from === other)));
+      g.classList.toggle('is-on', linked);
+    });
+  };
   net.nodes.forEach((no) => {
     const p = pos[no];
-    svgEl('circle', { class: `net__node net__node--${role(mine())}`, cx: p.x, cy: p.y, r: 22 }, svg);
-    const t = svgEl('text', { class: 'net__no', x: p.x, y: p.y + 5, 'text-anchor': 'middle' }, svg); t.textContent = no;
+    const key = `${mine()}-${no}`;
+    const g = svgEl('g', { class: 'net__player', tabindex: '0', role: 'button' }, svg);
+    g.dataset.no = no;
+    if (player(key)) g.dataset.spot = key;
+    g.setAttribute('aria-label', `Number ${no}: ${inv[no].out} passes made, ${inv[no].in} received. Open the spotlight.`);
+    svgEl('circle', { class: `net__node net__node--${role(mine())}`, cx: p.x, cy: p.y, r: rad(no) }, g);
+    const t = svgEl('text', { class: 'net__no', x: p.x, y: p.y + 5, 'text-anchor': 'middle' }, g); t.textContent = no;
+    const show = () => {
+      focus(no);
+      tip.innerHTML = `<b>#${esc(no)}</b><span>${inv[no].out} made, ${inv[no].in} received. Select for the spotlight.</span>`;
+      tip.hidden = false;
+      const s = svg.getBoundingClientRect().width / W; placeTip(tip, box, p.x * s, (p.y - rad(no)) * s);
+    };
+    const hide = () => { focus(null); tip.hidden = true; };
+    g.addEventListener('pointerenter', show); g.addEventListener('focus', show);
+    g.addEventListener('pointerleave', hide); g.addEventListener('blur', hide);
+    g.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && g.dataset.spot) { e.preventDefault(); openSpot(g.dataset.spot); } });
   });
   if (!n) { const t = svgEl('text', { class: 'empty-shots', x: W / 2, y: H / 2, 'text-anchor': 'middle' }, svg); t.textContent = 'No passes between identified players'; }
   const total = net.edges.reduce((a, e) => a + e.count, 0);
-  $('[data-net-sub]').textContent = `${state.data.teams[mine()].name}: ${total} passes between identified players. Thicker arrows mean more passes.`;
+  $('[data-net-sub]').textContent = `${state.data.teams[mine()].name}: ${total} passes between identified players. Bigger circles were more involved; point at a player to see only their passes.`;
   $('[data-pairs]').innerHTML = net.edges.slice(0, 6).map((e) => `<tr><th scope="row">#${esc(e.from)} → #${esc(e.to)}</th><td class="num">${e.count}</td></tr>`).join('');
 }
 
-// ---------------------------------------------------------------- all plays
+// ---------------------------------------------------------------- all plays: a compact feed with filters
+const FEED_FIRST = 12;
+const KINDS = [['all', 'All'], ['shot', 'Shots'], ['pass', 'Passes'], ['interception', 'Interceptions']];
+
+function feedPlays() {
+  const team = state.playTeam === 'both' ? null : state.playTeam === 'mine' ? mine() : theirs();
+  const find = state.find.replace(/[^0-9a-z]/gi, '');
+  return allPlays().filter((p) => (team === null || p.team === team)
+    && (!find || people(p).some((l) => (l || '').split('#')[1] === find)));
+}
+
 function renderPlays() {
-  const kinds = { all: () => true, shot: (p) => p.type === 'shot', pass: (p) => p.type === 'pass', interception: (p) => p.type === 'interception' };
-  $('[data-seg="playKind"]').innerHTML = [['all', 'All'], ['shot', 'Shots'], ['pass', 'Passes'], ['interception', 'Interceptions']]
-    .map(([v, l]) => `<button type="button" data-value="${v}" aria-pressed="${String(state.playKind === v)}">${l}</button>`).join('');
-  $('[data-plays]').innerHTML = allPlays().filter(kinds[state.playKind]).map((p) => {
+  const base = feedPlays();
+  const count = (k) => (k === 'all' ? base.length : base.filter((p) => p.type === k).length);
+  $('[data-seg="playKind"]').innerHTML = KINDS.map(([v, l]) => `<button type="button" data-value="${v}" aria-pressed="${String(state.playKind === v)}">${l}<span class="count">${count(v)}</span></button>`).join('');
+  $('[data-seg="playTeam"]').innerHTML = [['both', 'Both'], ['mine', esc(code(mine()))], ['theirs', esc(code(theirs()))]]
+    .map(([v, l]) => `<button type="button" data-value="${v}" aria-pressed="${String(state.playTeam === v)}">${l}</button>`).join('');
+  const list = base.filter((p) => state.playKind === 'all' || p.type === state.playKind);
+  const shown = state.feedAll ? list : list.slice(0, FEED_FIRST);
+  $('[data-plays]').innerHTML = shown.length ? shown.map((p) => {
     const text = playText(p);
-    return `<tr><td><button class="mini-btn" type="button" data-t="${p.t}" aria-label="Watch ${clock(p.t)}">▶ ${clock(p.t)}</button></td>
-      <td><i class="swatch swatch--${role(p.team)}"></i> ${esc(code(p.team))}</td><td>${esc(text.kind)}</td><td class="muted">${esc(text.detail)}</td></tr>`;
-  }).join('');
+    return `<li class="feed__item feed__item--${role(p.team)}">
+      <button class="feed__t" type="button" data-t="${p.t}" aria-label="Watch ${clock(p.t)}"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1l7 4-7 4z"/></svg>${clock(p.t)}</button>
+      <span class="feed__ic feed__ic--${iconFor(p)}">${icon(iconFor(p))}</span>
+      <div class="feed__text"><b>${esc(text.kind)}<span class="feed__team">${esc(code(p.team))}</span></b><span>${playDetail(p)}</span></div>
+    </li>`;
+  }).join('') : `<li class="feed__none">No plays match. ${state.find ? `Nobody with number ${esc(state.find)} ${state.playKind === 'all' ? 'made a play' : 'made one of these'}.` : ''}</li>`;
+  const more = $('[data-feed-more]');
+  more.hidden = list.length <= FEED_FIRST;
+  more.textContent = state.feedAll ? 'Show fewer' : `Show all ${list.length} plays`;
+  more.setAttribute('aria-expanded', String(state.feedAll));
   const q = state.data.quality;
   $('[data-about]').innerHTML = `<h3>About these numbers</h3><ul>${[
     `Jersey numbers are known for ${whole.format(q.players_with_number_pct)}% of the time players are on court; the rest is listed as "Not identified".`,
-    ...q.notes].map((t) => `<li>${esc(t)}</li>`).join('')}</ul>`;
+    ...q.notes.filter((t) => !/confirm/i.test(t))].map((t) => `<li>${esc(t)}</li>`).join('')}</ul>`;
+}
+
+function wireFeed() {
+  ['playKind', 'playTeam'].forEach((name) => $(`[data-seg="${name}"]`).addEventListener('click', (e) => {
+    const b = e.target.closest('button');
+    if (b) { state[name] = b.dataset.value; renderPlays(); }
+  }));
+  $('[data-feed-find]').addEventListener('input', (e) => { state.find = e.target.value.trim(); renderPlays(); });
+  $('[data-feed-more]').addEventListener('click', () => { state.feedAll = !state.feedAll; renderPlays(); });
+  $('[data-plays]').addEventListener('click', (e) => { const b = e.target.closest('[data-t]'); if (b) watch(Number(b.dataset.t)); });
+}
+
+// ---------------------------------------------------------------- player spotlight
+const ORD = ['1st', '2nd', '3rd'];
+function rankLine(p, get, higherIsBetter = true) {
+  const team = state.data.players.filter((x) => x.team === p.team && get(x) !== null && get(x) !== undefined);
+  if (get(p) === null || get(p) === undefined || !get(p)) return '';
+  const sorted = [...team].sort((a, b) => (get(b) - get(a)) * (higherIsBetter ? 1 : -1));
+  const i = sorted.findIndex((x) => x === p);
+  if (i === 0) return `Most in ${code(p.team)}`;
+  return `${ORD[i] || `${i + 1}th`} of ${sorted.length} in ${code(p.team)}`;
+}
+
+function spotShots(p) {
+  const src = $('[data-court-svg]').cloneNode(true);
+  src.removeAttribute('aria-labelledby');
+  src.querySelectorAll('desc').forEach((d) => d.remove());
+  src.querySelectorAll('[data-shot-layer], [data-zone-layer]').forEach((g) => g.replaceChildren());
+  src.querySelectorAll('*').forEach((el) => [...el.attributes].forEach((a) => { if (a.name.startsWith('data-')) el.removeAttribute(a.name); }));
+  [...src.attributes].forEach((a) => { if (a.name.startsWith('data-')) src.removeAttribute(a.name); });
+  const shots = state.data.shots.filter((s) => s.team === p.team && s.no === p.no && s.kind === 'field_goal');
+  const placed = shots.filter((s) => s.x !== null);
+  src.setAttribute('role', 'img');
+  src.setAttribute('aria-label', `Shots by ${labelOf(p)}: ${shots.filter((s) => s.made).length} of ${shots.length} made`);
+  const layer = svgEl('g', {}, src);
+  placed.forEach((s) => {
+    const { x, y } = toCourt(s);
+    const g = svgEl('g', { class: `shot shot--${role(s.team)} ${s.made ? 'shot--made' : 'shot--miss'}` }, layer);
+    if (s.made) svgEl('circle', { class: 'shot__mark', cx: x, cy: y, r: 26 }, g);
+    else svgEl('path', { class: 'shot__mark', d: `M${x - 20} ${y - 20}l40 40m0-40l-40 40` }, g);
+  });
+  return { svg: src, shots, placed };
+}
+
+function speedChart(p, key) {
+  const pts = (state.data.speed || {})[key] || [];
+  if (pts.length < 2) return null;
+  const W = 640; const H = 170; const L = 40; const R = 10; const T = 14; const B = 26;
+  const dur = state.data.clip.duration_s;
+  const top = Math.max(20, ...pts.map((q) => q[1]));
+  const x = (t) => L + ((W - L - R) * t) / dur;
+  const y = (v) => T + (H - T - B) * (1 - v / top);
+  const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': `Speed of ${labelOf(p)} through the clip, top ${one.format(p.top_kmh || 0)} km/h. Select a moment to watch it.` });
+  [0, 10, 20, 30].filter((v) => v <= top).forEach((v) => {
+    svgEl('line', { class: 'gridline', x1: L, x2: W - R, y1: y(v), y2: y(v) }, svg);
+    const t = svgEl('text', { class: 'axis-text', x: L - 8, y: y(v) + 4, 'text-anchor': 'end' }, svg); t.textContent = v;
+  });
+  for (let s = 0; s <= dur; s += dur > 90 ? 30 : 15) {
+    const t = svgEl('text', { class: 'axis-text', x: x(s), y: H - 6, 'text-anchor': 'middle' }, svg); t.textContent = clock(s);
+  }
+  // break the line where the player was off screen for more than 2 s
+  const runs = [[]];
+  pts.forEach((q, i) => { if (i && q[0] - pts[i - 1][0] > 2) runs.push([]); runs[runs.length - 1].push(q); });
+  runs.filter((r) => r.length > 1).forEach((r) => {
+    const line = r.map((q) => `${x(q[0]).toFixed(1)},${y(q[1]).toFixed(1)}`).join(' ');
+    svgEl('polygon', { class: `speed__area speed--${role(p.team)}`, points: `${x(r[0][0])},${y(0)} ${line} ${x(r[r.length - 1][0])},${y(0)}` }, svg);
+    svgEl('polyline', { class: `speed__line speed--${role(p.team)}`, points: line }, svg);
+  });
+  const best = pts.reduce((a, q) => (q[1] > a[1] ? q : a));
+  svgEl('circle', { class: `speed__top speed--${role(p.team)}`, cx: x(best[0]), cy: y(best[1]), r: 5 }, svg);
+  const lab = svgEl('text', { class: 'speed__label', x: Math.min(x(best[0]) + 9, W - 120), y: Math.max(y(best[1]) - 8, 12) }, svg);
+  lab.textContent = `${one.format(best[1])} km/h at ${clock(best[0])}`;
+  const head = svgEl('line', { class: 'speed__cursor', x1: 0, x2: 0, y1: T, y2: H - B }, svg);
+  head.style.display = 'none';
+  svg.dataset.dur = dur; svg.dataset.l = L; svg.dataset.r = R; svg.dataset.w = W;
+  return { svg, pts, x, head };
+}
+
+function spotHtml(p, key, mates) {
+  const i = mates.indexOf(key);
+  const prev = mates[(i - 1 + mates.length) % mates.length]; const next = mates[(i + 1) % mates.length];
+  const mapped = courtMapped();
+  const stats = [
+    ['Points', p.pts, rankLine(p, (x) => x.pts)],
+    ['Field goals', `${p.fgm}/${p.fga}`, p.fga ? `${pct.format(p.fgm / p.fga)} made` : 'No shots'],
+    ['Three-pointers', `${p.tpm}/${p.tpa}`, p.tpa ? `${pct.format(p.tpm / p.tpa)} made` : 'No attempts'],
+    ['Passes made', p.passes, rankLine(p, (x) => x.passes)],
+    ['Passes received', p.received, rankLine(p, (x) => x.received)],
+    ['Interceptions', p.int, rankLine(p, (x) => x.int)],
+    ['With the ball', p.ball_s === null ? '–' : `${one.format(p.ball_s)} s`, rankLine(p, (x) => x.ball_s)],
+    ...(mapped ? [['Distance', `${whole.format(p.distance_m)} m`, rankLine(p, (x) => x.distance_m)],
+      ['Top speed', p.top_kmh ? `${one.format(p.top_kmh)} km/h` : '–', rankLine(p, (x) => x.top_kmh)]] : []),
+  ];
+  const label = labelOf(p);
+  const passesTo = {}; const passesFrom = {};
+  state.data.plays.filter((q) => q.type === 'pass').forEach((q) => {
+    if (q.from === label) passesTo[q.to] = (passesTo[q.to] || 0) + 1;
+    if (q.to === label) passesFrom[q.from] = (passesFrom[q.from] || 0) + 1;
+  });
+  const top3 = (o) => Object.entries(o).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  const pairList = (o, none) => (top3(o).length ? `<ul class="spot__pairs">${top3(o).map(([who, c]) => `<li>${nameBtn(who)}<b>${c}</b></li>`).join('')}</ul>` : `<p class="fine">${none}</p>`);
+  const moments = allPlays().filter((q) => people(q).includes(label));
+  return `
+    <header class="spot__head spot--${role(p.team)}">
+      <span class="spot__no" aria-hidden="true">${esc(p.no)}</span>
+      <div class="spot__who">
+        <h2 id="spot-h">${esc(state.data.teams[p.team].name)}, number&nbsp;${esc(p.no)}</h2>
+        <p>${p.pts} point${p.pts === 1 ? "" : "s"} · ${p.passes} pass${p.passes === 1 ? "" : "es"} · ${clock(p.seconds)} on court</p>
+      </div>
+      <div class="spot__nav">
+        <button class="spot__btn" type="button" data-spot="${prev}" aria-label="Previous player: number ${esc(player(prev).no)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+        <button class="spot__btn" type="button" data-spot="${next}" aria-label="Next player: number ${esc(player(next).no)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+        <button class="spot__btn" type="button" data-spot-close aria-label="Close the spotlight" autofocus><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+    </header>
+    <dl class="spot__stats">${stats.map(([l, v, r]) => `<div><dt>${l}</dt><dd>${v}</dd>${r ? `<span>${esc(r)}</span>` : ''}</div>`).join('')}</dl>
+    <section class="spot__part" aria-labelledby="spot-shots-h">
+      <h3 id="spot-shots-h">Shots</h3>
+      <div class="spot__court" data-spot-court></div>
+      <p class="fine" data-spot-shot-note></p>
+    </section>
+    ${mapped ? `<section class="spot__part" aria-labelledby="spot-speed-h">
+      <h3 id="spot-speed-h">Speed through the clip</h3>
+      <div class="spot__speed" data-spot-speed><div class="tip" data-spot-tip role="tooltip" hidden></div></div>
+      <p class="fine">Select a moment on the line to watch it. Gaps are times the player was off screen.</p>
+    </section>
+    <section class="spot__part" aria-labelledby="spot-heat-h">
+      <h3 id="spot-heat-h">Where they played</h3>
+      <div class="spot__heat" data-spot-heat></div>
+    </section>` : `<p class="fine">${NO_COURT}</p>`}
+    <section class="spot__part spot__passing" aria-labelledby="spot-pass-h">
+      <h3 id="spot-pass-h" class="visually-hidden">Passing</h3>
+      <div><h4>Passed most to</h4>${pairList(passesTo, 'No passes to identified team-mates.')}</div>
+      <div><h4>Received most from</h4>${pairList(passesFrom, 'No passes from identified team-mates.')}</div>
+    </section>
+    <section class="spot__part" aria-labelledby="spot-moments-h">
+      <h3 id="spot-moments-h">Every moment (${moments.length})</h3>
+      <ol class="feed feed--spot">${moments.map((q) => `<li class="feed__item feed__item--${role(q.team)}">
+        <button class="feed__t" type="button" data-spot-watch="${q.t}" aria-label="Watch ${clock(q.t)}"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1l7 4-7 4z"/></svg>${clock(q.t)}</button>
+        <span class="feed__ic feed__ic--${iconFor(q)}">${icon(iconFor(q))}</span>
+        <div class="feed__text"><b>${esc(playText(q).kind)}</b><span>${playDetail(q)}</span></div></li>`).join('') || '<li class="feed__none">No plays found for this player.</li>'}</ol>
+    </section>`;
+}
+
+function openSpot(key) {
+  const p = player(key);
+  if (!p) return;
+  const dialog = $('[data-spot-dialog]');
+  const mates = state.data.players.filter((x) => x.team === p.team).sort((a, b) => Number(a.no) - Number(b.no)).map((x) => `${x.team}-${x.no}`);
+  const body = $('[data-spot-body]');
+  body.innerHTML = spotHtml(p, key, mates);
+  const { svg, shots, placed } = spotShots(p);
+  $('[data-spot-court]', body).append(svg);
+  const made = shots.filter((s) => s.made).length;
+  $('[data-spot-shot-note]', body).textContent = shots.length
+    ? `${made} of ${shots.length} made, ${shots.reduce((a, s) => a + (s.made ? s.points || 0 : 0), 0)} points.${shots.length > placed.length ? ` ${shots.length - placed.length} not drawn: the position could not be measured.` : ''}`
+    : 'No shots in this clip.';
+  if (courtMapped()) {
+    const grid = state.data.heat.players[key];
+    if (grid) $('[data-spot-heat]', body).append(heatSvg(grid, p.team, `Where number ${p.no} spent time on the court`));
+    else $('[data-spot-heat]', body).innerHTML = '<p class="fine">No court positions for this player.</p>';
+    const chart = speedChart(p, key);
+    const box = $('[data-spot-speed]', body);
+    if (!chart) box.innerHTML = '<p class="fine">Not enough speed readings for this player.</p>';
+    else {
+      box.prepend(chart.svg);
+      const tip = $('[data-spot-tip]', body);
+      const at = (e) => {
+        const r = chart.svg.getBoundingClientRect(); const W = Number(chart.svg.dataset.w);
+        const ux = ((e.clientX - r.left) * W) / r.width;
+        const t = ((ux - Number(chart.svg.dataset.l)) / (W - Number(chart.svg.dataset.l) - Number(chart.svg.dataset.r))) * state.data.clip.duration_s;
+        const q = chart.pts.reduce((a, b) => (Math.abs(b[0] - t) < Math.abs(a[0] - t) ? b : a));
+        return { q, r, W };
+      };
+      chart.svg.addEventListener('pointermove', (e) => {
+        const { q, r, W } = at(e);
+        const px = chart.x(q[0]);
+        chart.head.setAttribute('x1', px); chart.head.setAttribute('x2', px); chart.head.style.display = '';
+        tip.innerHTML = `<b>${clock(q[0])}</b><span>${one.format(q[1])} km/h</span>`;
+        tip.hidden = false;
+        placeTip(tip, box, (px * r.width) / W, 24);
+      });
+      chart.svg.addEventListener('pointerleave', () => { tip.hidden = true; chart.head.style.display = 'none'; });
+      chart.svg.addEventListener('click', (e) => { dialog.close(); watch(at(e).q[0]); });
+    }
+  }
+  state.spot = key;
+  writeUrl();
+  if (!dialog.open) dialog.showModal();
+  else $('[data-spot-close]', body).focus();
+  body.scrollTop = 0;
+}
+
+function wireSpot() {
+  const dialog = $('[data-spot-dialog]');
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-spot]');
+    if (b && b.dataset.spot) { e.preventDefault(); openSpot(b.dataset.spot); }
+  });
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog || e.target.closest('[data-spot-close]')) dialog.close();
+    const w = e.target.closest('[data-spot-watch]');
+    if (w) { dialog.close(); watch(Number(w.dataset.spotWatch)); }
+  });
+  dialog.addEventListener('keydown', (e) => {
+    if (e.target.closest('input, select, textarea')) return;
+    const nav = dialog.querySelectorAll('.spot__nav [data-spot]');
+    if (e.key === 'ArrowLeft' && nav[0]) { e.preventDefault(); openSpot(nav[0].dataset.spot); }
+    if (e.key === 'ArrowRight' && nav[1]) { e.preventDefault(); openSpot(nav[1].dataset.spot); }
+  });
+  dialog.addEventListener('close', () => { state.spot = null; writeUrl(); });
 }
 
 // ---------------------------------------------------------------- the whole page
@@ -648,9 +989,10 @@ async function start() {
   wirePlayers();
   $('[data-heat-select]').addEventListener('change', (e) => { state.heat = e.target.value; renderHeat(); });
   $('[data-moments]').addEventListener('click', (e) => { const b = e.target.closest('[data-t]'); if (b) watch(Number(b.dataset.t)); });
-  $('[data-plays]').addEventListener('click', (e) => { const b = e.target.closest('[data-t]'); if (b) watch(Number(b.dataset.t)); });
-  $('[data-seg="playKind"]').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { state.playKind = b.dataset.value; renderPlays(); } });
+  wireFeed();
+  wireSpot();
   renderAll(true);
+  if (url.spot && player(url.spot)) openSpot(url.spot);
   trackSections();
   let timer;
   addEventListener('resize', () => { clearTimeout(timer); timer = setTimeout(() => { renderTimeline(); renderNetwork(); }, 150); });
