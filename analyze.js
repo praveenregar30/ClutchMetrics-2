@@ -2,6 +2,7 @@
 // Used by the coach and the player dashboards: <section data-analyze="coach|player"> ... </section>
 
 import { SERVER, serverHeaders, serverFetch, serverVideoUrl } from './config.js';
+import { openCourtMapper } from './court-map.js?v=1';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -14,6 +15,7 @@ const role = root?.dataset.analyze || 'coach';
 let limits = { max_upload_mb: 1024, max_seconds: 180, formats: ['.mp4', '.mov'] };
 let file = null;
 let polling = null;
+let mapNext = null;      // the video just uploaded: open the court mapping window as soon as its pictures are ready
 
 function template() {
   root.innerHTML = `
@@ -113,7 +115,8 @@ async function upload(form) {
   xhr.onload = () => {
     bar.hidden = true;
     if (xhr.status >= 200 && xhr.status < 300) {
-      status.textContent = 'Uploaded. The analysis has started; you can leave this page and come back later.';
+      status.textContent = 'Uploaded. In about a minute a window opens where you map the court on a few pictures. The analysis keeps running meanwhile.';
+      try { mapNext = JSON.parse(xhr.responseText).id; } catch { mapNext = null; }
       form.reset(); file = null;
       $('[data-drop-title]', root).textContent = 'Drop a video here, or choose a file';
       loadJobs();
@@ -150,12 +153,30 @@ async function loadJobs() {
       <div class="job__main"><b>${esc(j.title)}</b><span>${esc(j.teams.join(' vs '))} · ${when.format(new Date(j.created * 1000))}${j.duration_s ? ` · ${clock(j.duration_s)} of video` : ''}</span></div>
       <div class="job__state">${state}${j.status === 'done' ? open : ''}</div>
       ${j.status === 'running' || j.status === 'queued' ? `<div class="job__progress"><div class="bar"><i style="width:${j.progress}%"></i></div><span>${esc(j.step_text)}</span></div>` : ''}
+      ${j.court_can_map ? `<div class="job__court"><span class="tag tag--map">Court not mapped yet</span><button class="mini-btn mini-btn--primary" type="button" data-map="${j.id}">Map the court (${j.court_pictures} pictures)</button></div>` : ''}
       ${j.status === 'failed' ? `<p class="job__msg">${esc(j.message)}</p>` : ''}
       <div class="job__watch" hidden></div>
     </article>`;
   }).join('')}`;
   clearTimeout(polling);
   if (jobs.some((j) => j.status === 'running' || j.status === 'queued')) polling = setTimeout(loadJobs, 5000);
+  const ready = mapNext && jobs.find((j) => j.id === mapNext);
+  if (ready && (ready.court_can_map || ready.status === 'done' || ready.status === 'failed' || ready.court !== 'none')) {
+    mapNext = null;
+    if (ready.court_can_map) map(ready.id);
+  }
+}
+
+function map(id) {
+  if (document.querySelector('dialog.cmap[open]')) return;
+  openCourtMapper(id, {
+    onFinish: (state) => {
+      $('[data-upload-status]', root).textContent = state === 'skipped'
+        ? 'Court mapping skipped. The analysis continues without court stats.'
+        : 'Court mapping sent. The analysis now includes speed, distance, heatmaps and shot positions.';
+      loadJobs();
+    },
+  });
 }
 
 // players watch the finished analysis right here
@@ -190,7 +211,12 @@ async function start() {
   drop.addEventListener('drop', (e) => { const f = e.dataTransfer.files[0]; if (f) pick(f); });
   form.addEventListener('input', updateSubmit);
   form.addEventListener('submit', (e) => { e.preventDefault(); if (file) upload(form); });
-  $('[data-jobs]', root).addEventListener('click', (e) => { const b = e.target.closest('[data-watch]'); if (b) watch(b.dataset.watch, b); });
+  $('[data-jobs]', root).addEventListener('click', (e) => {
+    const b = e.target.closest('[data-watch]');
+    if (b) watch(b.dataset.watch, b);
+    const m = e.target.closest('[data-map]');
+    if (m) map(m.dataset.map);
+  });
   if (await checkServer()) loadJobs();
   else $('[data-submit]', root).disabled = true;
 }

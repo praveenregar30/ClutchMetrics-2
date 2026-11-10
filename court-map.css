@@ -1,0 +1,53 @@
+/* Court mapping window (court-map.js). Tokens from auth.css. */
+.cmap { width: min(1240px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 1px solid var(--line-strong); border-radius: 16px; background: var(--surface); color: var(--ink); font-family: var(--font); overflow: auto; }
+.cmap::backdrop { background: rgb(8 6 4 / .78); }
+.cmap [hidden] { display: none !important; }
+.cmap__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 18px 20px 6px; }
+.cmap__head h2 { margin: 0; font-size: 22px; font-weight: 600; }
+.cmap__sub { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
+.cmap__x { flex: none; width: 40px; height: 40px; border: 1px solid var(--line-strong); border-radius: 50%; background: none; color: var(--ink); font-size: 16px; cursor: pointer; }
+.cmap__x:hover { border-color: var(--accent); }
+
+.cmap__steps { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 6px; padding: 6px 20px 12px; }
+.cmap__steps span:not(.fine) { width: 22px; height: 6px; border-radius: 3px; background: var(--line-strong); }
+.cmap__steps span.is-done { background: #3fbf6f; }
+.cmap__steps span.is-skip { background: var(--muted); opacity: .5; }
+.cmap__steps span.is-now { background: var(--accent); }
+.cmap__steps b { margin-left: 10px; font-weight: 500; font-size: 14px; }
+.cmap__steps .fine { margin: 0; font-size: 13px; color: var(--muted); }
+
+.cmap__body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding: 0 20px 16px; }
+@media (min-width: 900px) { .cmap__body { grid-template-columns: minmax(0, 1.75fr) minmax(300px, 1fr); align-items: start; } }
+.cmap__pic { position: relative; border-radius: 10px; overflow: hidden; background: #000; aspect-ratio: 16 / 9; }
+.cmap__pic canvas { display: block; width: 100%; height: 100%; object-fit: contain; cursor: crosshair; }
+.cmap__loading { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; color: var(--muted); }
+.cmap__loading[hidden] { display: none; }
+
+.cmap__side { display: grid; gap: 12px; }
+.cmap__court { width: 100%; height: auto; border-radius: 10px; background: #2a1f14; cursor: pointer; touch-action: manipulation; }
+.cmap__court .cmap__floor { fill: #b98a54; }
+.cmap__court polyline { fill: none; stroke: #fff; stroke-width: .09; }
+.cmap__court circle.cmap__lm { fill: #1b6fd1; stroke: #fff; stroke-width: .08; }
+.cmap__court circle.cmap__lm.is-live { fill: #3fff7a; stroke: #0b3d1b; }
+.cmap__court circle.cmap__lm.is-used { fill: #ff3b30; }
+.cmap__court circle.cmap__lm:hover { r: .6; }
+.cmap__court .cmap__label { fill: var(--muted); font-size: .62px; text-anchor: middle; font-family: var(--font); }
+.cmap__court .cmap__num { fill: #fff; font-size: .9px; font-weight: 700; paint-order: stroke; stroke: #000; stroke-width: .18px; font-family: var(--font); }
+.cmap__hint { margin: 0; font-size: 14px; line-height: 1.5; }
+.cmap__hint .fine { color: var(--muted); font-size: 13px; }
+.cmap__fit { margin: 0; min-height: 1.2em; color: var(--accent); font-size: 13px; }
+.cmap__tools { display: flex; flex-wrap: wrap; gap: 8px; }
+.cmap__tools .mini-btn:disabled { opacity: .4; cursor: not-allowed; }
+.cmap__accept { width: 100%; justify-content: center; }
+.cmap kbd { margin-left: 6px; padding: 0 5px; border: 1px solid currentColor; border-radius: 4px; font-family: var(--mono); font-size: 11px; opacity: .7; }
+
+.cmap__done { padding: 8px 20px 20px; }
+.cmap__done h3 { margin: 0 0 6px; font-size: 18px; font-weight: 600; }
+.cmap__done p { margin: 0 0 14px; color: var(--muted); }
+.cmap__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; padding: 12px 20px 18px; border-top: 1px solid var(--line); }
+.cmap__foot .fine { margin: 0; color: var(--muted); font-size: 13px; }
+.cmap__link { padding: 0; border: 0; background: none; color: var(--ink); font: inherit; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.cmap__link:hover { color: var(--accent); }
+
+.job__court { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.tag--map { border-color: rgb(255 210 63 / .55); color: #ffd23f; }
