@@ -24,6 +24,27 @@ export async function serverHeaders() {
   return headers;
 }
 
+// TEMPORARY (until the mentor review): finished analyses of the test accounts are copied into this website
+// (results/<random token>/), so they open while the analysis server (GPU) is off. Delete results/ to undo.
+export async function savedCopies() {
+  try {
+    if (!firebaseReady) return null;
+    const { currentUser } = await import('./firebase.js');
+    const user = await currentUser();
+    if (!user) return null;
+    const res = await fetch('results/index.json', { cache: 'no-cache' });
+    if (!res.ok) return null;
+    return (await res.json())[user.uid] || null;
+  } catch { return null; }
+}
+
+export function savedCopyNote(where) {
+  const note = document.createElement('p');
+  note.className = 'note';
+  note.textContent = 'The analysis server is off right now, so you are seeing saved copies of your finished analyses. Uploading a new video needs the server.';
+  where.before(note);
+}
+
 export async function serverFetch(path, options = {}) {
   return fetch(`${SERVER}${path}`, { ...options, headers: { ...(await serverHeaders()), ...(options.headers || {}) } });
 }

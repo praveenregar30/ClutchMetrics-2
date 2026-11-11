@@ -1,0 +1,92 @@
+{
+ "Edir3ssGzlaQ2abGvxhUkQTyrla2": [
+  {
+   "id": "2950656d9496",
+   "title": "POKA vs ROMA",
+   "teams": [
+    "POKA",
+    "ROMA"
+   ],
+   "role": "coach",
+   "created": 1794401172.6238968,
+   "finished": 1794401793.6749542,
+   "duration_s": 180.0,
+   "court_mapped": true,
+   "me": null,
+   "token": "85b564d2691568d6eef6566e",
+   "status": "done"
+  },
+  {
+   "id": "a05a1d0a0501",
+   "title": "Australia vs India",
+   "teams": [
+    "Australia",
+    "India"
+   ],
+   "role": "coach",
+   "created": 1794308101.2461855,
+   "finished": 1794308101.2461855,
+   "duration_s": 110.0,
+   "court_mapped": null,
+   "me": null,
+   "token": "f0137f0f9fde880c230795f9",
+   "status": "done"
+  },
+  {
+   "id": "d90a1e120612",
+   "title": "My own upload (A)",
+   "teams": [
+    "Australia",
+    "India"
+   ],
+   "role": "coach",
+   "created": 1794306075.0957572,
+   "finished": 1794306244.7108123,
+   "duration_s": 25.0,
+   "court_mapped": null,
+   "me": null,
+   "token": "3c3568e943fe0dc6035bcec4",
+   "status": "done"
+  }
+ ],
+ "dioCcqXXXyYD9BGyxM8G2eWMGZ33": [
+  {
+   "id": "c93425bf1592",
+   "title": "Australia vs India",
+   "teams": [
+    "Australia",
+    "India"
+   ],
+   "role": "player",
+   "created": 1794332871.046396,
+   "finished": 1794332871.046396,
+   "duration_s": 110.0,
+   "court_mapped": null,
+   "me": {
+    "team": 0,
+    "no": "4"
+   },
+   "token": "626a2228b3d12f13e7df6399",
+   "status": "done"
+  },
+  {
+   "id": "a2bdf67bf95f",
+   "title": "PAOK vs ROMA",
+   "teams": [
+    "PAOK",
+    "ROMA"
+   ],
+   "role": "player",
+   "created": 1794246471.046396,
+   "finished": 1794246471.046396,
+   "duration_s": 180.0,
+   "court_mapped": null,
+   "me": {
+    "team": 0,
+    "no": "26"
+   },
+   "token": "15706336fb3f082224075510",
+   "status": "done"
+  }
+ ]
+}

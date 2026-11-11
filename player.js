@@ -1,7 +1,7 @@
 // ClutchMetrics player report. The player's own analyses come from the analysis server; each upload remembers
 // which player in the video is "me" (team + jersey number, chosen at upload or fixed here).
 
-import { serverFetch, serverVideoUrl } from './config.js';
+import { savedCopies, savedCopyNote, serverFetch, serverVideoUrl } from './config.js?v=2';
 import { analyse } from './insights.js?v=1';
 import { advancedStats, insightLists, methodNote, ppiCard, radarSvg, radarValues, teamAverageValues } from './insights-ui.js?v=1';
 
@@ -349,7 +349,7 @@ async function renderForm() {
   const loaded = await Promise.all(recent.map(async (j) => {
     if (j.id === state.match) return { job: j, data: state.data, me: state.me };
     try {
-      const res = await serverFetch(`/api/jobs/${j.id}/match.json`, { cache: 'no-store' });
+      const res = await loadMatch(j.id);
       if (!res.ok) return null;
       const data = await res.json();
       return { job: j, data, me: data.me };
@@ -490,6 +490,12 @@ function renderReport() {
   renderForm();
 }
 
+// one game's data: from the analysis server, or from the saved copy while the server is off
+function loadMatch(id) {
+  const copy = state.saved && state.saved.find((g) => g.id === id);
+  return copy ? fetch(`results/${copy.token}/match.json`, { cache: 'no-cache' }) : serverFetch(`/api/jobs/${id}/match.json`, { cache: 'no-store' });
+}
+
 // ---------------------------------------------------------------- start
 async function myAnalyses() {
   try {
@@ -525,7 +531,9 @@ function trackSections() {
 async function start() {
   if (!document.querySelector('[data-dashboard="player"]')) return;
   const asked = new URLSearchParams(location.search).get('match');
-  const jobs = await myAnalyses();
+  let jobs = await myAnalyses();
+  // server off: use the saved copies of this account's finished analyses, if any
+  if (jobs === null) { const saved = await savedCopies(); if (saved && saved.length) { jobs = saved; state.saved = saved; } }
   state.jobs = jobs || [];
   state.match = asked && state.jobs.some((j) => j.id === asked) ? asked : state.jobs[0]?.id || null;
   const select = $('[data-match-select]');
@@ -534,7 +542,7 @@ async function start() {
   select.addEventListener('change', () => { if (select.value) location.search = `?match=${select.value}`; });
   if (!state.match) { showEmpty(jobs === null); return; }
   try {
-    const res = await serverFetch(`/api/jobs/${state.match}/match.json`, { cache: 'no-store' });
+    const res = await loadMatch(state.match);
     if (!res.ok) throw new Error(`status ${res.status}`);
     state.data = await res.json();
   } catch (err) {
@@ -545,8 +553,13 @@ async function start() {
     return;
   }
   state.me = state.data.me || state.jobs.find((j) => j.id === state.match)?.me || null;
-  serverVideoUrl(state.data.video).then((src) => { video().src = src; })
-    .catch(() => { $('[data-reel-now]').textContent = 'The video could not load from the analysis server.'; });
+  if (state.data.static_copy) {
+    video().src = state.data.video;
+    savedCopyNote($('.match-bar'));
+  } else {
+    serverVideoUrl(state.data.video).then((src) => { video().src = src; })
+      .catch(() => { $('[data-reel-now]').textContent = 'The video could not load from the analysis server.'; });
+  }
   $('[data-seg="hlKind"]').addEventListener('click', (e) => {
     const b = e.target.closest('button');
     if (b) { state.hlKind = b.dataset.value; renderHighlights(state.data, findPlayer(state.data, state.me)); }

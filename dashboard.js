@@ -2,7 +2,7 @@
 // (format in data/MATCH_FORMAT.md), and draws every view from it. "Your team" and the shot filters live in
 // the address, so a view can be shared or reloaded.
 
-import { serverFetch, serverVideoUrl } from './config.js';
+import { savedCopies, savedCopyNote, serverFetch, serverVideoUrl } from './config.js?v=2';
 import { analyse } from './insights.js?v=1';
 import { advancedStats, insightLists, methodNote, ppiCard, radarSvg, radarValues, teamAverageValues } from './insights-ui.js?v=1';
 
@@ -1051,14 +1051,18 @@ async function start() {
   if (!document.querySelector('[data-dashboard]')) return;
   const url = readUrl();
   state.match = url.match && /^[a-f0-9]{12}$/.test(url.match) ? url.match : null;
-  const mine = await myAnalyses();
+  let mine = await myAnalyses();
+  // server off: use the saved copies of this account's finished analyses, if any
+  if (mine === null) { const saved = await savedCopies(); if (saved && saved.length) { mine = saved; state.saved = saved; } }
   // open the user's latest analysis when none is chosen; with none at all, show the empty state
   if (!state.match && mine && mine.length) state.match = mine[0].id;
   buildMatchPicker(mine);
   if (!state.match) { showEmpty(mine === null); return; }
   try {
-    const res = state.match ? await serverFetch(`/api/jobs/${state.match}/match.json`, { cache: 'no-store' })
-      : await fetch('data/match.json', { cache: 'no-cache' });
+    const copy = state.saved && state.saved.find((g) => g.id === state.match);
+    const res = copy ? await fetch(`results/${copy.token}/match.json`, { cache: 'no-cache' })
+      : state.match ? await serverFetch(`/api/jobs/${state.match}/match.json`, { cache: 'no-store' })
+        : await fetch('data/match.json', { cache: 'no-cache' });
     if (!res.ok) throw new Error(`status ${res.status}`);
     state.data = await res.json();
     if (!state.data.teams?.length) throw new Error('no teams in the file');
@@ -1073,7 +1077,10 @@ async function start() {
   }
   const t = state.data.teams.findIndex((x) => x.code === url.team);
   Object.assign(state, { team: t >= 0 ? t : 0, player: url.player, result: url.result, shotTeam: ['mine', 'theirs', 'both'].includes(url.shotTeam) ? url.shotTeam : 'mine' });
-  if (state.match) {
+  if (state.data.static_copy) {
+    $('[data-video]').src = state.data.video;
+    savedCopyNote($('.match-bar'));
+  } else if (state.match) {
     // uploaded matches stream from the analysis server; load the video with the ngrok header
     serverVideoUrl(state.data.video).then((src) => { $('[data-video]').src = src; })
       .catch(() => { $('[data-video]').replaceWith(Object.assign(document.createElement('p'), { className: 'fine', textContent: 'The video could not load from the analysis server.' })); });
