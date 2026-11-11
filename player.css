@@ -71,3 +71,8 @@
 .whoami__no:active { transform: translateY(1px); }
 
 @media (prefers-reduced-motion: reduce) { .vs.is-new .vs__bar { animation: none; } }
+
+/* performance profile */
+.profile-grid { display: grid; gap: 16px; align-items: center; }
+@media (min-width: 1000px) { .profile-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.profile-grid .ppi { margin-bottom: 0; }

@@ -2,6 +2,8 @@
 // which player in the video is "me" (team + jersey number, chosen at upload or fixed here).
 
 import { serverFetch, serverVideoUrl } from './config.js';
+import { analyse } from './insights.js?v=1';
+import { advancedStats, insightLists, methodNote, ppiCard, radarSvg, radarValues, teamAverageValues } from './insights-ui.js?v=1';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const NS = 'http://www.w3.org/2000/svg';
@@ -445,6 +447,25 @@ function showWhoami(reason) {
 
 function setParts(visible) { document.querySelectorAll('[data-part]').forEach((el) => { el.hidden = !visible; }); }
 
+// performance profile from insights.js: index, radar against the team average, strengths, weaknesses, advanced stats
+function renderProfile(d, p) {
+  const ins = analyse(d);
+  const key = `${p.team}-${p.no}`;
+  const r = ins.rows.find((x) => x.key === key);
+  const prof = ins.profiles[key];
+  if (!r || !prof.eligible) {
+    $('[data-prof-summary]').textContent = prof ? prof.note : 'No profile for this game.';
+    ['[data-prof-ppi]', '[data-prof-radar]', '[data-prof-lists]', '[data-prof-adv]', '[data-prof-method]'].forEach((s) => { $(s).innerHTML = ''; });
+    return;
+  }
+  $('[data-prof-summary]').textContent = prof.summary.replace(`${r.label} played`, 'You played').replace(/^(.*?)Stands out/, '$1You stand out').replace('Main thing to work on', 'Your main thing to work on');
+  $('[data-prof-ppi]').innerHTML = ppiCard(r);
+  $('[data-prof-radar]').innerHTML = radarSvg([{ name: 'You', tone: 'team', values: radarValues(r) }, { name: 'Team-mates average', tone: 'avg', values: teamAverageValues(ins.rows, r.team, r) }], 'Your profile against your team-mates');
+  $('[data-prof-lists]').innerHTML = insightLists(prof);
+  $('[data-prof-adv]').innerHTML = advancedStats(r, ins.mapped);
+  $('[data-prof-method]').innerHTML = methodNote(ins.mapped);
+}
+
 function renderReport() {
   const d = state.data;
   const p = findPlayer(d, state.me);
@@ -459,6 +480,7 @@ function renderReport() {
   $('[data-whoami]').hidden = true;
   document.title = `Number ${p.no}, ${d.teams[p.team].name}: your ClutchMetrics report`;
   renderHead(d, p);
+  renderProfile(d, p);
   renderVs(d, p);
   renderHighlights(d, p);
   renderShots(d, p);

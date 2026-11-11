@@ -11,8 +11,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400..700&family=JetBrains+Mono:wght@400..500&family=Anton&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="auth.css?v=2">
-<link rel="stylesheet" href="dashboard.css?v=7">
-<link rel="stylesheet" href="player.css?v=1">
+<link rel="stylesheet" href="dashboard.css?v=8">
+<link rel="stylesheet" href="player.css?v=2">
 <link rel="stylesheet" href="analyze.css?v=2">
 <link rel="stylesheet" href="court-map.css?v=1">
 <link rel="stylesheet" href="cursor.css">
@@ -29,6 +29,7 @@
     </div>
     <nav class="side__nav" aria-label="Report sections">
       <a href="#report"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z"/></svg>Game report</a>
+      <a href="#profile"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>Performance profile</a>
       <a href="#vs-team"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M4 12h16M4 17h7"/></svg>You vs your team</a>
       <a href="#highlights"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.500"/><path d="m10 9 5 3-5 3z"/></svg>Highlights</a>
       <a href="#game"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.500"/><path d="M3.500 12h17M12 3.500v17M6.500 5.500c2.700 3.500 2.700 9.500 0 13M17.500 5.500c-2.700 3.500-2.700 9.500 0 13"/></svg>Shots and movement</a>
@@ -79,6 +80,23 @@
         <button class="mini-btn me-head__fix" type="button" data-whoami-open>Not you? Change player</button>
       </div>
       <dl class="me-stats" data-me-stats></dl>
+    </section>
+
+    <section class="block card" id="profile" aria-labelledby="profile-h" data-part hidden>
+      <div class="card__head">
+        <div>
+          <h2 id="profile-h">Your performance profile</h2>
+          <p class="card__sub" data-prof-summary></p>
+        </div>
+      </div>
+      <div class="profile-grid">
+        <div data-prof-ppi></div>
+        <div data-prof-radar></div>
+      </div>
+      <div data-prof-lists></div>
+      <h3 class="sub-h">Advanced stats</h3>
+      <div data-prof-adv></div>
+      <div data-prof-method></div>
     </section>
 
     <section class="block card" id="vs-team" aria-labelledby="vs-h" data-part hidden>
@@ -147,7 +165,7 @@
 </div>
 
 <script type="module" src="auth.js?v=2"></script>
-<script type="module" src="player.js?v=1"></script>
+<script type="module" src="player.js?v=2"></script>
 <script type="module" src="analyze.js?v=5"></script>
 </body>
 </html>

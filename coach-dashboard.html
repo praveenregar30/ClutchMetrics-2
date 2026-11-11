@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@400..700&family=JetBrains+Mono:wght@400..500&family=Anton&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="auth.css?v=2">
-<link rel="stylesheet" href="dashboard.css?v=7">
+<link rel="stylesheet" href="dashboard.css?v=8">
 <link rel="stylesheet" href="analyze.css?v=1">
 <link rel="stylesheet" href="court-map.css?v=1">
 <link rel="stylesheet" href="cursor.css">
@@ -28,9 +28,11 @@
     </div>
     <nav class="side__nav" aria-label="Dashboard sections">
       <a href="#overview"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 7h6V4h-6z"/></svg>Overview</a>
+      <a href="#report"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>Match report</a>
       <a href="#video"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.500"/><path d="m10 9 5 3-5 3z"/></svg>Match video</a>
       <a href="#shots"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.500"/><path d="M3.500 12h17M12 3.500v17M6.500 5.500c2.700 3.500 2.700 9.500 0 13M17.500 5.500c-2.700 3.500-2.700 9.500 0 13"/></svg>Shot chart</a>
       <a href="#players"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11a3.500 3.500 0 1 0 0-7 3.500 3.500 0 0 0 0 7ZM2.500 20c.5-3.600 3-5.500 6.500-5.500s6 1.900 6.500 5.500M16 4.500a3.500 3.500 0 0 1 0 6.500M18.500 14.800c1.700.8 2.700 2.500 3 5.200"/></svg>Players</a>
+      <a href="#ratings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg>Player ratings</a>
       <a href="#movement"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18c3-1 4-6 7-6s3 4 6 4 4-7 5-9"/><circle cx="7" cy="6" r="2"/></svg>Movement</a>
       <a href="#ball"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="7" r="2.500"/><circle cx="18" cy="7" r="2.500"/><circle cx="12" cy="18" r="2.500"/><path d="M8.500 7h7M7.300 9.200l3.500 6.500M16.700 9.200l-3.500 6.500"/></svg>Ball &amp; passing</a>
       <a href="#plays"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>All plays</a>
@@ -76,6 +78,28 @@
         </div>
       </div>
       <div class="kpis" data-kpis aria-live="polite"></div>
+    </section>
+
+    <section class="block card" id="report" aria-labelledby="report-h">
+      <div class="card__head">
+        <div>
+          <h2 id="report-h">Match report</h2>
+          <p class="card__sub">Calculated from the events the model found in this clip. Select a player for the full report.</p>
+        </div>
+      </div>
+      <div class="leaders" data-leaders></div>
+      <div class="report-grid">
+        <section aria-labelledby="teams-h">
+          <h3 class="sub-h" id="teams-h">Team comparison</h3>
+          <div class="scroll"><table class="table table--teams" data-team-table></table></div>
+        </section>
+        <section aria-labelledby="obs-h">
+          <h3 class="sub-h" id="obs-h">Tactical observations</h3>
+          <ul class="obs" data-observations></ul>
+          <h3 class="sub-h" id="coach-h">Coaching recommendations for <span data-coach-team></span></h3>
+          <ul class="obs obs--coach" data-coaching aria-labelledby="coach-h"></ul>
+        </section>
+      </div>
     </section>
 
     <section class="block card" id="video" aria-labelledby="video-h">
@@ -152,6 +176,29 @@
           <tbody data-players></tbody>
         </table>
       </div>
+    </section>
+
+    <section class="block card" id="ratings" aria-labelledby="ratings-h">
+      <div class="card__head">
+        <div>
+          <h2 id="ratings-h">Player ratings</h2>
+          <p class="card__sub">Player Performance Index (0–100) and its four areas, ranked against everyone in this game. Select a player for strengths, weaknesses and advice.</p>
+        </div>
+        <div class="seg" role="group" aria-label="Which players" data-seg="rateTeam"></div>
+      </div>
+      <div class="scroll">
+        <table class="table table--ratings">
+          <thead><tr><th scope="col">Player</th><th scope="col">PPI</th><th scope="col" class="num">Offense</th><th scope="col" class="num">Defense</th><th scope="col" class="num">Physical</th><th scope="col" class="num">Playmaking</th><th scope="col">Top strength</th></tr></thead>
+          <tbody data-ratings></tbody>
+        </table>
+      </div>
+      <h3 class="sub-h">Compare two players</h3>
+      <div class="filters">
+        <div class="pick pick--inline"><label for="cmp-a">Player A</label><select id="cmp-a" data-cmp="a"></select></div>
+        <div class="pick pick--inline"><label for="cmp-b">Player B</label><select id="cmp-b" data-cmp="b"></select></div>
+      </div>
+      <div class="compare" data-compare></div>
+      <div data-method></div>
     </section>
 
     <div class="pair" id="movement">
@@ -241,7 +288,7 @@
 </dialog>
 
 <script type="module" src="auth.js?v=2"></script>
-<script type="module" src="dashboard.js?v=10"></script>
+<script type="module" src="dashboard.js?v=11"></script>
 <script type="module" src="analyze.js?v=4"></script>
 </body>
 </html>

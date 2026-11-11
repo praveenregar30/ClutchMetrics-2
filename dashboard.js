@@ -3,6 +3,8 @@
 // the address, so a view can be shared or reloaded.
 
 import { serverFetch, serverVideoUrl } from './config.js';
+import { analyse } from './insights.js?v=1';
+import { advancedStats, insightLists, methodNote, ppiCard, radarSvg, radarValues, teamAverageValues } from './insights-ui.js?v=1';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const NS = 'http://www.w3.org/2000/svg';
@@ -22,7 +24,7 @@ const clock = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStar
 const dateFmt = new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
 
 const state = { data: null, match: null, team: 0, shotTeam: 'mine', player: 'all', result: 'all', playKind: 'all', playTeam: 'both',
-  find: '', feedAll: false, heat: 'team', spot: null, sort: { key: 'pts', dir: 'descending' } };
+  find: '', feedAll: false, heat: 'team', spot: null, rateTeam: 'mine', cmpA: null, cmpB: null, ins: null, sort: { key: 'pts', dir: 'descending' } };
 const mine = () => state.team;
 const theirs = () => 1 - state.team;
 const role = (team) => (team === state.team ? 'team' : 'opp');
@@ -748,6 +750,23 @@ function speedChart(p, key) {
   return { svg, pts, x, head };
 }
 
+function spotProfile(key) {
+  const r = state.ins.rows.find((x) => x.key === key);
+  const prof = state.ins.profiles[key];
+  if (!r || !prof.eligible) return `<section class="spot__part"><h3>Performance profile</h3><p class="fine">${esc(prof ? prof.note : 'No profile for this player.')}</p></section>`;
+  return `<section class="spot__part" aria-labelledby="spot-prof-h">
+      <h3 id="spot-prof-h">Performance profile</h3>
+      <p class="prof-summary">${esc(prof.summary)}</p>
+      ${ppiCard(r)}
+      ${radarSvg([{ name: r.label, tone: role(r.team), values: radarValues(r) }, { name: `${code(r.team)} average`, tone: 'avg', values: teamAverageValues(state.ins.rows, r.team, r) }], `Profile of ${r.label} against the team average`)}
+      ${insightLists(prof)}
+    </section>
+    <section class="spot__part" aria-labelledby="spot-adv-h">
+      <h3 id="spot-adv-h">Advanced stats</h3>
+      ${advancedStats(r, state.ins.mapped)}
+    </section>`;
+}
+
 function spotHtml(p, key, mates) {
   const i = mates.indexOf(key);
   const prev = mates[(i - 1 + mates.length) % mates.length]; const next = mates[(i + 1) % mates.length];
@@ -786,6 +805,7 @@ function spotHtml(p, key, mates) {
       </div>
     </header>
     <dl class="spot__stats">${stats.map(([l, v, r]) => `<div><dt>${l}</dt><dd>${v}</dd>${r ? `<span>${esc(r)}</span>` : ''}</div>`).join('')}</dl>
+    ${spotProfile(key)}
     <section class="spot__part" aria-labelledby="spot-shots-h">
       <h3 id="spot-shots-h">Shots</h3>
       <div class="spot__court" data-spot-court></div>
@@ -883,6 +903,80 @@ function wireSpot() {
   dialog.addEventListener('close', () => { state.spot = null; writeUrl(); });
 }
 
+// ---------------------------------------------------------------- match report (insights.js)
+function renderReport() {
+  const { report } = state.ins;
+  $('[data-leaders]').innerHTML = report.leaders.map((l) => `<button class="leader leader--${role(l.team)}" type="button" data-spot="${l.key}">
+      <span class="leader__title">${esc(l.title)}</span><b>${esc(l.label)}</b><span class="leader__ev">${esc(l.evidence)}</span></button>`).join('')
+    || '<p class="fine">Not enough identified players for leaders in this clip.</p>';
+  const [a, b] = [report.teams[mine()], report.teams[theirs()]];
+  const f = (v, kind) => (v === null || v === undefined ? '–' : kind === 'pct' ? `${Math.round(v * 100)}%` : kind === 'kmh' ? `${one.format(v)} km/h` : kind === 'm' ? `${whole.format(v)} m` : v);
+  const rows = [
+    ['Points', 'points'], ['Field goals', null, (t) => `${t.fgm}/${t.fga}`], ['eFG%', 'efg', null, 'pct'],
+    ['Three-pointers', null, (t) => `${t.tpm}/${t.tpa}`], ['Ball control', 'possession', null, 'pct'],
+    ['Passes', 'passes'], ['Assists', 'assists'], ['Lost to interceptions', 'turnovers', null, null, true],
+    ['Shots from the paint', null, (t) => `${t.paintShots} of ${t.shots}`],
+    ...(state.ins.mapped ? [['Distance (identified players)', 'distance', null, 'm'], ['Speed after winning the ball', 'transitionKmh', null, 'kmh'], ['Speed after losing the ball', 'recoveryKmh', null, 'kmh']] : []),
+  ];
+  $('[data-team-table]').innerHTML = `<thead><tr><th scope="col"></th><th scope="col" class="num"><i class="swatch swatch--team"></i> ${esc(a.code)}</th><th scope="col" class="num"><i class="swatch swatch--opp"></i> ${esc(b.code)}</th></tr></thead><tbody>${
+    rows.map(([label, k, get, kind, lowerBetter]) => {
+      const va = get ? get(a) : a[k]; const vb = get ? get(b) : b[k];
+      const lead = (x, y) => (k && typeof x === 'number' && typeof y === 'number' && x !== y && (lowerBetter ? x < y : x > y) ? ' is-lead' : '');
+      return `<tr><th scope="row">${label}</th><td class="num${lead(va, vb)}">${get ? va : f(va, kind)}</td><td class="num${lead(vb, va)}">${get ? vb : f(vb, kind)}</td></tr>`;
+    }).join('')}</tbody>`;
+  $('[data-observations]').innerHTML = (report.observations.length ? report.observations : ['No strong team pattern stands out in this short clip.']).map((o) => `<li>${esc(o)}</li>`).join('');
+  $('[data-coach-team]').textContent = state.data.teams[mine()].name;
+  $('[data-coaching]').innerHTML = report.coaching[mine()].map((o) => `<li>${esc(o)}</li>`).join('');
+}
+
+// ---------------------------------------------------------------- player ratings and comparison
+function renderRatings() {
+  const { eligible, rows, profiles } = state.ins;
+  $('[data-seg="rateTeam"]').innerHTML = [['mine', esc(code(mine()))], ['theirs', esc(code(theirs()))], ['both', 'Both']]
+    .map(([v, l]) => `<button type="button" data-value="${v}" aria-pressed="${String(state.rateTeam === v)}">${l}</button>`).join('');
+  const teams = state.rateTeam === 'both' ? [0, 1] : [state.rateTeam === 'mine' ? mine() : theirs()];
+  const list = eligible.filter((r) => teams.includes(r.team)).sort((x, y) => (y.ppi ?? -1) - (x.ppi ?? -1));
+  const bar = (v) => `<span class="mini-score"><i style="width:${v ?? 0}%"></i></span><b>${v ?? 'n/a'}</b>`;
+  $('[data-ratings]').innerHTML = list.map((r, i) => `<tr>
+      <td class="who"><button class="who-btn" type="button" data-spot="${r.key}"><b>${i + 1}. No. ${esc(r.no)}</b><span><i class="swatch swatch--${role(r.team)}"></i> ${esc(code(r.team))} · ${clock(r.seconds)}</span></button></td>
+      <td><div class="ppi-cell">${bar(r.ppi)}</div></td>
+      <td class="num">${r.areas.offense ?? 'n/a'}</td><td class="num">${r.areas.defense ?? 'n/a'}</td><td class="num">${r.areas.physical ?? 'n/a'}</td><td class="num">${r.areas.playmaking ?? 'n/a'}</td>
+      <td class="muted">${esc(profiles[r.key].strengths[0]?.title || '–')}</td></tr>`).join('')
+    + rows.filter((r) => !r.pct && teams.includes(r.team)).map((r) => `<tr class="row--muted"><td class="who"><b>No. ${esc(r.no)}</b><span>${esc(code(r.team))} · ${clock(r.seconds)}</span></td><td colspan="6">On court too briefly for a rating (minimum ${30} s)</td></tr>`).join('');
+  // comparison
+  const opts = eligible.slice().sort((x, y) => x.team - y.team || Number(x.no) - Number(y.no));
+  if (!state.cmpA || !opts.some((r) => r.key === state.cmpA)) state.cmpA = eligible.filter((r) => r.team === mine()).sort((x, y) => y.ppi - x.ppi)[0]?.key || null;
+  if (!state.cmpB || !opts.some((r) => r.key === state.cmpB)) state.cmpB = eligible.filter((r) => r.team === theirs()).sort((x, y) => y.ppi - x.ppi)[0]?.key || null;
+  ['a', 'b'].forEach((slot) => {
+    const sel = $(`[data-cmp="${slot}"]`);
+    sel.innerHTML = opts.map((r) => `<option value="${r.key}">${esc(r.label)} (PPI ${r.ppi ?? '–'})</option>`).join('');
+    sel.value = slot === 'a' ? state.cmpA : state.cmpB;
+  });
+  renderCompare();
+  $('[data-method]').innerHTML = methodNote(state.ins.mapped);
+}
+
+function renderCompare() {
+  const box = $('[data-compare]');
+  const A = state.ins.eligible.find((r) => r.key === state.cmpA); const B = state.ins.eligible.find((r) => r.key === state.cmpB);
+  if (!A || !B) { box.innerHTML = '<p class="fine">Not enough identified players to compare.</p>'; return; }
+  const metrics = [
+    ['PPI', (r) => r.ppi], ['Points', (r) => r.pts], ['eFG%', (r) => (r.efg === null ? null : Math.round(r.efg * 100)), '%'],
+    ['Passes', (r) => r.raw.passes], ['Assists', (r) => r.assists], ['Interceptions', (r) => r.raw.int],
+    ...(state.ins.mapped ? [['Distance (m)', (r) => Math.round(r.raw.distance_m)], ['Top speed (km/h)', (r) => r.topKmh], ['Sprints', (r) => r.sprints]] : []),
+  ];
+  box.innerHTML = `<div class="compare__radar">${radarSvg([{ name: A.label, tone: 'team', values: radarValues(A) }, { name: B.label, tone: 'opp', values: radarValues(B) }], `Comparison of ${A.label} and ${B.label}`)}</div>
+    <table class="table table--compare"><thead><tr><th scope="col"></th><th scope="col" class="num"><i class="radar-key radar-key--team"></i> ${esc(A.label)}</th><th scope="col" class="num"><i class="radar-key radar-key--opp"></i> ${esc(B.label)}</th></tr></thead><tbody>${
+      metrics.map(([label, get, unit]) => { const a = get(A); const b = get(B); const lead = (x, y) => (x !== null && y !== null && x > y ? ' is-lead' : '');
+        const show = (v) => (v === null || v === undefined ? '–' : `${typeof v === 'number' && !Number.isInteger(v) ? one.format(v) : v}${unit || ''}`);
+        return `<tr><th scope="row">${label}</th><td class="num${lead(a, b)}">${show(a)}</td><td class="num${lead(b, a)}">${show(b)}</td></tr>`; }).join('')}</tbody></table>`;
+}
+
+function wireRatings() {
+  $('[data-seg="rateTeam"]').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { state.rateTeam = b.dataset.value; renderRatings(); } });
+  ['a', 'b'].forEach((slot) => $(`[data-cmp="${slot}"]`).addEventListener('change', (e) => { state[slot === 'a' ? 'cmpA' : 'cmpB'] = e.target.value; renderCompare(); }));
+}
+
 // ---------------------------------------------------------------- the whole page
 function renderAll(animate) {
   document.title = `${state.data.teams[mine()].name} vs ${state.data.teams[theirs()].name}: ClutchMetrics coach dashboard`;
@@ -897,6 +991,8 @@ function renderAll(animate) {
   renderControl(animate);
   renderNetwork();
   renderPlays();
+  renderReport();
+  renderRatings();
   writeUrl();
 }
 
@@ -939,7 +1035,7 @@ function buildMatchPicker(mine) {
 
 // Nothing of the user's to show yet: hide the analysis sections, keep the upload section
 function showEmpty(serverOffline) {
-  ['#overview', '#video', '#shots', '#players', '#movement', '#ball', '#plays'].forEach((id) => {
+  ['#overview', '#report', '#video', '#shots', '#players', '#ratings', '#movement', '#ball', '#plays'].forEach((id) => {
     $(id).hidden = true;
     document.querySelector(`.side__nav a[href="${id}"]`)?.setAttribute('hidden', '');
   });
@@ -989,8 +1085,10 @@ async function start() {
   wirePlayers();
   $('[data-heat-select]').addEventListener('change', (e) => { state.heat = e.target.value; renderHeat(); });
   $('[data-moments]').addEventListener('click', (e) => { const b = e.target.closest('[data-t]'); if (b) watch(Number(b.dataset.t)); });
+  state.ins = analyse(state.data);
   wireFeed();
   wireSpot();
+  wireRatings();
   renderAll(true);
   if (url.spot && player(url.spot)) openSpot(url.spot);
   trackSections();
