@@ -1,0 +1,71 @@
+/* Premium touches for the dashboards (premium.js): cursor light on cards, ambient video glow, glass top bar,
+   quick search, loading screen. Tokens from auth.css / dashboard.css. */
+
+/* ---- cursor light: a soft glow follows the pointer across a card and along its border */
+.card, .kpi, .leader, .trend { position: relative; --mx: -999px; --my: -999px; }
+.card { background-image: radial-gradient(520px circle at var(--mx) var(--my), rgb(255 122 26 / .06), transparent 45%); }
+.kpi, .leader, .trend { background-image: radial-gradient(260px circle at var(--mx) var(--my), rgb(255 122 26 / .1), transparent 55%); }
+.card::after, .kpi::after, .leader::after, .trend::after {
+  content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; pointer-events: none; opacity: 0;
+  background: radial-gradient(340px circle at var(--mx) var(--my), rgb(255 122 26 / .85), transparent 60%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude;
+  transition: opacity .35s ease;
+}
+.card:hover::after, .kpi:hover::after, .leader:hover::after, .trend:hover::after { opacity: 1; }
+@media (hover: none) { .card::after, .kpi::after, .leader::after, .trend::after { display: none; } }
+
+/* ---- ambient video glow: the video's own colours light the area around it */
+.ambient { position: relative; isolation: isolate; }
+.ambient__glow { position: absolute; inset: -5% -3%; z-index: -1; width: 106%; height: 110%; border-radius: 24px; filter: blur(46px) saturate(1.5); opacity: 0; transition: opacity 1.2s ease; pointer-events: none; }
+.ambient.is-lit .ambient__glow { opacity: .55; }
+.ambient .video-wrap { position: relative; box-shadow: 0 30px 80px -40px rgb(0 0 0 / .9); }
+
+html { scroll-padding-top: 68px; }
+.main .block { scroll-margin-top: 68px; }
+
+/* ---- glass top bar: match, score, section and reading progress once the header has scrolled away */
+.topbar { position: fixed; top: 0; right: 0; left: 0; z-index: 30; display: flex; align-items: center; gap: 16px; height: 52px; padding: 0 20px; border-bottom: 1px solid var(--line);
+  background: rgb(16 14 12 / .72); -webkit-backdrop-filter: blur(16px) saturate(1.4); backdrop-filter: blur(16px) saturate(1.4);
+  transform: translateY(-110%); transition: transform .45s cubic-bezier(.22, 1, .36, 1); }
+@media (min-width: 1024px) { .topbar { left: 248px; padding: 0 40px; } }
+.topbar.is-on { transform: none; }
+.topbar__title { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar__score { flex: none; padding: 3px 10px; border: 1px solid var(--line-strong); border-radius: 99px; font: 500 14px var(--font); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.topbar__section { margin-left: auto; color: var(--muted); font-size: 14px; white-space: nowrap; }
+.topbar__find { flex: none; display: inline-flex; align-items: center; gap: 8px; min-height: 32px; padding: 0 10px; border: 1px solid var(--line-strong); border-radius: 8px; background: transparent; color: var(--muted); font: 13px var(--font); cursor: pointer; transition: border-color .15s ease, color .15s ease; }
+.topbar__find:hover { border-color: var(--accent); color: var(--ink); }
+.topbar__find kbd, .palette kbd { padding: 1px 5px; border: 1px solid var(--line-strong); border-radius: 4px; font: 11px var(--mono); }
+.topbar__bar { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--accent); transform-origin: left; transform: scaleX(var(--read, 0)); }
+@media (max-width: 639px) { .topbar__section, .topbar__find span { display: none; } .topbar { gap: 10px; padding: 0 14px; } }
+
+/* ---- quick search (Ctrl+K) */
+.palette { width: min(560px, calc(100vw - 32px)); margin-top: 14vh; padding: 0; border: 1px solid var(--line-strong); border-radius: 16px; background: rgb(22 19 15 / .96); color: var(--ink); font-family: var(--font); box-shadow: 0 40px 120px -30px rgb(0 0 0 / .95); overflow: hidden; }
+.palette::backdrop { background: rgb(8 6 4 / .6); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
+.palette[open] { animation: palette-in .22s cubic-bezier(.22, 1, .36, 1); }
+@keyframes palette-in { from { opacity: 0; transform: translateY(-8px) scale(.98); } }
+.palette__input { width: 100%; height: 56px; padding: 0 18px; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: var(--ink); font: 17px var(--font); outline: none; }
+.palette__input::placeholder { color: #7f776c; }
+.palette__list { max-height: 46vh; margin: 0; padding: 6px; overflow-y: auto; list-style: none; }
+.palette__group { padding: 10px 12px 4px; color: var(--muted); font-size: 12px; }
+.palette__item { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 42px; padding: 0 12px; border-radius: 9px; cursor: pointer; }
+.palette__item span { color: var(--muted); font-size: 13px; }
+.palette__item.is-active { background: rgb(255 122 26 / .14); }
+.palette__item.is-active b { color: var(--accent); }
+.palette__item b { font-weight: 500; }
+.palette__none { padding: 18px 12px; color: var(--muted); }
+.palette__foot { display: flex; gap: 16px; padding: 10px 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+
+/* ---- loading screen while the game loads */
+.loading-game { display: none; }
+.reveal-on:not(.data-ready) .loading-game { position: fixed; inset: 0; z-index: 5; display: grid; place-content: center; justify-items: center; gap: 14px; color: var(--muted); font-size: 15px; pointer-events: none; }
+@media (min-width: 1024px) { .reveal-on:not(.data-ready) .loading-game { left: 248px; } }
+.loading-game svg { width: 44px; height: 44px; animation: ball-bounce .62s cubic-bezier(.3, 0, .7, 1) infinite alternate; }
+.loading-game i { width: 34px; height: 6px; border-radius: 50%; background: rgb(0 0 0 / .55); animation: ball-shadow .62s cubic-bezier(.3, 0, .7, 1) infinite alternate; }
+@keyframes ball-bounce { from { transform: translateY(-26px); } to { transform: translateY(0) scaleY(.94); } }
+@keyframes ball-shadow { from { transform: scaleX(.55); opacity: .4; } to { transform: scaleX(1); opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar, .ambient__glow, .card::after { transition: none; }
+  .palette[open], .loading-game svg, .loading-game i { animation: none; }
+}

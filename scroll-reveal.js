@@ -70,6 +70,7 @@ if (!reduced && 'IntersectionObserver' in window) {
   const began = performance.now();
   const begin = () => {
     if (!ready() && performance.now() - began < 4000) { setTimeout(begin, 100); return; }
+    document.documentElement.classList.add('data-ready');     // premium.css hides the loading screen
     watch();
     // sections shown later (a game loads, the player report appears) are picked up too
     new MutationObserver(watch).observe(document.querySelector('.main') || document.body, { attributes: true, attributeFilter: ['hidden'], subtree: true });
