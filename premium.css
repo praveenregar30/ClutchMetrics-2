@@ -24,7 +24,7 @@
 .ambient.is-lit .ambient__glow { opacity: .55; }
 .ambient .video-wrap { position: relative; box-shadow: 0 30px 80px -40px rgb(0 0 0 / .9); }
 
-html { scroll-padding-top: 68px; }
+html { scroll-padding-top: 0; }
 .main .block { scroll-margin-top: 68px; }
 
 /* ---- glass top bar: match, score, section and reading progress once the header has scrolled away */
@@ -74,9 +74,8 @@ html { scroll-padding-top: 68px; }
 }
 
 
-/* ---- inertia scrolling (smooth.js): Lenis drives the scroll, so the browser's own smoothing is off */
-html.lenis-on { scroll-behavior: auto !important; }
-html.lenis-on.lenis-stopped { overflow: clip; }
+/* ---- the page stays still behind an open popup (spotlight, search, court mapping) */
+html:has(dialog[open]) { overflow: hidden; }
 
 /* ---- scroll-linked motion (browsers with scroll-driven animations; others just show the page) */
 @supports (animation-timeline: view()) {
