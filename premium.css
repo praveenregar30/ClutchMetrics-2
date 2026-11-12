@@ -1,19 +1,22 @@
 /* Premium touches for the dashboards (premium.js): cursor light on cards, ambient video glow, glass top bar,
    quick search, loading screen. Tokens from auth.css / dashboard.css. */
 
-/* ---- cursor light: a soft glow follows the pointer across a card and along its border */
-.card, .kpi, .leader, .trend { position: relative; --mx: -999px; --my: -999px; }
-.card { background-image: radial-gradient(520px circle at var(--mx) var(--my), rgb(255 122 26 / .06), transparent 45%); }
+/* ---- cursor light: a soft glow follows the pointer across the small stat tiles and along their border.
+   Big cards only light their border on hover: a pointer-following gradient on them had to be redrawn for every
+   strip of page that scrolled into view, which made scrolling stutter on laptops. */
+.kpi, .leader, .trend { position: relative; --mx: -999px; --my: -999px; }
 .kpi, .leader, .trend { background-image: radial-gradient(260px circle at var(--mx) var(--my), rgb(255 122 26 / .1), transparent 55%); }
-.card::after, .kpi::after, .leader::after, .trend::after {
+.kpi::after, .leader::after, .trend::after {
   content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; pointer-events: none; opacity: 0;
-  background: radial-gradient(340px circle at var(--mx) var(--my), rgb(255 122 26 / .85), transparent 60%);
+  background: radial-gradient(200px circle at var(--mx) var(--my), rgb(255 122 26 / .85), transparent 60%);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude;
   transition: opacity .35s ease;
 }
-.card:hover::after, .kpi:hover::after, .leader:hover::after, .trend:hover::after { opacity: 1; }
-@media (hover: none) { .card::after, .kpi::after, .leader::after, .trend::after { display: none; } }
+.kpi:hover::after, .leader:hover::after, .trend:hover::after { opacity: 1; }
+.card { transition: border-color .35s ease; }
+@media (hover: hover) { .card:hover { border-color: rgb(255 122 26 / .28); } }
+@media (hover: none) { .kpi::after, .leader::after, .trend::after { display: none; } }
 
 /* ---- ambient video glow: the video's own colours light the area around it */
 .ambient { position: relative; isolation: isolate; }
@@ -66,7 +69,7 @@ html { scroll-padding-top: 68px; }
 @keyframes ball-shadow { from { transform: scaleX(.55); opacity: .4; } to { transform: scaleX(1); opacity: 1; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .topbar, .ambient__glow, .card::after { transition: none; }
+  .topbar, .ambient__glow, .card, .kpi::after { transition: none; }
   .palette[open], .loading-game svg, .loading-game i { animation: none; }
 }
 

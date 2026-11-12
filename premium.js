@@ -4,6 +4,8 @@
 const $ = (s, r = document) => r.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const main = $('.main');
+// change text only when it differs (every write makes the browser re-check the layout)
+const setText = (el, text) => { if (el && el.textContent !== text) el.textContent = text; };
 
 if (main) {
   // ---------------------------------------------------------------- loading screen (hidden once scroll-reveal.js marks the data ready)
@@ -11,19 +13,21 @@ if (main) {
     <svg viewBox="-18 -18 36 36"><circle r="17" fill="#ff7a1a"/><path d="M-17 0H17M0-17V17M-12-12Q-4 0-12 12M12-12Q4 0 12 12" fill="none" stroke="#160b03" stroke-width="1.8"/></svg><i></i><span>Loading your game…</span></div>`);
 
   // ---------------------------------------------------------------- cursor light
-  let lit = null;
+  // small stat tiles only, at most once per frame
+  let lit = null; let pending = null;
   document.addEventListener('pointermove', (e) => {
     if (e.pointerType === 'touch') return;
-    const el = e.target.closest?.('.kpi, .leader, .trend') || e.target.closest?.('.card');
-    const card = e.target.closest?.('.card');
-    [el, card].forEach((t) => {
-      if (!t) return;
-      const r = t.getBoundingClientRect();
-      t.style.setProperty('--mx', `${e.clientX - r.left}px`);
-      t.style.setProperty('--my', `${e.clientY - r.top}px`);
+    if (!pending) requestAnimationFrame(() => {
+      const ev = pending; pending = null;
+      const el = ev.target.closest?.('.kpi, .leader, .trend');
+      if (lit && lit !== el) { lit.style.setProperty('--mx', '-999px'); lit.style.setProperty('--my', '-999px'); }
+      lit = el;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      el.style.setProperty('--mx', `${ev.clientX - r.left}px`);
+      el.style.setProperty('--my', `${ev.clientY - r.top}px`);
     });
-    if (lit && lit !== card && lit !== el) { lit.style.setProperty('--mx', '-999px'); lit.style.setProperty('--my', '-999px'); }
-    lit = card || el;
+    pending = e;
   }, { passive: true });
 
   // ---------------------------------------------------------------- ambient video glow
@@ -62,13 +66,14 @@ if (main) {
   function sync() {
     const title = ($('[data-title]') || $('[data-me-title]'))?.textContent || '';
     const ready = title && !/^Loading/.test(title);
-    bar.classList.toggle('is-on', headGone && ready);
-    $('[data-tb-title]', bar).textContent = title;
+    const on = Boolean(headGone && ready);
+    if (bar.classList.contains('is-on') !== on) bar.classList.toggle('is-on', on);
     const score = $('.scorebox__main');
     const s = $('[data-tb-score]', bar);
-    s.hidden = !score;
-    if (score) s.textContent = score.textContent.replace(/\s+/g, ' ').trim();
-    $('[data-tb-section]', bar).textContent = $('.side__nav a.is-here')?.textContent.trim() || '';
+    if (s.hidden !== !score) s.hidden = !score;
+    setText($('[data-tb-title]', bar), title);
+    if (score) setText(s, score.textContent.replace(/\s+/g, ' ').trim());
+    setText($('[data-tb-section]', bar), $('.side__nav a.is-here')?.textContent.trim() || '');
   }
   let ticking = false;
   addEventListener('scroll', () => {
@@ -186,20 +191,22 @@ if (main) {
 
   // the game on screen, as a card under the logo
   const card = $('[data-side-match]');
+  let cardQueued = false;
+  const queueCard = () => { if (!cardQueued) { cardQueued = true; requestAnimationFrame(() => { cardQueued = false; fillCard(); }); } };
   function fillCard() {
     if (!card) return;
     const title = ($('[data-title]') || $('[data-me-title]'))?.textContent.trim() || '';
     const ok = title && !/^Loading/.test(title) && !$('[data-empty]:not([hidden])');
-    card.hidden = !ok;
+    if (card.hidden !== !ok) card.hidden = !ok;
     if (!ok) return;
-    $('[data-side-title]', card).textContent = title;
-    card.title = title;
+    setText($('[data-side-title]', card), title);
+    if (card.title !== title) card.title = title;
     const score = $('.scorebox__main');
     const s = $('[data-side-score]', card);
-    s.hidden = !score;
-    if (score) s.textContent = score.textContent.replace(/\s+/g, ' ').trim();
+    if (s.hidden !== !score) s.hidden = !score;
+    if (score) setText(s, score.textContent.replace(/\s+/g, ' ').trim());
   }
-  new MutationObserver(fillCard).observe(main, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ['hidden'] });
+  new MutationObserver(queueCard).observe(main, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ['hidden'] });
   fillCard();
 
   // account: initials from the e-mail address, full address on hover
