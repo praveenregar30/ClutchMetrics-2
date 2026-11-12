@@ -658,3 +658,18 @@ th[aria-sort="ascending"] .sort svg { transform: rotate(180deg); }
 .method ul { margin: 10px 0 0; padding-left: 18px; }
 .method b { color: var(--ink); font-weight: 500; }
 @media (prefers-reduced-motion: reduce) { .leader { transition: none; } }
+
+
+/* ================================================================ smooth scrolling (scroll-reveal.js) */
+html { scroll-behavior: smooth; }
+.reveal-on .main .block { transition: opacity .55s ease, transform .55s cubic-bezier(.22, 1, .36, 1); }
+.reveal-on .main .block:not(.is-seen) { opacity: 0; transform: translateY(16px); }
+/* chart animations wait until their card is on screen */
+.reveal-on .main .block:not(.is-seen) * { animation-play-state: paused !important; }
+/* radar shapes grow from the centre of the chart (its centre is at 50% / 49.3% of the drawing) */
+.radar__series { transform-box: view-box; transform-origin: 50% 49.28%; animation: radar-grow .75s cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes radar-grow { from { transform: scale(.15); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .radar__series { animation: none; }
+}
