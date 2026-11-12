@@ -69,3 +69,23 @@ html { scroll-padding-top: 68px; }
   .topbar, .ambient__glow, .card::after { transition: none; }
   .palette[open], .loading-game svg, .loading-game i { animation: none; }
 }
+
+
+/* ---- inertia scrolling (smooth.js): Lenis drives the scroll, so the browser's own smoothing is off */
+html.lenis-on { scroll-behavior: auto !important; }
+html.lenis-on.lenis-stopped { overflow: clip; }
+
+/* ---- scroll-linked motion (browsers with scroll-driven animations; others just show the page) */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* the header drifts up and fades as you scroll away from it */
+    .game-head, .me-head { animation: head-away linear both; animation-timeline: view(); animation-range: exit 0% exit 100%; }
+    @keyframes head-away { to { opacity: 0; transform: translateY(-28px) scale(.985); } }
+    /* the match video scales up into place as it enters */
+    .ambient { animation: video-arrive linear both; animation-timeline: view(); animation-range: entry 0% cover 32%; transform-origin: 50% 100%; }
+    @keyframes video-arrive { from { transform: scale(.93); opacity: .55; } to { transform: none; opacity: 1; } }
+    /* charts ease up into their frame */
+    .court, .heat, .net, .radar { animation: chart-arrive linear both; animation-timeline: view(); animation-range: entry 0% cover 28%; }
+    @keyframes chart-arrive { from { transform: translateY(26px) scale(.975); } to { transform: none; } }
+  }
+}
