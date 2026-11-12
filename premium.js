@@ -148,4 +148,70 @@ if (main) {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); open(); }
   });
   document.addEventListener('click', (e) => { if (e.target.closest('[data-find-open]')) open(); });
+
+  // ---------------------------------------------------------------- sidebar: sliding highlight, game card, account
+  const nav = $('.side__nav');
+  const pill = $('.side__pill', nav || undefined);
+  const desktop = matchMedia('(min-width: 1024px)');
+  let lastHere = null;
+  function placePill() {
+    const here = nav && $('a.is-here:not([hidden])', nav);
+    if (!nav || !pill) return;
+    if (nav.classList.contains('has-pill') !== desktop.matches) nav.classList.toggle('has-pill', desktop.matches);
+    if (!here) { if (pill.classList.contains('is-on')) pill.classList.remove('is-on'); return; }
+    // the link's position inside the scrolling nav
+    const top = here.getBoundingClientRect().top - nav.getBoundingClientRect().top + nav.scrollTop;
+    const first = !pill.classList.contains('is-on');
+    if (first) pill.style.transition = 'none';
+    pill.style.setProperty('--y', `${top}px`);
+    pill.style.setProperty('--h', `${here.offsetHeight}px`);
+    pill.classList.add('is-on');
+    if (first) { pill.getBoundingClientRect(); pill.style.transition = ''; }
+    if (here !== lastHere) {
+      lastHere = here;
+      // keep the current section visible: in the desktop list, and in the phone row of chips
+      const nr = nav.getBoundingClientRect(); const hr = here.getBoundingClientRect();
+      if (desktop.matches ? (hr.top < nr.top || hr.bottom > nr.bottom) : (hr.left < nr.left || hr.right > nr.right)) {
+        nav.scrollTo({ top: desktop.matches ? nav.scrollTop + hr.top - nr.top - nr.height / 2 : 0, left: desktop.matches ? 0 : nav.scrollLeft + hr.left - nr.left - 16, behavior: 'smooth' });
+      }
+    }
+  }
+  if (nav) {
+    // only changes on the links themselves (the highlight's own class changes must not call it again)
+    new MutationObserver((records) => { if (records.some((r) => r.target.tagName === 'A')) placePill(); }).observe(nav, { attributes: true, attributeFilter: ['class', 'hidden'], subtree: true });
+    desktop.addEventListener('change', placePill);
+    placePill();
+    addEventListener('resize', placePill, { passive: true });
+  }
+
+  // the game on screen, as a card under the logo
+  const card = $('[data-side-match]');
+  function fillCard() {
+    if (!card) return;
+    const title = ($('[data-title]') || $('[data-me-title]'))?.textContent.trim() || '';
+    const ok = title && !/^Loading/.test(title) && !$('[data-empty]:not([hidden])');
+    card.hidden = !ok;
+    if (!ok) return;
+    $('[data-side-title]', card).textContent = title;
+    card.title = title;
+    const score = $('.scorebox__main');
+    const s = $('[data-side-score]', card);
+    s.hidden = !score;
+    if (score) s.textContent = score.textContent.replace(/\s+/g, ' ').trim();
+  }
+  new MutationObserver(fillCard).observe(main, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ['hidden'] });
+  fillCard();
+
+  // account: initials from the e-mail address, full address on hover
+  const email = $('.side__user [data-email]');
+  const avatar = $('[data-avatar]');
+  function fillUser() {
+    const text = email?.textContent.trim() || '';
+    if (!text || !avatar) return;
+    email.title = text;
+    const words = text.split('@')[0].split(/[._\-+\d]+/).filter(Boolean);
+    avatar.textContent = ((words[0]?.[0] || text[0]) + (words[1]?.[0] || '')).toUpperCase();
+  }
+  if (email) new MutationObserver(fillUser).observe(email, { childList: true, characterData: true, subtree: true });
+  fillUser();
 }

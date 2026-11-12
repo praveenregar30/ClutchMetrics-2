@@ -15,26 +15,10 @@ html { scroll-padding-top: 16px; }
 
 /* ---- shell */
 .app { display: grid; grid-template-columns: minmax(0, 1fr); min-height: 100svh; }
-.side { display: flex; flex-direction: column; gap: 16px; padding: 16px; border-bottom: 1px solid var(--line); background: #0c0b09; }
-.side__brand { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.side__nav { display: flex; flex-wrap: wrap; gap: 4px; }
-.side__nav a { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 12px; border-radius: 9px; color: var(--muted); font-weight: 500; font-size: 15px; text-decoration: none; transition: background-color .2s ease, color .2s ease; }
-.side__nav a:hover, .side__nav a.is-here { background: rgb(255 122 26 / .12); color: var(--ink); }
-.side__nav a.is-here svg { stroke: var(--accent); }
-.side__nav svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-.side__user { display: none; }
-.side__label { color: var(--muted); font-size: 13px; }
-.side__out { min-height: 40px; padding: 0 14px; border: 1px solid var(--line-strong); border-radius: 9px; background: transparent; color: var(--ink); font: 500 14px var(--font); transition: border-color .2s ease; }
-.side__out:hover { border-color: var(--accent); }
+/* sidebar: see premium.css ("sidebar") */
 
 @media (min-width: 1024px) {
   .app { grid-template-columns: 248px minmax(0, 1fr); }
-  .side { position: sticky; top: 0; height: 100svh; padding: 24px 16px; border-bottom: 0; border-right: 1px solid var(--line); }
-  .side__out--top { display: none; }
-  .side__nav { flex-direction: column; flex-wrap: nowrap; margin-top: 16px; }
-  .side__nav a { min-height: 44px; }
-  .side__user { display: grid; gap: 4px; margin-top: auto; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
-  .side__user b { font-weight: 500; font-size: 14px; overflow-wrap: anywhere; margin-bottom: 10px; }
 }
 
 .main { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; width: min(100%, 1240px); margin: 0 auto; padding: 20px 16px 48px; min-width: 0; }
