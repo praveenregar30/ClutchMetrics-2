@@ -12,7 +12,7 @@ const when = new Intl.DateTimeFormat(undefined, { day: 'numeric', month: 'short'
 
 const root = document.querySelector('[data-analyze]');
 const role = root?.dataset.analyze || 'coach';
-let limits = { max_upload_mb: 1024, max_seconds: 180, formats: ['.mp4', '.mov'] };
+let limits = { max_upload_mb: 4096, max_seconds: 0, formats: ['.mp4', '.mov'] };   // max_seconds 0 = whole video
 let file = null;
 let polling = null;
 let mapNext = null;      // the video just uploaded: open the court mapping window as soon as its pictures are ready
@@ -60,7 +60,7 @@ async function checkServer() {
     limits = await res.json();
     badge.className = 'server is-on';
     badge.innerHTML = `<i></i>Analysis server online${limits.queue ? ` · ${limits.queue} waiting` : ''}`;
-    $('[data-drop-sub]', root).textContent = `MP4, MOV, AVI, MKV or WebM, up to ${limits.max_upload_mb} MB. The first ${clock(limits.max_seconds)} is analysed. It is converted automatically.`;
+    $('[data-drop-sub]', root).textContent = `MP4, MOV, AVI, MKV or WebM, up to ${limits.max_upload_mb >= 1024 ? `${limits.max_upload_mb / 1024} GB` : `${limits.max_upload_mb} MB`}. ${limits.max_seconds ? `The first ${clock(limits.max_seconds)} is analysed.` : 'The whole video is analysed (about 10 minutes of analysis per minute of video).'} It is converted automatically.`;
     return true;
   } catch {
     badge.className = 'server is-off';
@@ -83,7 +83,7 @@ function pick(f) {
   probe.preload = 'metadata';
   probe.onloadedmetadata = () => {
     const d = probe.duration;
-    $('[data-drop-sub]', root).textContent = `${mb(f.size)} · ${clock(d)}${d > limits.max_seconds ? ` (the first ${clock(limits.max_seconds)} will be analysed)` : ''}`;
+    $('[data-drop-sub]', root).textContent = `${mb(f.size)} · ${clock(d)}${limits.max_seconds && d > limits.max_seconds ? ` (the first ${clock(limits.max_seconds)} will be analysed)` : ` · analysis takes about ${Math.max(5, Math.round(d / 6))} min`}`;
     URL.revokeObjectURL(probe.src);
   };
   probe.onerror = () => { $('[data-drop-sub]', root).textContent = `${mb(f.size)} · the server will convert this format`; };
