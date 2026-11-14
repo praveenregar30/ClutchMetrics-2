@@ -106,19 +106,72 @@ function updateSubmit() {
 }
 
 // ---------------------------------------------------------------- uploading
+const PIECE_LIMIT = 90e6;          // above this, send the video in pieces
+const PIECE_SIZE = 50 * 1024 * 1024;
+
+// Sends the file piece by piece (each retried up to 3 times). Returns the upload token, or null if cancelled/failed.
+async function uploadPieces(f, bar, status, cancel) {
+  const token = [...crypto.getRandomValues(new Uint8Array(12))].map((b) => b.toString(16).padStart(2, '0')).join('');
+  let current = null; let stopped = false;
+  cancel.onclick = () => { stopped = true; current?.abort(); };
+  const send = (offset, blob, headers) => new Promise((resolve) => {
+    const xhr = new XMLHttpRequest();
+    current = xhr;
+    xhr.open('POST', `${SERVER}/api/upload-part?token=${token}&offset=${offset}`);
+    Object.entries(headers).forEach(([k, v]) => xhr.setRequestHeader(k, v));
+    xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+    xhr.upload.onprogress = (e) => {
+      const p = (offset + e.loaded) / f.size;
+      bar.firstElementChild.style.width = `${p * 100}%`;
+      status.textContent = `Uploading… ${Math.round(p * 100)}% (${mb(offset + e.loaded)} of ${mb(f.size)})`;
+    };
+    xhr.onload = () => resolve(xhr.status >= 200 && xhr.status < 300 ? 'ok' : `status ${xhr.status}: ${(() => { try { return JSON.parse(xhr.responseText).detail; } catch { return ''; } })()}`);
+    xhr.onerror = () => resolve('network');
+    xhr.onabort = () => resolve('abort');
+    xhr.send(blob);
+  });
+  status.textContent = 'Uploading…';
+  for (let offset = 0; offset < f.size; offset += PIECE_SIZE) {
+    const blob = f.slice(offset, offset + PIECE_SIZE);
+    let result = '';
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      result = await send(offset, blob, await serverHeaders());      // fresh login token for every piece
+      if (result === 'ok' || result === 'abort' || stopped) break;
+    }
+    if (stopped || result === 'abort') { bar.hidden = true; status.textContent = 'Upload cancelled. Nothing was sent for analysis.'; return null; }
+    if (result !== 'ok') {
+      bar.hidden = true;
+      status.textContent = result === 'network' ? 'The upload failed: the analysis server could not be reached.' : `The upload failed (${result}).`;
+      return null;
+    }
+  }
+  status.textContent = 'Uploaded. Starting the analysis…';
+  return token;
+}
+
 async function upload(form) {
   const status = $('[data-upload-status]', root);
   const bar = $('[data-upload-bar]', root);
   const data = new FormData(form);
   data.set('file', file);
   data.set('role', role);
-  const xhr = new XMLHttpRequest();
-  xhr.open('POST', `${SERVER}/api/jobs`);
-  Object.entries(await serverHeaders()).forEach(([k, v]) => xhr.setRequestHeader(k, v));
   bar.hidden = false;
   $('[data-submit]', root).disabled = true;
   const cancel = $('[data-cancel-upload]', root);
   cancel.hidden = false;
+
+  // Big videos go up in 50 MB pieces: the cloud address (behind Cloudflare) refuses a single request over 100 MB
+  if (file.size > PIECE_LIMIT) {
+    const pieces = await uploadPieces(file, bar, status, cancel);
+    if (!pieces) { cancel.hidden = true; updateSubmit(); return; }
+    data.delete('file');
+    data.set('parts', pieces);
+    data.set('filename', file.name);
+  }
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', `${SERVER}/api/jobs`);
+  Object.entries(await serverHeaders()).forEach(([k, v]) => xhr.setRequestHeader(k, v));
   cancel.onclick = () => xhr.abort();
   xhr.onloadend = () => { cancel.hidden = true; };
   xhr.onabort = () => { bar.hidden = true; status.textContent = 'Upload cancelled. Nothing was sent for analysis.'; updateSubmit(); };
