@@ -106,8 +106,8 @@ function updateSubmit() {
 }
 
 // ---------------------------------------------------------------- uploading
-const PIECE_LIMIT = 90e6;          // above this, send the video in pieces
-const PIECE_SIZE = 50 * 1024 * 1024;
+const PIECE_LIMIT = 8 * 1024 * 1024;   // above this, send the video in pieces (the cloud proxy refuses requests over ~10 MB)
+const PIECE_SIZE = 8 * 1024 * 1024;
 
 // Sends the file piece by piece (each retried up to 3 times). Returns the upload token, or null if cancelled/failed.
 async function uploadPieces(f, bar, status, cancel) {
@@ -160,7 +160,7 @@ async function upload(form) {
   const cancel = $('[data-cancel-upload]', root);
   cancel.hidden = false;
 
-  // Big videos go up in 50 MB pieces: the cloud address (behind Cloudflare) refuses a single request over 100 MB
+  // Videos go up in 8 MB pieces: the cloud address refuses single requests over about 10 MB
   if (file.size > PIECE_LIMIT) {
     const pieces = await uploadPieces(file, bar, status, cancel);
     if (!pieces) { cancel.hidden = true; updateSubmit(); return; }
