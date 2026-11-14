@@ -3,14 +3,14 @@
 // and remove it again with:  localStorage.removeItem('cm-server')
 import { firebaseReady } from './firebase-config.js';
 
-const DEFAULT_SERVER = 'https://lizard-makeshift-clock.ngrok-free.dev';
+const DEFAULT_SERVER = 'https://fb843a5709291.notebooksn.jarvislabs.net';
 
 export const SERVER = (() => {
   try { return localStorage.getItem('cm-server') || DEFAULT_SERVER; } catch { return DEFAULT_SERVER; }
 })();
 
 // ngrok's free plan shows a warning page to browsers unless this header is sent
-export const SERVER_HEADERS = { 'ngrok-skip-browser-warning': '1' };
+export const SERVER_HEADERS = {};
 
 // Headers for every server call: the ngrok one, plus the signed-in user's login token when accounts are on
 // (the server checks it with Google before accepting an upload or showing an analysis)
