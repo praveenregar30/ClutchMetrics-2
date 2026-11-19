@@ -208,7 +208,9 @@ function renderTimeline() {
 
 // ---------------------------------------------------------------- shot chart (FIBA half court, 1 m = 100 units)
 const ZONES = ['Paint', 'Mid-range', 'Corner 3', 'Above-break 3'];
-const toCourt = (s) => ({ x: 750 + s.x * 100, y: s.y * 100 });
+// match.json "x" runs across the half court with the opposite sign to the drawing (seen from half court, the far
+// sideline is on the left): mirror it here so shots appear on the side they were taken from
+const toCourt = (s) => ({ x: 750 - s.x * 100, y: s.y * 100 });
 
 function shotTeams() {
   return state.shotTeam === 'mine' ? [mine()] : state.shotTeam === 'theirs' ? [theirs()] : [0, 1];

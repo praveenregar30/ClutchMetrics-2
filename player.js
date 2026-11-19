@@ -245,7 +245,7 @@ function renderShots(d, p) {
   box.prepend(svg);
   const layer = svgEl('g', { class: `shot-layer${reduced ? '' : ' is-new'}` }, svg);
   placed.forEach((s, i) => {
-    const x = 750 + s.x * 100; const y = s.y * 100;
+    const x = 750 - s.x * 100; const y = s.y * 100;   // mirrored, as in dashboard.js toCourt
     const g = svgEl('g', { class: `shot shot--team ${s.made ? 'shot--made' : 'shot--miss'}`, style: `--i: ${i}`, tabindex: '0', role: 'button' }, layer);
     g.setAttribute('aria-label', `${clock(s.t)}: ${s.made ? 'made' : 'missed'}, ${s.zone}, ${one.format(s.distance_m)} m. Watch.`);
     svgEl('circle', { class: 'shot__hit', cx: x, cy: y, r: 40 }, g);
