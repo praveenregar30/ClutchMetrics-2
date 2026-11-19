@@ -1035,7 +1035,7 @@ function buildMatchPicker(mine) {
 
 // Nothing of the user's to show yet: hide the analysis sections, keep the upload section
 function showEmpty(serverOffline) {
-  ['#overview', '#report', '#video', '#shots', '#players', '#ratings', '#movement', '#ball', '#plays'].forEach((id) => {
+  ['#overview', '#video', '#stats', '#report', '#shots', '#players', '#ratings', '#movement', '#ball', '#plays'].forEach((id) => {
     $(id).hidden = true;
     document.querySelector(`.side__nav a[href="${id}"]`)?.setAttribute('hidden', '');
   });
