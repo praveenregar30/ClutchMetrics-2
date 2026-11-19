@@ -173,9 +173,13 @@ function percentile(value, values) {
   return Math.round(((below + 0.5 * (equal - 1)) / (values.length - 1)) * 100);
 }
 
+// Minimum time on court for a rating: CONFIG.minSeconds, or 40% of a short clip (a 45 s clip would otherwise rate nobody)
+export const minSecondsFor = (match) => Math.min(CONFIG.minSeconds, Math.round(0.4 * (match?.clip?.duration_s || Infinity)));
+
 export function score(match) {
   const { rows, mapped } = derive(match);
-  const eligible = rows.filter((r) => r.seconds >= CONFIG.minSeconds);
+  const minSeconds = minSecondsFor(match);
+  const eligible = rows.filter((r) => r.seconds >= minSeconds);
   eligible.forEach((r) => { r.pct = {}; });
   Object.entries(METRICS).forEach(([m, def]) => {
     const ok = (r) => r[m] !== null && r[m] !== undefined && (!def.ok || def.ok(r));
@@ -192,7 +196,7 @@ export function score(match) {
     Object.entries(CONFIG.weights).forEach(([a, wt]) => { if (r.areas[a] !== null) { sum += r.areas[a] * wt; w += wt; } });
     r.ppi = w ? Math.round(sum / w) : null;
   });
-  return { rows, eligible, mapped };
+  return { rows, eligible, mapped, minSeconds };
 }
 
 // ---------------------------------------------------------------- strengths, weaknesses, improvements
@@ -241,7 +245,7 @@ const WEAK_OK = {
 
 export function profile(r, scored) {
   if (!r.pct) {
-    return { eligible: false, note: `On court only ${clock(r.seconds)}: not enough time for a report (minimum ${CONFIG.minSeconds} s).` };
+    return { eligible: false, note: `On court only ${clock(r.seconds)}: not enough time for a report (minimum ${scored.minSeconds ?? CONFIG.minSeconds} s).` };
   }
   const ord = (n) => `${n}${n % 10 === 1 && n % 100 !== 11 ? 'st' : n % 10 === 2 && n % 100 !== 12 ? 'nd' : n % 10 === 3 && n % 100 !== 13 ? 'rd' : 'th'}`;
   const rankText = (m) => {

@@ -104,11 +104,11 @@ export function zonesBar(z) {
 }
 
 // ---------------------------------------------------------------- method
-export function methodNote(mapped) {
+export function methodNote(mapped, minSeconds = CONFIG.minSeconds) {
   const w = Object.entries(CONFIG.weights).map(([a, v]) => `${AREAS[a]} ${Math.round(v * 100)}%`).join(', ');
   const byArea = Object.entries(AREAS).map(([a, name]) => `<li><b>${name}:</b> ${Object.values(METRICS).filter((m) => m.area === a).map((m) => m.name).join(', ')}</li>`).join('');
   return `<details class="method"><summary>How these scores are calculated</summary>
-    <p>Every number comes from events the model detects in the video. Each metric is ranked against all players of <b>this game</b> who were on court at least ${CONFIG.minSeconds} s (per-minute rates, so playing time is fair), giving 0–100. An area score is the average of its metrics; the <b>Player Performance Index</b> is the weighted average of the areas: ${w}. Areas without data are left out, not guessed.</p>
+    <p>Every number comes from events the model detects in the video. Each metric is ranked against all players of <b>this game</b> who were on court at least ${minSeconds} s (per-minute rates, so playing time is fair), giving 0–100. An area score is the average of its metrics; the <b>Player Performance Index</b> is the weighted average of the areas: ${w}. Areas without data are left out, not guessed.</p>
     <ul>${byArea}</ul>
     <p>Reliability rules: shooting efficiency needs ${CONFIG.minShotsForEfficiency}+ shots; ball security needs ${CONFIG.minHandlingForSecurity}+ passes or lost balls; interceptions and assists are never called a weakness (too rare in short clips); weaknesses about involvement need 60 s on court.${mapped ? '' : ' This video has no court mapping, so physical metrics are not available.'}</p>
     <p>Not measured, because the model cannot detect them reliably yet: rebounds, free-throw attempts (so no TS%), steals versus intercepted passes, defensive assignments, and per-player offensive/defensive ratings. Scores describe this clip only, relative to the players in it.</p>

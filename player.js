@@ -2,8 +2,8 @@
 // which player in the video is "me" (team + jersey number, chosen at upload or fixed here).
 
 import { savedCopies, savedCopyNote, serverFetch, serverVideoUrl } from './config.js?v=2';
-import { analyse } from './insights.js?v=1';
-import { advancedStats, insightLists, methodNote, ppiCard, radarSvg, radarValues, teamAverageValues } from './insights-ui.js?v=1';
+import { analyse } from './insights.js?v=2';
+import { advancedStats, insightLists, methodNote, ppiCard, radarSvg, radarValues, teamAverageValues } from './insights-ui.js?v=2';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const NS = 'http://www.w3.org/2000/svg';
@@ -463,7 +463,7 @@ function renderProfile(d, p) {
   $('[data-prof-radar]').innerHTML = radarSvg([{ name: 'You', tone: 'team', values: radarValues(r) }, { name: 'Team-mates average', tone: 'avg', values: teamAverageValues(ins.rows, r.team, r) }], 'Your profile against your team-mates');
   $('[data-prof-lists]').innerHTML = insightLists(prof);
   $('[data-prof-adv]').innerHTML = advancedStats(r, ins.mapped);
-  $('[data-prof-method]').innerHTML = methodNote(ins.mapped);
+  $('[data-prof-method]').innerHTML = methodNote(ins.mapped, ins.minSeconds);
 }
 
 function renderReport() {

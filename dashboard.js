@@ -3,8 +3,8 @@
 // the address, so a view can be shared or reloaded.
 
 import { savedCopies, savedCopyNote, serverFetch, serverVideoUrl } from './config.js?v=2';
-import { analyse } from './insights.js?v=1';
-import { advancedStats, insightLists, methodNote, ppiCard, radarSvg, radarValues, teamAverageValues } from './insights-ui.js?v=1';
+import { analyse } from './insights.js?v=2';
+import { advancedStats, insightLists, methodNote, ppiCard, radarSvg, radarValues, teamAverageValues } from './insights-ui.js?v=2';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const NS = 'http://www.w3.org/2000/svg';
@@ -944,7 +944,7 @@ function renderRatings() {
       <td><div class="ppi-cell">${bar(r.ppi)}</div></td>
       <td class="num">${r.areas.offense ?? 'n/a'}</td><td class="num">${r.areas.defense ?? 'n/a'}</td><td class="num">${r.areas.physical ?? 'n/a'}</td><td class="num">${r.areas.playmaking ?? 'n/a'}</td>
       <td class="muted">${esc(profiles[r.key].strengths[0]?.title || '–')}</td></tr>`).join('')
-    + rows.filter((r) => !r.pct && teams.includes(r.team)).map((r) => `<tr class="row--muted"><td class="who"><b>No. ${esc(r.no)}</b><span>${esc(code(r.team))} · ${clock(r.seconds)}</span></td><td colspan="6">On court too briefly for a rating (minimum ${30} s)</td></tr>`).join('');
+    + rows.filter((r) => !r.pct && teams.includes(r.team)).map((r) => `<tr class="row--muted"><td class="who"><b>No. ${esc(r.no)}</b><span>${esc(code(r.team))} · ${clock(r.seconds)}</span></td><td colspan="6">On court too briefly for a rating (minimum ${state.ins.minSeconds} s)</td></tr>`).join('');
   // comparison
   const opts = eligible.slice().sort((x, y) => x.team - y.team || Number(x.no) - Number(y.no));
   if (!state.cmpA || !opts.some((r) => r.key === state.cmpA)) state.cmpA = eligible.filter((r) => r.team === mine()).sort((x, y) => y.ppi - x.ppi)[0]?.key || null;
@@ -955,7 +955,7 @@ function renderRatings() {
     sel.value = slot === 'a' ? state.cmpA : state.cmpB;
   });
   renderCompare();
-  $('[data-method]').innerHTML = methodNote(state.ins.mapped);
+  $('[data-method]').innerHTML = methodNote(state.ins.mapped, state.ins.minSeconds);
 }
 
 function renderCompare() {
