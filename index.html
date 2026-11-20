@@ -142,6 +142,7 @@
 <link rel="stylesheet" href="court-scene.css?v=5">
 <link rel="stylesheet" href="cursor.css">
 <link rel="stylesheet" href="stat-motion.css?v=1">
+<link rel="stylesheet" href="courtside.css?v=1">
 </head>
 <body>
 <!-- type: software
@@ -197,6 +198,11 @@
               <mask id="scene-fade" maskUnits="userSpaceOnUse" x="0" y="540" width="760" height="80"><rect y="540" width="760" height="80" fill="url(#scene-fade-x)"/></mask>
               <radialGradient id="scene-shadow"><stop offset="0" stop-color="#000" stop-opacity=".8"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
             </defs>
+            <g class="arena-lines" fill="none" stroke="currentColor" aria-hidden="true">
+              <path pathLength="1" d="M42 546 258 461H698L754 546Z"/>
+              <path pathLength="1" d="M468 461 425 546M332 546C365 514 490 510 526 546"/>
+              <path pathLength="1" d="M695 474H623L614 504H724M624 475C589 476 583 503 614 504"/>
+            </g>
             <ellipse data-p="pool" cx="400" cy="330" rx="400" ry="300" fill="url(#scene-pool)"/>
             <g mask="url(#scene-fade)"><rect y="556" width="760" height="64" fill="url(#scene-floor)"/>
             <path d="M90 620 150 556M250 620 280 556M410 620 410 556M570 620 540 556M730 620 670 556" stroke="#100e0c" stroke-opacity=".45" stroke-width="2"/></g>

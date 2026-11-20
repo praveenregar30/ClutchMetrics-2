@@ -91,11 +91,14 @@ function renderOverview() {
     { label: 'Interceptions', a: me.interceptions, b: op.interceptions, show: (t) => whole.format(t.interceptions), note: () => 'Ball won from the opponent' },
   ];
   $('[data-kpis]').innerHTML = tiles.map((k, index) => {
+    const total = k.a + k.b;
+    const share = total > 0 ? 100 * k.a / total : null;
     const lead = k.a > k.b ? 'is-good' : '';
     return `<article class="kpi" style="--stat-order:${index}">
       <span class="kpi__label">${k.label}</span>
       <span class="kpi__value">${k.show(me)}</span>
       ${k.note(me) ? `<span class="kpi__delta ${lead}">${k.note(me)}</span>` : ''}
+      <span aria-hidden="true" class="team-split"${share === null ? '' : ` style="--team-share:${share}%"`}></span>
       <span class="kpi__opp"><i class="swatch swatch--opp"></i>${esc(op.code)} <b>${k.show(op)}</b></span>
     </article>`;
   }).join('');

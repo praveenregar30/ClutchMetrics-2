@@ -1,0 +1,37 @@
+/* The court is drawn behind the existing shot sequence. */
+.arena-lines { color: #e0ab72; opacity: .33; stroke-width: 1.4; }
+@media (prefers-reduced-motion: no-preference) {
+  .arena-lines path { stroke-dasharray: 1; animation: mark-court 1.25s cubic-bezier(.2,.7,.2,1) backwards; }
+  .arena-lines path:nth-child(2) { animation-delay: .18s; }
+  .arena-lines path:nth-child(3) { animation-delay: .32s; }
+  .auth__head { animation: lineup-arrive .45s ease-out backwards; }
+  .roles a[aria-current="page"] { animation: lineup-arrive .32s ease-out backwards; }
+}
+@keyframes mark-court { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes lineup-arrive { from { opacity: .2; translate: 0 7px; } to { opacity: 1; translate: 0; } }
+
+/* Concentric court markings behind the team and player introductions. */
+.game-head, .me-head {
+  padding: clamp(16px, 3vw, 38px);
+  border: 1px solid #54402e;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 76% 150%, transparent 0 98px, #bf86552b 99px 100px, transparent 101px 174px, #bf86552b 175px 176px, transparent 177px),
+    linear-gradient(112deg, #332319, #201b16 55%, #161412);
+}
+.scorebox__main { background: #120f0d; border-color: #745037; box-shadow: inset 0 2px #d78143; }
+.scorebox__main b { color: #ffbd83; }
+.me-head__no { text-shadow: 2px 2px #160f0a, 3px 3px #9e633c; }
+.me-stats > div:first-child, .kpi:first-child { background-color: #352519; }
+.me-stats > div:first-child dd, .kpi:first-child .kpi__value { color: #ffc28e; }
+.team-split {
+  display: block; width: 100%; height: 3px; margin: auto 0 3px;
+  border-radius: 3px; background: var(--line-strong);
+}
+.team-split[style] {
+  background: linear-gradient(to right, var(--series-team) var(--team-share), var(--series-opp) var(--team-share));
+}
+@media (max-width: 540px) {
+  .game-head, .me-head { padding: 14px; gap: 12px; }
+  .me-head__no { font-size: clamp(60px, 16vw, 86px); }
+}
