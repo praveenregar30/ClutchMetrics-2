@@ -1,0 +1,15 @@
+/* Native anchor scrolling leaves wheel, touch and keyboard input under browser control. */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+  .reveal-on .block.is-seen :is([data-kpis], [data-me-stats]) > * {
+    animation: stat-arrival 430ms ease-out backwards;
+    animation-delay: calc(var(--stat-order, 0) * 65ms);
+    transform-origin: center 75%;
+  }
+}
+
+@keyframes stat-arrival {
+  from { opacity: 0; transform: translateY(9px) scale(.955); }
+  65% { opacity: 1; transform: translateY(-1px) scale(1.012); }
+  to { opacity: 1; transform: none; }
+}

@@ -172,7 +172,7 @@ function renderHead(d, p) {
     ...(mapped ? [['Distance', `${whole.format(p.distance_m)} m`, teamRank(d, p, (x) => x.distance_m)],
       ['Top speed', p.top_kmh ? `${one.format(p.top_kmh)} km/h` : '–', teamRank(d, p, (x) => x.top_kmh)]] : []),
   ];
-  $('[data-me-stats]').innerHTML = tiles.map(([l, v, r]) => `<div><dt>${l}</dt><dd>${v}</dd>${r ? `<span>${esc(r)}</span>` : ''}</div>`).join('');
+  $('[data-me-stats]').innerHTML = tiles.map(([l, v, r], index) => `<div style="--stat-order:${index}"><dt>${l}</dt><dd>${v}</dd>${r ? `<span>${esc(r)}</span>` : ''}</div>`).join('');
 }
 
 function renderVs(d, p) {

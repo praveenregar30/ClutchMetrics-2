@@ -90,9 +90,9 @@ function renderOverview() {
     { label: 'Passes', a: me.passes, b: op.passes, show: (t) => whole.format(t.passes), note: () => 'Completed to a team-mate' },
     { label: 'Interceptions', a: me.interceptions, b: op.interceptions, show: (t) => whole.format(t.interceptions), note: () => 'Ball won from the opponent' },
   ];
-  $('[data-kpis]').innerHTML = tiles.map((k) => {
+  $('[data-kpis]').innerHTML = tiles.map((k, index) => {
     const lead = k.a > k.b ? 'is-good' : '';
-    return `<article class="kpi">
+    return `<article class="kpi" style="--stat-order:${index}">
       <span class="kpi__label">${k.label}</span>
       <span class="kpi__value">${k.show(me)}</span>
       ${k.note(me) ? `<span class="kpi__delta ${lead}">${k.note(me)}</span>` : ''}
