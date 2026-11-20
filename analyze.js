@@ -220,7 +220,7 @@ async function loadJobs() {
       : `<span class="tag tag--run">${j.progress}%</span>`;
     return `<article class="job" data-job="${j.id}">
       <div class="job__main"><b>${esc(j.title)}</b><span>${esc(j.teams.join(' vs '))} · ${when.format(new Date(j.created * 1000))}${j.duration_s ? ` · ${clock(j.duration_s)} of video` : ''}</span></div>
-      <div class="job__state">${state}${j.status === 'done' ? open : ''}${j.status === 'running' || j.status === 'queued' ? `<button class="mini-btn" type="button" data-cancel="${j.id}" data-title="${esc(j.title)}">Cancel</button>` : ''}</div>
+      <div class="job__state">${state}${['done','failed'].includes(j.status) ? `<button class="mini-btn" type="button" data-remove="${j.id}" data-title="${esc(j.title)}">Remove</button>` : ''}${j.status === 'done' ? open : ''}${j.status === 'running' || j.status === 'queued' ? `<button class="mini-btn" type="button" data-cancel="${j.id}" data-title="${esc(j.title)}">Cancel</button>` : ''}</div>
       ${j.status === 'running' || j.status === 'queued' ? `<div class="job__progress"><div class="bar"><i style="width:${j.progress}%"></i></div><span>${esc(j.step_text)}</span></div>` : ''}
       ${j.court_can_map ? `<div class="job__court"><span class="tag tag--map">Court not mapped yet</span><button class="mini-btn mini-btn--primary" type="button" data-map="${j.id}">Map the court (${j.court_pictures} pictures)</button></div>` : ''}
       ${j.status === 'failed' ? `<p class="job__msg">${esc(j.message)}</p>` : ''}
@@ -303,6 +303,13 @@ async function start() {
     if (b) watch(b.dataset.watch, b);
     const m = e.target.closest('[data-map]');
     if (m) map(m.dataset.map);
+    const remove = e.target.closest('[data-remove]');
+    if (remove && confirm(`Remove "${remove.dataset.title}" from your account?`)) {
+      remove.disabled = true;
+      serverFetch(`/api/jobs/${remove.dataset.remove}/remove`, { method: 'POST' })
+        .then(res => { if (!res.ok) throw Error(res.status); location.replace(location.pathname); })
+        .catch(err => { remove.disabled = false; $('[data-upload-status]', root).textContent = `Could not remove analysis (${err.message}).`; });
+    }
     const c = e.target.closest('[data-cancel]');
     if (c) cancelJob(c);
   });

@@ -302,7 +302,12 @@ export async function openCourtMapper(jobId, { onFinish } = {}) {
   // ---- events (replaced on every open, so handlers always see this job)
   const pointer = (e) => {
     const r = canvas.getBoundingClientRect();
-    return [((e.clientX - r.left) / r.width) * canvas.width / data.image_scale, ((e.clientY - r.top) / r.height) * canvas.height / data.image_scale];
+    // The canvas uses object-fit: contain. Letterbox margins are outside the image.
+    const scale = Math.min(r.width / canvas.width, r.height / canvas.height);
+    const x = (e.clientX - r.left - (r.width - canvas.width * scale) / 2) / scale;
+    const y = (e.clientY - r.top - (r.height - canvas.height * scale) / 2) / scale;
+    if (x < 0 || x > canvas.width || y < 0 || y > canvas.height) return null;
+    return [x * data.size[0] / canvas.width, y * data.size[1] / canvas.height];
   };
   canvas.onclick = (e) => { if (img) { pending = pointer(e); redraw(); } };
   svg.onclick = (e) => {
