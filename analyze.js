@@ -2,7 +2,7 @@
 // Used by the coach and the player dashboards: <section data-analyze="coach|player"> ... </section>
 
 import { SERVER, serverHeaders, serverFetch, serverVideoUrl } from './config.js';
-import { openCourtMapper } from './court-map.js?v=1';
+import { openCourtMapper } from './court-map.js?v=2';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
