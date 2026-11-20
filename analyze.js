@@ -304,11 +304,13 @@ async function start() {
     const m = e.target.closest('[data-map]');
     if (m) map(m.dataset.map);
     const remove = e.target.closest('[data-remove]');
-    if (remove && confirm(`Remove "${remove.dataset.title}" from your account?`)) {
+    if (remove && confirm(`Permanently delete "${remove.dataset.title}"?
+
+Its video, statistics and dashboard are removed from the server for good. This cannot be undone.`)) {
       remove.disabled = true;
       serverFetch(`/api/jobs/${remove.dataset.remove}/remove`, { method: 'POST' })
         .then(res => { if (!res.ok) throw Error(res.status); location.replace(location.pathname); })
-        .catch(err => { remove.disabled = false; $('[data-upload-status]', root).textContent = `Could not remove analysis (${err.message}).`; });
+        .catch(err => { remove.disabled = false; $('[data-upload-status]', root).textContent = `Could not delete the analysis (${err.message === '404' ? 'the server does not support deleting yet' : `error ${err.message}`}).`; });
     }
     const c = e.target.closest('[data-cancel]');
     if (c) cancelJob(c);
